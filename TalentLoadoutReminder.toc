@@ -1,0 +1,11 @@
+## Interface: 100002
+## DefaultState: enabled
+
+## Title: TalentLoadoutReminder
+## Notes: Reminds you to switch your class talent loadout when entering certain situations
+## Author: genju
+## SavedVariablesPerCharacter: TalentLoadoutReminderDB
+## Version: 1.0
+
+LoadoutReminder.lua
+LoadoutReminder.xml
