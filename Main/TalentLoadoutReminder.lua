@@ -51,12 +51,6 @@ function TalentLoadoutReminder.MAIN:PrintAlreadyLoadedMessage(set)
 	local reminderFrame = TalentLoadoutReminder.GGUI:GetFrame(TalentLoadoutReminder.MAIN.FRAMES, TalentLoadoutReminder.CONST.FRAMES.REMINDER_FRAME)
 	-- hide frame if its visible
 	reminderFrame:Hide()
-
-	if set == nil then
-		print("TLOR: Talent set not assigned yet. Type /tlor config to configure")
-	else
-		print("TLOR: Talent set already loaded: " .. set)
-	end
 end
 
 function TalentLoadoutReminder.MAIN:CheckAndShow()
