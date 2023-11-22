@@ -56,15 +56,10 @@ function TalentLoadoutReminder.OPTIONS:Init()
     end)
 
     local function dropdownClickCallback(setID, setName)
-        local reminderFrame = TalentLoadoutReminder.GGUI:GetFrame(TalentLoadoutReminder.MAIN.FRAMES, TalentLoadoutReminder.CONST.FRAMES.REMINDER_FRAME)
         TalentLoadoutReminderDB[setID] = setName
         -- a new set was chosen for a new environment
-        -- check if it is not already loaded anyway, then close frame if open
-        if not TalentLoadoutReminder.MAIN:IsSetLoaded(setName) then
-            TalentLoadoutReminder.MAIN:CheckAndShow()
-        else
-            reminderFrame:Hide()
-        end
+        -- update visibility
+        TalentLoadoutReminder.MAIN:CheckAndShow()
     end
 
     ---@type GGUI.Dropdown
