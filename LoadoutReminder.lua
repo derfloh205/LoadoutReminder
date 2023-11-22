@@ -86,7 +86,7 @@ function addon:getTalentUICurrentSelectedLoadout()
 	return ClassTalentFrame.TalentsTab.LoadoutDropDown.lastValidSelectionID
 end
 
-function addon:getTalentSets()
+function addon:GetTalentSets()
 	local talentSets = {STARTER_BUILD}
 	local configIDs = C_ClassTalents.GetConfigIDsBySpecID(PlayerUtil.GetCurrentSpecID())
 	ConfigNameToIDMAP = {}
@@ -184,7 +184,7 @@ function addon:checkAndShow()
 		end
 		SET_TO_LOAD = OPENWORLD_SET
 	end
-	local _ = addon:getTalentSets() -- refresh map
+	local _ = addon:GetTalentSets() -- refresh map
 	local currentSet = addon:getCurrentSet()
 	if ConfigNameToIDMAP[currentSet] == nil then
 		-- only the case when handling a deleted set.. which shows as default set
@@ -311,7 +311,7 @@ end
 function addon:initializeDropdownValues(dropDown, linkedSetID)
 	UIDropDownMenu_Initialize(dropDown, function(self) 
 		-- loop through possible sets and put them as option
-		local setList = addon:getTalentSets()
+		local setList = addon:GetTalentSets()
 		for k, v in pairs(setList) do
 			setName = v -- TODO: check if k or v is needed
 			local info = UIDropDownMenu_CreateInfo()
