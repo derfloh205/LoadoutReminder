@@ -132,7 +132,11 @@ function TalentLoadoutReminder.MAIN:GetCurrentSet()
 
 	if configID then
 		local configInfo = C_Traits.GetConfigInfo(configID);
-		return configInfo.name
+		if configInfo then
+			return configInfo.name
+		end
+		-- otherwise wtf?
+		return nil
 	else
 		return nil -- no set selected yet?
 	end
