@@ -1,0 +1,3 @@
+_, LoadoutReminder = ...
+
+LoadoutReminder.EQUIP = {}

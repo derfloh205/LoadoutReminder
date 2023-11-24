@@ -46,3 +46,8 @@ LoadoutReminder.CONST.BOSS_ID_MAP = {
     [209090] = 'AMIRDRASSIL_TINDRAL_SAGESWIFT',
     [204931] = 'AMIRDRASSIL_FYRAKK',
 }
+
+LoadoutReminder.CONST.ADDON_LIST_ADDONS = {
+    BETTER_ADDON_LIST = "BetterAddonList",
+    ADDON_CONTROL_PANEL = "AddonControlPanel",
+}

@@ -1,14 +1,11 @@
 LoadoutReminderAddonName, LoadoutReminder = ...
 
-LoadoutReminder.MAIN = CreateFrame("Frame", "LoadoutReminderAddon")
+LoadoutReminder.MAIN = CreateFrame("Frame")
 LoadoutReminder.MAIN:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end)
 LoadoutReminder.MAIN:RegisterEvent("ADDON_LOADED")
 LoadoutReminder.MAIN:RegisterEvent("PLAYER_LOGIN")
 LoadoutReminder.MAIN:RegisterEvent("PLAYER_LOGOUT")
 LoadoutReminder.MAIN:RegisterEvent("PLAYER_ENTERING_WORLD")
-LoadoutReminder.MAIN:RegisterEvent("TRAIT_CONFIG_UPDATED")
-LoadoutReminder.MAIN:RegisterEvent("CONFIG_COMMIT_FAILED")
-LoadoutReminder.MAIN:RegisterEvent("TRAIT_TREE_CHANGED")
 -- LoadoutReminder.MAIN:RegisterEvent("ZONE_CHANGED")
 -- LoadoutReminder.MAIN:RegisterEvent("ZONE_CHANGED_INDOORS")
 LoadoutReminder.MAIN:RegisterEvent("PLAYER_TARGET_CHANGED")
@@ -18,11 +15,18 @@ LoadoutReminder.MAIN.FRAMES = {}
 LoadoutReminderGGUIConfig = LoadoutReminderGGUIConfig or {}
 
 LoadoutReminderDB = LoadoutReminderDB or {
-	DUNGEON = nil,
-	OPENWORLD = nil,
-	RAID = nil,
-	BG = nil,
-	ARENA = nil,
+	TALENTS = {
+		GENERAL = {},
+		BOSS = {},
+	},
+	ADDONS = {
+		GENERAL = {},
+		BOSS = {},
+	},
+	EQUIP = {
+		GENERAL = {},
+		BOSS = {},
+	},
 }
 
 LoadoutReminderBossDB = LoadoutReminderBossDB or {}
@@ -40,18 +44,6 @@ function LoadoutReminder.MAIN:ADDON_LOADED(addon_name)
 	reminderFrame:RestoreSavedConfig(UIParent)
 end
 
----@return TraitConfigInfo[]
-function LoadoutReminder.MAIN:GetTalentSets()
-	local specID = PlayerUtil.GetCurrentSpecID()
-
-	local configIDs = C_ClassTalents.GetConfigIDsBySpecID(specID)
-
-	local talentSets = LoadoutReminder.GUTIL:Map(configIDs, function (configID)
-		return C_Traits.GetConfigInfo(configID)
-	end)
-	return talentSets
-end
-
 function LoadoutReminder.MAIN:PrintAlreadyLoadedMessage(set)
 	local reminderFrame = LoadoutReminder.GGUI:GetFrame(LoadoutReminder.MAIN.FRAMES, LoadoutReminder.CONST.FRAMES.REMINDER_FRAME)
 	-- hide frame if its visible
@@ -65,13 +57,13 @@ function LoadoutReminder.MAIN:CheckAndShowReload()
 
 	reminderFrame.content.bossInfo:Hide() -- do not show on reload info
 
-	local DUNGEON_SET = LoadoutReminderDB["DUNGEON"]
-	local RAID_SET = LoadoutReminderDB["RAID"]
-	local BG_SET = LoadoutReminderDB["BG"]
-	local ARENA_SET = LoadoutReminderDB["ARENA"]
-	local OPENWORLD_SET = LoadoutReminderDB["OPENWORLD"]
+	local DUNGEON_SET = LoadoutReminderDB.TALENTS.GENERAL["DUNGEON"]
+	local RAID_SET = LoadoutReminderDB.TALENTS.GENERAL["RAID"]
+	local BG_SET = LoadoutReminderDB.TALENTS.GENERAL["BG"]
+	local ARENA_SET = LoadoutReminderDB.TALENTS.GENERAL["ARENA"]
+	local OPENWORLD_SET = LoadoutReminderDB.TALENTS.GENERAL["OPENWORLD"]
 	local SET_TO_LOAD = nil
-	local CURRENT_SET = LoadoutReminder.MAIN:GetCurrentSet()
+	local CURRENT_SET = LoadoutReminder.TALENTS:GetCurrentSet()
 
 	-- check if player went into a dungeon
 	if inInstance and instanceType == 'party' then
@@ -134,7 +126,7 @@ function LoadoutReminder.MAIN:CheckAndShowNewTarget()
 		return -- npc is no boss
 	end
 
-	local bossSet = LoadoutReminderBossDB[boss]
+	local bossSet = LoadoutReminderDB.TALENTS.BOSS[boss]
 
 	if bossSet == nil then
 		return -- no set assigned to this boss yet
@@ -167,45 +159,14 @@ function LoadoutReminder.MAIN:CheckAndShowNewTarget()
 	reminderFrame:Show()
 end
 
---- find out what set is currently activated
-function LoadoutReminder.MAIN:GetCurrentSet()
-
-	if C_ClassTalents.GetStarterBuildActive() then
-		return LoadoutReminder.CONST.STARTER_BUILD
-	end
-
-	-- from wowpedia
-	local function GetSelectedLoadoutConfigID()
-		local lastSelected = PlayerUtil.GetCurrentSpecID() and C_ClassTalents.GetLastSelectedSavedConfigID(PlayerUtil.GetCurrentSpecID())
-		local selectionID = ClassTalentFrame and ClassTalentFrame.TalentsTab and ClassTalentFrame.TalentsTab.LoadoutDropDown and ClassTalentFrame.TalentsTab.LoadoutDropDown.GetSelectionID and ClassTalentFrame.TalentsTab.LoadoutDropDown:GetSelectionID()
-	
-		-- the priority in authoritativeness is [default UI's dropdown] > [API] > ['ActiveConfigID'] > nil
-		return selectionID or lastSelected or C_ClassTalents.GetActiveConfigID() or nil -- nil happens when you don't have any spec selected, e.g. on a freshly created character
-	end
-
-	local configID = GetSelectedLoadoutConfigID()
-
-	if configID then
-		local configInfo = C_Traits.GetConfigInfo(configID);
-		if configInfo then
-			return configInfo.name
-		end
-		-- otherwise wtf?
-		return nil
-	else
-		return nil -- no set selected yet?
-	end
-end
-
-
 function LoadoutReminder.MAIN:PLAYER_ENTERING_WORLD(isLogIn, isReload)
 		LoadoutReminder.MAIN:CheckAndShowReload()
 end
 
 function LoadoutReminder.MAIN:PLAYER_LOGIN()
-	SLASH_LoadoutReminder1 = "/LoadoutReminder"
-	SLASH_LoadoutReminder2 = "/tlor"
-	SlashCmdList["LoadoutReminder"] = function(input)
+	SLASH_LOADOUTREMINDER1 = "/loadoutreminder"
+	SLASH_LOADOUTREMINDER2 = "/lor"
+	SlashCmdList["LOADOUTREMINDER"] = function(input)
 
 		input = SecureCmdOptionParse(input)
 		if not input then return end
@@ -223,30 +184,15 @@ function LoadoutReminder.MAIN:PLAYER_LOGIN()
 		end
 
 		if command == "" then
-			print("Talent LoadoutReminder Help")
-			print("/tlor or /LoadoutReminder can be used for following commands")
-			print("/tlor -> show help text")
-			print("/tlor config -> show options panel")
-			print("/tlor check -> if configured check current player situation")
+			print("LoadoutReminder Help")
+			print("/lor or /loadoutreminder can be used for following commands")
+			print("/lor -> show help text")
+			print("/lor config -> show options panel")
+			print("/lor check -> if configured check current player situation")
 		end
 	end
 end
 
-function LoadoutReminder.MAIN:TRAIT_CONFIG_UPDATED()
-	LoadoutReminder.MAIN:CheckAndShowReload()
-	-- make another check slightly delayed
-	C_Timer.After(1, function ()
-		LoadoutReminder.MAIN:CheckAndShowReload()
-	end)
-end
-
-function LoadoutReminder.MAIN:CONFIG_COMMIT_FAILED()
-	LoadoutReminder.MAIN:CheckAndShowReload()
-end
-
-function LoadoutReminder.MAIN:TRAIT_TREE_CHANGED() 
-	LoadoutReminder.MAIN:CheckAndShowReload()
-end
 function LoadoutReminder.MAIN:PLAYER_TARGET_CHANGED() 
 	LoadoutReminder.MAIN:CheckAndShowNewTarget()
 end

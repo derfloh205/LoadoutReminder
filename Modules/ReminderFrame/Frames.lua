@@ -15,7 +15,7 @@ function LoadoutReminder.REMINDER_FRAME.FRAMES:Init()
         sizeX=sizeX,sizeY=sizeY,
         offsetX=offsetX,offsetY=offsetY,
         frameID=LoadoutReminder.CONST.FRAMES.REMINDER_FRAME, 
-        title="Talent Loadout Reminder",
+        title="Loadout Reminder",
         collapseable=true,
         closeable=true,
         moveable=true,

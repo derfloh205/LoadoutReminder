@@ -7,8 +7,9 @@
 ## X-Curse-Project-ID: 942303
 ## X-Wago-ID: n6VPOLGd
 ## X-WoWI-ID: 26653
-## SavedVariablesPerCharacter: LoadoutReminderDB, LoadoutReminderGGUIConfig, LoadoutReminderBossDB
+## SavedVariablesPerCharacter: LoadoutReminderDB, LoadoutReminderGGUIConfig
 ## Version: 1.0.0
+## OptionalDeps: BetterAddonList, AddonControlPanel
 
 embeds.xml
 Libs/Libs.lua
@@ -18,3 +19,7 @@ Main/LoadoutReminder.lua
 Modules/Options/Options.lua
 Modules/ReminderFrame/ReminderFrame.lua
 Modules/ReminderFrame/Frames.lua
+
+Modules/Talents/Talents.lua
+Modules/Addons/Addons.lua
+Modules/Equip/Equip.lua
