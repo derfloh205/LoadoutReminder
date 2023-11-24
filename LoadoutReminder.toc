@@ -1,0 +1,20 @@
+## Interface: 102000
+## DefaultState: enabled
+
+## Title: LoadoutReminder
+## Notes: Reminds you to switch your loadouts when entering certain situations
+## Author: genju
+## X-Curse-Project-ID: 942303
+## X-Wago-ID: n6VPOLGd
+## X-WoWI-ID: 26653
+## SavedVariablesPerCharacter: LoadoutReminderDB, LoadoutReminderGGUIConfig, LoadoutReminderBossDB
+## Version: 3.0.0
+
+embeds.xml
+Libs/Libs.lua
+Util/Const.lua
+Main/LoadoutReminder.lua
+
+Modules/Options/Options.lua
+Modules/ReminderFrame/ReminderFrame.lua
+Modules/ReminderFrame/Frames.lua

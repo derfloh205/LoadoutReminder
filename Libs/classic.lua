@@ -7,12 +7,12 @@
 -- the terms of the MIT license. See LICENSE for details.
 --
 
-_, TalentLoadoutReminder = ...
+_, LoadoutReminder = ...
 
 local Object = {}
 Object.__index = Object
 
-TalentLoadoutReminder.Object = Object
+LoadoutReminder.Object = Object
 
 
 function Object:new()

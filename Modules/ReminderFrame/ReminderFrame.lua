@@ -1,11 +1,11 @@
-_, TalentLoadoutReminder = ...
+_, LoadoutReminder = ...
 
-TalentLoadoutReminder.REMINDER_FRAME = {}
+LoadoutReminder.REMINDER_FRAME = {}
 
-function TalentLoadoutReminder.REMINDER_FRAME:UpdateLoadButtonMacro(SET_TO_LOAD)
-    local reminderFrame = TalentLoadoutReminder.GGUI:GetFrame(TalentLoadoutReminder.MAIN.FRAMES, TalentLoadoutReminder.CONST.FRAMES.REMINDER_FRAME)
+function LoadoutReminder.REMINDER_FRAME:UpdateLoadButtonMacro(SET_TO_LOAD)
+    local reminderFrame = LoadoutReminder.GGUI:GetFrame(LoadoutReminder.MAIN.FRAMES, LoadoutReminder.CONST.FRAMES.REMINDER_FRAME)
     local macroText = ""
-    if SET_TO_LOAD == TalentLoadoutReminder.CONST.STARTER_BUILD then
+    if SET_TO_LOAD == LoadoutReminder.CONST.STARTER_BUILD then
         -- care for the snowflake..
         macroText = "/run C_ClassTalents.SetStarterBuildActive(true)"
     else

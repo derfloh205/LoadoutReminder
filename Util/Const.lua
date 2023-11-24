@@ -1,14 +1,14 @@
-_, TalentLoadoutReminder = ...
+_, LoadoutReminder = ...
 
-TalentLoadoutReminder.CONST = {}
+LoadoutReminder.CONST = {}
 
-TalentLoadoutReminder.CONST.FRAMES = {
+LoadoutReminder.CONST.FRAMES = {
     REMINDER_FRAME = "TALENT_REMINDER_FRAME",
 }
 
-TalentLoadoutReminder.CONST.STARTER_BUILD = "Starter Build"
+LoadoutReminder.CONST.STARTER_BUILD = "Starter Build"
 
-TalentLoadoutReminder.CONST.DEFAULT_BACKDROP_OPTIONS = {
+LoadoutReminder.CONST.DEFAULT_BACKDROP_OPTIONS = {
     bgFile = "Interface\\CharacterFrame\\UI-Party-Background",
     borderOptions = {
         edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
@@ -17,7 +17,7 @@ TalentLoadoutReminder.CONST.DEFAULT_BACKDROP_OPTIONS = {
     }
 }
 
-TalentLoadoutReminder.CONST.BOSS_NAMES = {
+LoadoutReminder.CONST.BOSS_NAMES = {
     -- Amirdrassil
     AMIRDRASSIL_GNARLROOT = 'Gnarlroot',
     AMIRDRASSIL_IGIRA = 'Igira',
@@ -31,7 +31,7 @@ TalentLoadoutReminder.CONST.BOSS_NAMES = {
 }
 
 -- TODO: Gather data
-TalentLoadoutReminder.CONST.BOSS_ID_MAP = {
+LoadoutReminder.CONST.BOSS_ID_MAP = {
     -- Amirdrassil
     [209333] = 'AMIRDRASSIL_GNARLROOT',
     [200926] = 'AMIRDRASSIL_IGIRA',
