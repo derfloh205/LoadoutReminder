@@ -32,6 +32,12 @@ function TalentLoadoutReminder.REMINDER_FRAME.FRAMES:Init()
             text="",
         })
 
+        frame.content.bossInfo = TalentLoadoutReminder.GGUI.Text({
+            parent=frame.content, anchorParent=frame.content, offsetX=0, offsetY=20,
+            anchorA="CENTER", anchorB="CENTER",
+            text="",
+        })
+
         frame.content.loadButton = TalentLoadoutReminder.GGUI.Button({
             parent=frame.content, anchorParent=frame.content, anchorA="BOTTOM", anchorB="BOTTOM",
             label="Load Set", adjustWidth=true, macro=true, offsetY=20

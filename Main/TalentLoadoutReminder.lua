@@ -9,6 +9,9 @@ TalentLoadoutReminder.MAIN:RegisterEvent("PLAYER_ENTERING_WORLD")
 TalentLoadoutReminder.MAIN:RegisterEvent("TRAIT_CONFIG_UPDATED")
 TalentLoadoutReminder.MAIN:RegisterEvent("CONFIG_COMMIT_FAILED")
 TalentLoadoutReminder.MAIN:RegisterEvent("TRAIT_TREE_CHANGED")
+-- TalentLoadoutReminder.MAIN:RegisterEvent("ZONE_CHANGED")
+-- TalentLoadoutReminder.MAIN:RegisterEvent("ZONE_CHANGED_INDOORS")
+TalentLoadoutReminder.MAIN:RegisterEvent("PLAYER_TARGET_CHANGED")
 
 TalentLoadoutReminder.MAIN.FRAMES = {}
 
@@ -21,6 +24,8 @@ TalentLoadoutReminderDB = TalentLoadoutReminderDB or {
 	BG = nil,
 	ARENA = nil,
 }
+
+TalentLoadoutReminderBossDB = TalentLoadoutReminderBossDB or {}
 
 function TalentLoadoutReminder.MAIN:ADDON_LOADED(addon_name)
 	if addon_name ~= TalentLoadoutReminderAddonName then
@@ -53,10 +58,12 @@ function TalentLoadoutReminder.MAIN:PrintAlreadyLoadedMessage(set)
 	reminderFrame:Hide()
 end
 
-function TalentLoadoutReminder.MAIN:CheckAndShow()
+function TalentLoadoutReminder.MAIN:CheckAndShowReload()
 	local inInstance, instanceType = IsInInstance()
 
 	local reminderFrame = TalentLoadoutReminder.GGUI:GetFrame(TalentLoadoutReminder.MAIN.FRAMES, TalentLoadoutReminder.CONST.FRAMES.REMINDER_FRAME)
+
+	reminderFrame.content.bossInfo:Hide() -- do not show on reload info
 
 	local DUNGEON_SET = TalentLoadoutReminderDB["DUNGEON"]
 	local RAID_SET = TalentLoadoutReminderDB["RAID"]
@@ -112,6 +119,54 @@ function TalentLoadoutReminder.MAIN:CheckAndShow()
 	reminderFrame:Show()
 end
 
+function TalentLoadoutReminder.MAIN:CheckAndShowNewTarget()
+	
+	-- get name of player's target
+	local npcID = TalentLoadoutReminder.MAIN:GetTargetNPCID()
+	if not npcID then
+		return -- no target
+	end
+	-- check npcID for boss
+	local boss = TalentLoadoutReminder.CONST.BOSS_ID_MAP[npcID]
+	local reminderFrame = TalentLoadoutReminder.GGUI:GetFrame(TalentLoadoutReminder.MAIN.FRAMES, TalentLoadoutReminder.CONST.FRAMES.REMINDER_FRAME)
+
+	if boss == nil then
+		return -- npc is no boss
+	end
+
+	local bossSet = TalentLoadoutReminderBossDB[boss]
+
+	if bossSet == nil then
+		return -- no set assigned to this boss yet
+	end
+
+	local CURRENT_SET = TalentLoadoutReminder.MAIN:GetCurrentSet()
+
+	if CURRENT_SET == bossSet then
+		-- set is already assigned, hide frame
+		reminderFrame:Hide()
+		return 
+	end
+
+	if CURRENT_SET ~= nil then
+		reminderFrame.content.info:SetText("Current Talent Set: \"" .. CURRENT_SET .. "\"")
+	else
+		reminderFrame.content.info:SetText("Current Talent Set not recognized")
+	end
+
+	local bossName = TalentLoadoutReminder.CONST.BOSS_NAMES[boss] -- TODO: Localizations
+	if bossName then
+		reminderFrame.content.bossInfo:Show()
+		reminderFrame.content.bossInfo:SetText("Boss detected: " .. bossName)
+	else
+		reminderFrame.content.bossInfo:Hide()
+	end
+
+	TalentLoadoutReminder.REMINDER_FRAME:UpdateLoadButtonMacro(bossSet)
+
+	reminderFrame:Show()
+end
+
 --- find out what set is currently activated
 function TalentLoadoutReminder.MAIN:GetCurrentSet()
 
@@ -144,7 +199,7 @@ end
 
 
 function TalentLoadoutReminder.MAIN:PLAYER_ENTERING_WORLD(isLogIn, isReload)
-		TalentLoadoutReminder.MAIN:CheckAndShow()
+		TalentLoadoutReminder.MAIN:CheckAndShowReload()
 end
 
 function TalentLoadoutReminder.MAIN:PLAYER_LOGIN()
@@ -164,7 +219,7 @@ function TalentLoadoutReminder.MAIN:PLAYER_LOGIN()
 		end
 
 		if command == "check" then 
-			TalentLoadoutReminder.MAIN:CheckAndShow()
+			TalentLoadoutReminder.MAIN:CheckAndShowReload()
 		end
 
 		if command == "" then
@@ -178,17 +233,31 @@ function TalentLoadoutReminder.MAIN:PLAYER_LOGIN()
 end
 
 function TalentLoadoutReminder.MAIN:TRAIT_CONFIG_UPDATED()
-	TalentLoadoutReminder.MAIN:CheckAndShow()
+	TalentLoadoutReminder.MAIN:CheckAndShowReload()
 	-- make another check slightly delayed
 	C_Timer.After(1, function ()
-		TalentLoadoutReminder.MAIN:CheckAndShow()
+		TalentLoadoutReminder.MAIN:CheckAndShowReload()
 	end)
 end
 
 function TalentLoadoutReminder.MAIN:CONFIG_COMMIT_FAILED()
-	TalentLoadoutReminder.MAIN:CheckAndShow()
+	TalentLoadoutReminder.MAIN:CheckAndShowReload()
 end
 
 function TalentLoadoutReminder.MAIN:TRAIT_TREE_CHANGED() 
-	TalentLoadoutReminder.MAIN:CheckAndShow()
+	TalentLoadoutReminder.MAIN:CheckAndShowReload()
+end
+function TalentLoadoutReminder.MAIN:PLAYER_TARGET_CHANGED() 
+	TalentLoadoutReminder.MAIN:CheckAndShowNewTarget()
+end
+
+function TalentLoadoutReminder.MAIN:GetTargetNPCID()
+    if UnitExists("target") then
+        local targetGUID = UnitGUID("target")
+        local _, _, _, _, _, npcID = strsplit("-", targetGUID)
+
+        return tonumber(npcID)
+    end
+
+    return nil
 end
