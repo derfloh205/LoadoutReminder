@@ -34,6 +34,7 @@ LoadoutReminder.CONST.BOSS_NAMES = {
 LoadoutReminder.CONST.BOSS_ID_MAP = {
     -- Amirdrassil
     [209333] = 'AMIRDRASSIL_GNARLROOT',
+    [213930] = 'AMIRDRASSIL_GNARLROOT', -- debug
     [200926] = 'AMIRDRASSIL_IGIRA',
     [208478] = 'AMIRDRASSIL_VOLCOROSS',
         -- Council of Dreams: Urctos, Aerwynn, Pip

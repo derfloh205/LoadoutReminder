@@ -35,7 +35,8 @@ function LoadoutReminder.MAIN:ADDON_LOADED(addon_name)
 	if addon_name ~= LoadoutReminderAddonName then
 		return
 	end
-
+	LoadoutReminder.TALENTS:InitTalentDB()
+	LoadoutReminder.EQUIP:InitEquipDB()
 	LoadoutReminder.OPTIONS:Init()
 	LoadoutReminder.REMINDER_FRAME.FRAMES:Init()	
 
@@ -50,65 +51,32 @@ function LoadoutReminder.MAIN:PrintAlreadyLoadedMessage(set)
 	reminderFrame:Hide()
 end
 
-function LoadoutReminder.MAIN:CheckAndShowReload()
-	local inInstance, instanceType = IsInInstance()
-
+function LoadoutReminder.MAIN:CheckAndShowGeneral()
+	print("TLR: Check and Show General")
 	local reminderFrame = LoadoutReminder.GGUI:GetFrame(LoadoutReminder.MAIN.FRAMES, LoadoutReminder.CONST.FRAMES.REMINDER_FRAME)
 
 	reminderFrame.content.bossInfo:Hide() -- do not show on reload info
 
-	local DUNGEON_SET = LoadoutReminderDB.TALENTS.GENERAL["DUNGEON"]
-	local RAID_SET = LoadoutReminderDB.TALENTS.GENERAL["RAID"]
-	local BG_SET = LoadoutReminderDB.TALENTS.GENERAL["BG"]
-	local ARENA_SET = LoadoutReminderDB.TALENTS.GENERAL["ARENA"]
-	local OPENWORLD_SET = LoadoutReminderDB.TALENTS.GENERAL["OPENWORLD"]
-	local SET_TO_LOAD = nil
-	local CURRENT_SET = LoadoutReminder.TALENTS:GetCurrentSet()
+	local currentTalentSet, assignedTalentSet = LoadoutReminder.TALENTS:CheckGeneralTalentSet()
+	local currentAddonSet, assignedAddonSet = LoadoutReminder.ADDONS:CheckGeneralAddonSet()
+	local currentEquipSet, assignedEquipSet = LoadoutReminder.EQUIP:CheckGeneralEquipSet()
 
-	-- check if player went into a dungeon
-	if inInstance and instanceType == 'party' then
-		if instanceType == 'party' then
-			if DUNGEON_SET == CURRENT_SET or DUNGEON_SET == nil then
-				LoadoutReminder.MAIN:PrintAlreadyLoadedMessage(DUNGEON_SET)
-				return
-			end
-			SET_TO_LOAD = DUNGEON_SET
-		elseif instanceType == 'raid' then
-			if RAID_SET == CURRENT_SET or RAID_SET == nil then
-				LoadoutReminder.MAIN:PrintAlreadyLoadedMessage(RAID_SET)
-				return
-			end
-			SET_TO_LOAD = RAID_SET
-		elseif instanceType == 'pvp' then
-			if BG_SET == CURRENT_SET or BG_SET == nil then
-				LoadoutReminder.MAIN:PrintAlreadyLoadedMessage(BG_SET)
-				return
-			end
-			SET_TO_LOAD = BG_SET
-		elseif instanceType == 'arena' then
-			if ARENA_SET == CURRENT_SET or ARENA_SET == nil then
-				LoadoutReminder.MAIN:PrintAlreadyLoadedMessage(ARENA_SET)
-				return
-			end
-			SET_TO_LOAD = ARENA_SET
+	-- Update Talent Reminder
+	if assignedTalentSet then
+		print("Update Talent Reminder: " .. tostring(currentTalentSet) .. "/" .. tostring(assignedTalentSet))
+		if currentTalentSet ~= nil then
+			reminderFrame.content.talentFrame.info:SetText("Current Talent Set: \"" .. currentTalentSet .. "\"")
+		else
+			reminderFrame.content.talentFrame.info:SetText("Current Talent Set not recognized")
 		end
-	elseif not inInstance then
-		if OPENWORLD_SET == CURRENT_SET or OPENWORLD_SET == nil then
-			LoadoutReminder.MAIN:PrintAlreadyLoadedMessage(OPENWORLD_SET)
-			return
-		end
-		SET_TO_LOAD = OPENWORLD_SET
+
+		LoadoutReminder.TALENTS:UpdateLoadButtonMacro(assignedTalentSet)
 	end
 
-	if CURRENT_SET ~= nil then
-		reminderFrame.content.info:SetText("Current Talent Set: \"" .. CURRENT_SET .. "\"")
-	else
-		reminderFrame.content.info:SetText("Current Talent Set not recognized")
+	-- if any loadout is to be reminded of -> show 
+	if assignedTalentSet or assignedAddonSet or assignedEquipSet then
+		reminderFrame:Show()
 	end
-
-	LoadoutReminder.REMINDER_FRAME:UpdateLoadButtonMacro(SET_TO_LOAD)
-
-	reminderFrame:Show()
 end
 
 function LoadoutReminder.MAIN:CheckAndShowNewTarget()
@@ -132,7 +100,7 @@ function LoadoutReminder.MAIN:CheckAndShowNewTarget()
 		return -- no set assigned to this boss yet
 	end
 
-	local CURRENT_SET = LoadoutReminder.MAIN:GetCurrentSet()
+	local CURRENT_SET = LoadoutReminder.TALENTS:GetCurrentSet()
 
 	if CURRENT_SET == bossSet then
 		-- set is already assigned, hide frame
@@ -141,9 +109,9 @@ function LoadoutReminder.MAIN:CheckAndShowNewTarget()
 	end
 
 	if CURRENT_SET ~= nil then
-		reminderFrame.content.info:SetText("Current Talent Set: \"" .. CURRENT_SET .. "\"")
+		reminderFrame.content.talentFrame.info:SetText("Current Talent Set: \"" .. CURRENT_SET .. "\"")
 	else
-		reminderFrame.content.info:SetText("Current Talent Set not recognized")
+		reminderFrame.content.talentFrame.info:SetText("Current Talent Set not recognized")
 	end
 
 	local bossName = LoadoutReminder.CONST.BOSS_NAMES[boss] -- TODO: Localizations
@@ -154,13 +122,13 @@ function LoadoutReminder.MAIN:CheckAndShowNewTarget()
 		reminderFrame.content.bossInfo:Hide()
 	end
 
-	LoadoutReminder.REMINDER_FRAME:UpdateLoadButtonMacro(bossSet)
+	LoadoutReminder.TALENTS:UpdateLoadButtonMacro(bossSet)
 
 	reminderFrame:Show()
 end
 
 function LoadoutReminder.MAIN:PLAYER_ENTERING_WORLD(isLogIn, isReload)
-		LoadoutReminder.MAIN:CheckAndShowReload()
+		LoadoutReminder.MAIN:CheckAndShowGeneral()
 end
 
 function LoadoutReminder.MAIN:PLAYER_LOGIN()
@@ -180,7 +148,7 @@ function LoadoutReminder.MAIN:PLAYER_LOGIN()
 		end
 
 		if command == "check" then 
-			LoadoutReminder.MAIN:CheckAndShowReload()
+			LoadoutReminder.MAIN:CheckAndShowGeneral()
 		end
 
 		if command == "" then

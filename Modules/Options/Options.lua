@@ -75,10 +75,12 @@ function LoadoutReminder.OPTIONS:Init()
     end)
 
     local function dropdownClickCallbackTalents(setID, setName)
-        LoadoutReminderDB.TALENTS.GENERAL[setID] = setName
+        -- To save per spec
+        local playerSpecID = GetSpecialization()
+        LoadoutReminderDB.TALENTS.GENERAL[playerSpecID][setID] = setName
         -- a new set was chosen for a new environment
         -- update visibility
-        LoadoutReminder.MAIN:CheckAndShowReload()
+        LoadoutReminder.MAIN:CheckAndShowGeneral()
     end
 
     local generalDropdownSpacingX = 200
@@ -88,11 +90,13 @@ function LoadoutReminder.OPTIONS:Init()
 
     -- Row 1
 
+    local playerSpecID = GetSpecialization()
+
     ---@type GGUI.Dropdown
     generalTab.content.dungeonDropdown=LoadoutReminder.GGUI.Dropdown({
         parent=generalTab.content, anchorParent=generalTab.content,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=generalDropdownBaseOffsetX,offsetY=generalDropdownBaseOffsetY,label="Dungeon",
-        initialData=dropdownData, initialValue=LoadoutReminderDB.DUNGEON, initialLabel=LoadoutReminderDB.DUNGEON or "Not set yet",
+        initialData=dropdownData, initialValue=LoadoutReminderDB.TALENTS.GENERAL[playerSpecID].DUNGEON, initialLabel=LoadoutReminderDB.TALENTS.GENERAL[playerSpecID].DUNGEON or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackTalents("DUNGEON", label)
         end,
@@ -100,7 +104,7 @@ function LoadoutReminder.OPTIONS:Init()
     generalTab.content.raidDropdown=LoadoutReminder.GGUI.Dropdown({
         parent=generalTab.content, anchorParent=generalTab.content,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=generalDropdownBaseOffsetX+generalDropdownSpacingX,offsetY=generalDropdownBaseOffsetY,label="Raid",
-        initialData=dropdownData, initialValue=LoadoutReminderDB.RAID, initialLabel=LoadoutReminderDB.RAID or "Not set yet",
+        initialData=dropdownData, initialValue=LoadoutReminderDB.TALENTS.GENERAL[playerSpecID].RAID, initialLabel=LoadoutReminderDB.TALENTS.GENERAL[playerSpecID].RAID or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackTalents("RAID", label)
         end,
@@ -108,7 +112,7 @@ function LoadoutReminder.OPTIONS:Init()
     generalTab.content.arenaDropdown=LoadoutReminder.GGUI.Dropdown({
         parent=generalTab.content, anchorParent=generalTab.content,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=generalDropdownBaseOffsetX+generalDropdownSpacingX*2,offsetY=generalDropdownBaseOffsetY,label="Arena",
-        initialData=dropdownData, initialValue=LoadoutReminderDB.ARENA, initialLabel=LoadoutReminderDB.ARENA or "Not set yet",
+        initialData=dropdownData, initialValue=LoadoutReminderDB.TALENTS.GENERAL[playerSpecID].ARENA, initialLabel=LoadoutReminderDB.TALENTS.GENERAL[playerSpecID].ARENA or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackTalents("ARENA", label)
         end,
@@ -118,7 +122,7 @@ function LoadoutReminder.OPTIONS:Init()
     generalTab.content.battlegroundsDropdown=LoadoutReminder.GGUI.Dropdown({
         parent=generalTab.content, anchorParent=generalTab.content,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=generalDropdownBaseOffsetX,offsetY=generalDropdownBaseOffsetY+generalDropdownSpacingY,label="Battlegrounds",
-        initialData=dropdownData, initialValue=LoadoutReminderDB.BG, initialLabel=LoadoutReminderDB.BG or "Not set yet",
+        initialData=dropdownData, initialValue=LoadoutReminderDB.TALENTS.GENERAL[playerSpecID].BG, initialLabel=LoadoutReminderDB.TALENTS.GENERAL[playerSpecID].BG or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackTalents("BG", label)
         end,
@@ -126,7 +130,7 @@ function LoadoutReminder.OPTIONS:Init()
     generalTab.content.openWorldDropdown=LoadoutReminder.GGUI.Dropdown({
         parent=generalTab.content, anchorParent=generalTab.content,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=generalDropdownBaseOffsetX+generalDropdownSpacingX,offsetY=generalDropdownBaseOffsetY+generalDropdownSpacingY,label="Open World",
-        initialData=dropdownData, initialValue=LoadoutReminderDB.OPENWORLD, initialLabel=LoadoutReminderDB.OPENWORLD or "Not set yet",
+        initialData=dropdownData, initialValue=LoadoutReminderDB.TALENTS.GENERAL[playerSpecID].OPENWORLD, initialLabel=LoadoutReminderDB.TALENTS.GENERAL[playerSpecID].OPENWORLD or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackTalents("OPENWORLD", label)
         end,
@@ -167,7 +171,7 @@ function LoadoutReminder.OPTIONS:Init()
     generalTab.content.amirdrassilGnarlrootDropdown=LoadoutReminder.GGUI.Dropdown({
         parent=amirdrassilTab.content, anchorParent=amirdrassilTab.button.frame,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=bossDropdownBaseOffsetX,offsetY=bossDropdownBaseOffsetY,label=LoadoutReminder.CONST.BOSS_NAMES.AMIRDRASSIL_GNARLROOT,
-        initialData=dropdownData, initialValue=LoadoutReminderBossDB.AMIRDRASSIL_GNARLROOT, initialLabel=LoadoutReminderBossDB.AMIRDRASSIL_GNARLROOT or "Not set yet",
+        initialData=dropdownData, initialValue=LoadoutReminderDB.TALENTS.BOSS.AMIRDRASSIL_GNARLROOT, initialLabel=LoadoutReminderDB.TALENTS.BOSS.AMIRDRASSIL_GNARLROOT or "Not set yet",
         clickCallback=function (self, label, _)
             bossDropdownClickCallbackTalents("AMIRDRASSIL_GNARLROOT", label)
         end,
@@ -177,7 +181,7 @@ function LoadoutReminder.OPTIONS:Init()
     generalTab.content.amirdrassilIgiraDropdown=LoadoutReminder.GGUI.Dropdown({
         parent=amirdrassilTab.content, anchorParent=amirdrassilTab.button.frame,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=bossDropdownBaseOffsetX + bossDropdownSpacingX,offsetY=bossDropdownBaseOffsetY,label=LoadoutReminder.CONST.BOSS_NAMES.AMIRDRASSIL_IGIRA,
-        initialData=dropdownData, initialValue=LoadoutReminderBossDB.AMIRDRASSIL_IGIRA, initialLabel=LoadoutReminderBossDB.AMIRDRASSIL_IGIRA or "Not set yet",
+        initialData=dropdownData, initialValue=LoadoutReminderDB.TALENTS.BOSS.AMIRDRASSIL_IGIRA, initialLabel=LoadoutReminderDB.TALENTS.BOSS.AMIRDRASSIL_IGIRA or "Not set yet",
         clickCallback=function (self, label, _)
             bossDropdownClickCallbackTalents("AMIRDRASSIL_IGIRA", label)
         end,
@@ -189,7 +193,7 @@ function LoadoutReminder.OPTIONS:Init()
     generalTab.content.amirdrassilVolcorossDropdown=LoadoutReminder.GGUI.Dropdown({
         parent=amirdrassilTab.content, anchorParent=amirdrassilTab.button.frame,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=bossDropdownBaseOffsetX + bossDropdownSpacingX*2,offsetY=bossDropdownBaseOffsetY,label=LoadoutReminder.CONST.BOSS_NAMES.AMIRDRASSIL_VOLCOROSS,
-        initialData=dropdownData, initialValue=LoadoutReminderBossDB.AMIRDRASSIL_VOLCOROSS, initialLabel=LoadoutReminderBossDB.AMIRDRASSIL_VOLCOROSS or "Not set yet",
+        initialData=dropdownData, initialValue=LoadoutReminderDB.TALENTS.BOSS.AMIRDRASSIL_VOLCOROSS, initialLabel=LoadoutReminderDB.TALENTS.BOSS.AMIRDRASSIL_VOLCOROSS or "Not set yet",
         clickCallback=function (self, label, _)
             bossDropdownClickCallbackTalents("AMIRDRASSIL_VOLCOROSS", label)
         end,
@@ -201,7 +205,7 @@ function LoadoutReminder.OPTIONS:Init()
     generalTab.content.amirdrassilCOUNCIL_OF_DREAMSDropdown=LoadoutReminder.GGUI.Dropdown({
         parent=amirdrassilTab.content, anchorParent=amirdrassilTab.button.frame,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=bossDropdownBaseOffsetX,offsetY=bossDropdownBaseOffsetY*2,label=LoadoutReminder.CONST.BOSS_NAMES.AMIRDRASSIL_COUNCIL_OF_DREAMS,
-        initialData=dropdownData, initialValue=LoadoutReminderBossDB.AMIRDRASSIL_COUNCIL_OF_DREAMS, initialLabel=LoadoutReminderBossDB.AMIRDRASSIL_COUNCIL_OF_DREAMS or "Not set yet",
+        initialData=dropdownData, initialValue=LoadoutReminderDB.TALENTS.BOSS.AMIRDRASSIL_COUNCIL_OF_DREAMS, initialLabel=LoadoutReminderDB.TALENTS.BOSS.AMIRDRASSIL_COUNCIL_OF_DREAMS or "Not set yet",
         clickCallback=function (self, label, _)
             bossDropdownClickCallbackTalents("AMIRDRASSIL_COUNCIL_OF_DREAMS", label)
         end,
@@ -211,7 +215,7 @@ function LoadoutReminder.OPTIONS:Init()
     generalTab.content.amirdrassilLARODARDropdown=LoadoutReminder.GGUI.Dropdown({
         parent=amirdrassilTab.content, anchorParent=amirdrassilTab.button.frame,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=bossDropdownBaseOffsetX + bossDropdownSpacingX,offsetY=bossDropdownBaseOffsetY*2,label=LoadoutReminder.CONST.BOSS_NAMES.AMIRDRASSIL_LARODAR,
-        initialData=dropdownData, initialValue=LoadoutReminderBossDB.AMIRDRASSIL_LARODAR, initialLabel=LoadoutReminderBossDB.AMIRDRASSIL_LARODAR or "Not set yet",
+        initialData=dropdownData, initialValue=LoadoutReminderDB.TALENTS.BOSS.AMIRDRASSIL_LARODAR, initialLabel=LoadoutReminderDB.TALENTS.BOSS.AMIRDRASSIL_LARODAR or "Not set yet",
         clickCallback=function (self, label, _)
             bossDropdownClickCallbackTalents("AMIRDRASSIL_LARODAR", label)
         end,
@@ -222,7 +226,7 @@ function LoadoutReminder.OPTIONS:Init()
     generalTab.content.amirdrassilNYMUEDropdown=LoadoutReminder.GGUI.Dropdown({
         parent=amirdrassilTab.content, anchorParent=amirdrassilTab.button.frame,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=bossDropdownBaseOffsetX + bossDropdownSpacingX*2,offsetY=bossDropdownBaseOffsetY*2,label=LoadoutReminder.CONST.BOSS_NAMES.AMIRDRASSIL_NYMUE,
-        initialData=dropdownData, initialValue=LoadoutReminderBossDB.AMIRDRASSIL_NYMUE, initialLabel=LoadoutReminderBossDB.AMIRDRASSIL_NYMUE or "Not set yet",
+        initialData=dropdownData, initialValue=LoadoutReminderDB.TALENTS.BOSS.AMIRDRASSIL_NYMUE, initialLabel=LoadoutReminderDB.TALENTS.BOSS.AMIRDRASSIL_NYMUE or "Not set yet",
         clickCallback=function (self, label, _)
             bossDropdownClickCallbackTalents("AMIRDRASSIL_NYMUE", label)
         end,
@@ -234,7 +238,7 @@ function LoadoutReminder.OPTIONS:Init()
     generalTab.content.amirdrassilSMOLDERONDropdown=LoadoutReminder.GGUI.Dropdown({
         parent=amirdrassilTab.content, anchorParent=amirdrassilTab.button.frame,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=bossDropdownBaseOffsetX,offsetY=bossDropdownBaseOffsetY*3,label=LoadoutReminder.CONST.BOSS_NAMES.AMIRDRASSIL_SMOLDERON,
-        initialData=dropdownData, initialValue=LoadoutReminderBossDB.AMIRDRASSIL_SMOLDERON, initialLabel=LoadoutReminderBossDB.AMIRDRASSIL_SMOLDERON or "Not set yet",
+        initialData=dropdownData, initialValue=LoadoutReminderDB.TALENTS.BOSS.AMIRDRASSIL_SMOLDERON, initialLabel=LoadoutReminderDB.TALENTS.BOSS.AMIRDRASSIL_SMOLDERON or "Not set yet",
         clickCallback=function (self, label, _)
             bossDropdownClickCallbackTalents("AMIRDRASSIL_SMOLDERON", label)
         end,
@@ -244,7 +248,7 @@ function LoadoutReminder.OPTIONS:Init()
     generalTab.content.amirdrassilTINDRAL_SAGESWIFTDropdown=LoadoutReminder.GGUI.Dropdown({
         parent=amirdrassilTab.content, anchorParent=amirdrassilTab.button.frame,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=bossDropdownBaseOffsetX + bossDropdownSpacingX,offsetY=bossDropdownBaseOffsetY*3,label=LoadoutReminder.CONST.BOSS_NAMES.AMIRDRASSIL_TINDRAL_SAGESWIFT,
-        initialData=dropdownData, initialValue=LoadoutReminderBossDB.AMIRDRASSIL_TINDRAL_SAGESWIFT, initialLabel=LoadoutReminderBossDB.AMIRDRASSIL_TINDRAL_SAGESWIFT or "Not set yet",
+        initialData=dropdownData, initialValue=LoadoutReminderDB.TALENTS.BOSS.AMIRDRASSIL_TINDRAL_SAGESWIFT, initialLabel=LoadoutReminderDB.TALENTS.BOSS.AMIRDRASSIL_TINDRAL_SAGESWIFT or "Not set yet",
         clickCallback=function (self, label, _)
             bossDropdownClickCallbackTalents("AMIRDRASSIL_TINDRAL_SAGESWIFT", label)
         end,
@@ -255,7 +259,7 @@ function LoadoutReminder.OPTIONS:Init()
     generalTab.content.amirdrassilFYRAKKDropdown=LoadoutReminder.GGUI.Dropdown({
         parent=amirdrassilTab.content, anchorParent=amirdrassilTab.button.frame,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=bossDropdownBaseOffsetX + bossDropdownSpacingX*2,offsetY=bossDropdownBaseOffsetY*3,label=LoadoutReminder.CONST.BOSS_NAMES.AMIRDRASSIL_FYRAKK,
-        initialData=dropdownData, initialValue=LoadoutReminderBossDB.AMIRDRASSIL_FYRAKK, initialLabel=LoadoutReminderBossDB.AMIRDRASSIL_FYRAKK or "Not set yet",
+        initialData=dropdownData, initialValue=LoadoutReminderDB.TALENTS.BOSS.AMIRDRASSIL_FYRAKK, initialLabel=LoadoutReminderDB.TALENTS.BOSS.AMIRDRASSIL_FYRAKK or "Not set yet",
         clickCallback=function (self, label, _)
             bossDropdownClickCallbackTalents("AMIRDRASSIL_FYRAKK", label)
         end,
@@ -337,7 +341,7 @@ function LoadoutReminder.OPTIONS:Init()
         LoadoutReminderDB.ADDONS.GENERAL[setID] = setName
         -- a new set was chosen for a new environment
         -- update visibility
-        LoadoutReminder.MAIN:CheckAndShowReload()
+        LoadoutReminder.MAIN:CheckAndShowGeneral()
     end
 
     local generalDropdownSpacingX = 200
@@ -351,7 +355,7 @@ function LoadoutReminder.OPTIONS:Init()
     generalTabAddons.content.dungeonDropdown=LoadoutReminder.GGUI.Dropdown({
         parent=generalTabAddons.content, anchorParent=generalTabAddons.content,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=generalDropdownBaseOffsetX,offsetY=generalDropdownBaseOffsetY,label="Dungeon",
-        initialData=dropdownDataAddons, initialValue=LoadoutReminderDB.DUNGEON, initialLabel=LoadoutReminderDB.DUNGEON or "Not set yet",
+        initialData=dropdownDataAddons, initialValue=LoadoutReminderDB.ADDONS.GENERAL.DUNGEON, initialLabel=LoadoutReminderDB.ADDONS.GENERAL.DUNGEON or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackAddons("DUNGEON", label)
         end,
@@ -359,7 +363,7 @@ function LoadoutReminder.OPTIONS:Init()
     generalTabAddons.content.raidDropdown=LoadoutReminder.GGUI.Dropdown({
         parent=generalTabAddons.content, anchorParent=generalTabAddons.content,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=generalDropdownBaseOffsetX+generalDropdownSpacingX,offsetY=generalDropdownBaseOffsetY,label="Raid",
-        initialData=dropdownDataAddons, initialValue=LoadoutReminderDB.RAID, initialLabel=LoadoutReminderDB.RAID or "Not set yet",
+        initialData=dropdownDataAddons, initialValue=LoadoutReminderDB.ADDONS.GENERAL.RAID, initialLabel=LoadoutReminderDB.ADDONS.GENERAL.RAID or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackAddons("RAID", label)
         end,
@@ -367,7 +371,7 @@ function LoadoutReminder.OPTIONS:Init()
     generalTabAddons.content.arenaDropdown=LoadoutReminder.GGUI.Dropdown({
         parent=generalTabAddons.content, anchorParent=generalTabAddons.content,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=generalDropdownBaseOffsetX+generalDropdownSpacingX*2,offsetY=generalDropdownBaseOffsetY,label="Arena",
-        initialData=dropdownDataAddons, initialValue=LoadoutReminderDB.ARENA, initialLabel=LoadoutReminderDB.ARENA or "Not set yet",
+        initialData=dropdownDataAddons, initialValue=LoadoutReminderDB.ADDONS.GENERAL.ARENA, initialLabel=LoadoutReminderDB.ADDONS.GENERAL.ARENA or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackAddons("ARENA", label)
         end,
@@ -377,7 +381,7 @@ function LoadoutReminder.OPTIONS:Init()
     generalTabAddons.content.battlegroundsDropdown=LoadoutReminder.GGUI.Dropdown({
         parent=generalTabAddons.content, anchorParent=generalTabAddons.content,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=generalDropdownBaseOffsetX,offsetY=generalDropdownBaseOffsetY+generalDropdownSpacingY,label="Battlegrounds",
-        initialData=dropdownDataAddons, initialValue=LoadoutReminderDB.BG, initialLabel=LoadoutReminderDB.BG or "Not set yet",
+        initialData=dropdownDataAddons, initialValue=LoadoutReminderDB.ADDONS.GENERAL.BG, initialLabel=LoadoutReminderDB.ADDONS.GENERAL.BG or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackAddons("BG", label)
         end,
@@ -385,7 +389,7 @@ function LoadoutReminder.OPTIONS:Init()
     generalTabAddons.content.openWorldDropdown=LoadoutReminder.GGUI.Dropdown({
         parent=generalTabAddons.content, anchorParent=generalTabAddons.content,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=generalDropdownBaseOffsetX+generalDropdownSpacingX,offsetY=generalDropdownBaseOffsetY+generalDropdownSpacingY,label="Open World",
-        initialData=dropdownDataAddons, initialValue=LoadoutReminderDB.OPENWORLD, initialLabel=LoadoutReminderDB.OPENWORLD or "Not set yet",
+        initialData=dropdownDataAddons, initialValue=LoadoutReminderDB.ADDONS.GENERAL.OPENWORLD, initialLabel=LoadoutReminderDB.ADDONS.GENERAL.OPENWORLD or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackAddons("OPENWORLD", label)
         end,
