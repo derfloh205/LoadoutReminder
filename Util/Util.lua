@@ -33,11 +33,12 @@ function LoadoutReminder.UTIL:CheckCurrentSetAgainstInstanceSetList(currentSet, 
 	return currentSet, instanceSet
 end
 
-local tryCount = 4
+local tryCount = 10
 function LoadoutReminder.UTIL:IsNecessaryInfoLoaded()
 	local _, type = IsInInstance()
 	local talentSetRecognizeable = LoadoutReminder.TALENTS:CurrentSetRecognizable()
 	local equipSetsLoaded = LoadoutReminder.EQUIP:AreEquipSetsLoaded()
+	local numSpecsExists = GetNumSpecializations() and GetNumSpecializations() > 0
 	-- print("load infos: ")
 	-- print("instanceType: " .. tostring(type))
 	-- print("talentSetRecognizeable: " .. tostring(talentSetRecognizeable))
@@ -48,7 +49,7 @@ function LoadoutReminder.UTIL:IsNecessaryInfoLoaded()
 	else
 		return true
 	end
-	return GetSpecialization() ~= nil and type ~= nil and talentSetRecognizeable and equipSetsLoaded
+	return GetSpecialization() ~= nil and type ~= nil and talentSetRecognizeable and equipSetsLoaded and numSpecsExists
 end
 
 function LoadoutReminder.UTIL:UpdateReminderFrame(visibility, activeRemindersCount)
