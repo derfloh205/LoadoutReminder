@@ -107,7 +107,7 @@ function LoadoutReminder.MAIN:CheckInstanceTypes()
 	-- print("Check Instance Reminders")
 	local instanceType = LoadoutReminder.UTIL:GetCurrentInstanceType()
 	local talentReminderInfo = LoadoutReminder.TALENTS:CheckInstanceTalentSet()
-	local addonReminderInfo = LoadoutReminder.ADDONS:CheckInstanceAddonSet()
+	local addonReminderInfo = (LoadoutReminder.ADDONS.AVAILABLE and LoadoutReminder.ADDONS:CheckInstanceAddonSet()) or nil
 	local equipReminderInfo = LoadoutReminder.EQUIP:CheckInstanceEquipSet()
 	local specReminderInfo = LoadoutReminder.SPEC:CheckInstanceSpecSet()
 
@@ -159,7 +159,7 @@ function LoadoutReminder.MAIN:CheckBoss()
 	
 	-- print("check boss reminders..")
 	local talentReminderInfo = LoadoutReminder.TALENTS:CheckBossTalentSet(boss)
-	local addonReminderInfo = LoadoutReminder.ADDONS:CheckBossAddonSet(boss)
+	local addonReminderInfo = (LoadoutReminder.ADDONS.AVAILABLE and LoadoutReminder.ADDONS:CheckBossAddonSet(boss)) or nil
 	local equipReminderInfo = LoadoutReminder.EQUIP:CheckBossEquipSet(boss)
 	local specReminderInfo = LoadoutReminder.SPEC:CheckBossSpecSet(boss)
 

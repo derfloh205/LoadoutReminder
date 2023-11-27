@@ -8,7 +8,7 @@
 ## X-Wago-ID: n6VPOLGd
 ## X-WoWI-ID: 26653
 ## SavedVariablesPerCharacter: LoadoutReminderDB, LoadoutReminderGGUIConfig, LoadoutReminderOptions
-## Version: 1.0.1
+## Version: 2.0.0
 ## OptionalDeps: BetterAddonList, AddonControlPanel
 
 embeds.xml

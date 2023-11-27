@@ -6,6 +6,8 @@ LoadoutReminder.ADDONS.LIST_ADDON = nil
 LoadoutReminder.ADDONS.BETTER_ADDON_LIST = {}
 LoadoutReminder.ADDONS.ADDON_CONTROL_PANEL = {}
 
+LoadoutReminder.ADDONS.AVAILABLE = false
+
 ---@return boolean success true if list_addon could be loaded, false if otherwise
 function LoadoutReminder.ADDONS:Init()
     -- check if optdep is loaded and set to it
@@ -17,6 +19,7 @@ function LoadoutReminder.ADDONS:Init()
     for name, plugin in pairs(DEPENDENCY_MAP) do
         if C_AddOns.IsAddOnLoaded(name) then
             LoadoutReminder.ADDONS.LIST_ADDON = plugin
+			LoadoutReminder.ADDONS.AVAILABLE = true
             return true
         end
     end
