@@ -29,28 +29,44 @@ function LoadoutReminder.REMINDER_FRAME.FRAMES:Init()
     local function createContent(frame)
 
         local innerFramesBaseOffsetY = -60
-        frame.content.bossInfo = LoadoutReminder.GGUI.Text({
+        frame.content.situationInfo = LoadoutReminder.GGUI.Text({
             parent=frame.content, anchorParent=frame.content, offsetX=0, offsetY=-40,
             anchorA="TOP", anchorB="TOP",
-            text="Boss Text",
-        })
-        frame.content.talentFrame = CreateFrame('Frame', nil, frame.content)
-        local talentFrame = frame.content.talentFrame
-        talentFrame:SetSize(320, 60)
-        talentFrame:SetPoint("TOP", frame.content, "TOP", 0, innerFramesBaseOffsetY)
-
-        --- @type GGUI.Text
-        talentFrame.info = LoadoutReminder.GGUI.Text({
-            parent=talentFrame, anchorParent=talentFrame, offsetX=0, offsetY=0,
-            anchorA="TOP", anchorB="TOP",
-            text="",
+            text="Situation Text",
         })
 
-        talentFrame.loadButton = LoadoutReminder.GGUI.Button({
-            parent=talentFrame, anchorParent=talentFrame, anchorA="BOTTOM", anchorB="BOTTOM",
-            label="Load Set", adjustWidth=true, macro=true, offsetY=20
-        })
-        
+        local function createDisplayFrame(parent, anchorParent, anchorA, anchorB, offsetX, offsetY)
+            local displayFrameHeight = 60
+            local frame = CreateFrame('Frame', nil, parent)
+            frame:SetSize(320, displayFrameHeight)
+            frame:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
+
+            --- @type GGUI.Text
+            frame.info = LoadoutReminder.GGUI.Text({
+                parent=frame, anchorParent=frame, offsetX=0, offsetY=0,
+                anchorA="TOP", anchorB="TOP",
+                text="",
+            })
+
+            --- @type GGUI.Button
+            frame.loadButton = LoadoutReminder.GGUI.Button({
+                parent=frame, anchorParent=frame, anchorA="BOTTOM", anchorB="BOTTOM",
+                label="Load Set", adjustWidth=true, macro=true, offsetY=20
+            })
+
+            frame.collapse = function ()
+                frame:SetSize(320, 0)
+            end
+            frame.decollapse = function ()
+                frame:SetSize(320, displayFrameHeight)
+            end
+
+            return frame
+        end
+        frame.content.displayFrames = {}
+        frame.content.displayFrames[LoadoutReminder.CONST.REMINDER_TYPES.TALENTS] = 
+        createDisplayFrame(frame.content, frame.content, "TOP", "TOP", 0, innerFramesBaseOffsetY)
+
         frame:Hide()
     end
 

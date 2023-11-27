@@ -3,11 +3,6 @@ LoadoutReminderAddonName, LoadoutReminder = ...
 LoadoutReminder.MAIN = CreateFrame("Frame")
 LoadoutReminder.MAIN:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end)
 LoadoutReminder.MAIN:RegisterEvent("ADDON_LOADED")
-LoadoutReminder.MAIN:RegisterEvent("PLAYER_LOGIN")
-LoadoutReminder.MAIN:RegisterEvent("PLAYER_LOGOUT")
-LoadoutReminder.MAIN:RegisterEvent("PLAYER_ENTERING_WORLD")
--- LoadoutReminder.MAIN:RegisterEvent("ZONE_CHANGED")
--- LoadoutReminder.MAIN:RegisterEvent("ZONE_CHANGED_INDOORS")
 LoadoutReminder.MAIN:RegisterEvent("PLAYER_TARGET_CHANGED")
 
 LoadoutReminder.MAIN.FRAMES = {}
@@ -29,12 +24,20 @@ LoadoutReminderDB = LoadoutReminderDB or {
 	},
 }
 
-LoadoutReminderBossDB = LoadoutReminderBossDB or {}
+LoadoutReminderOptions = LoadoutReminderOptions or {
+	TALENTS = {
+		RAIDS_PER_BOSS = {}
+	}
+}
 
-function LoadoutReminder.MAIN:ADDON_LOADED(addon_name)
-	if addon_name ~= LoadoutReminderAddonName then
-		return
+function LoadoutReminder.MAIN:Init()
+	if not LoadoutReminder.UTIL:IsNecessaryInfoLoaded() then
+		-- poll until info is available
+		C_Timer.After(LoadoutReminder.CONST.INIT_POLL_INTERVAL, LoadoutReminder.MAIN.Init)
+		return	
 	end
+
+	LoadoutReminder.MAIN:InitializeSlashCommands()
 	LoadoutReminder.TALENTS:InitTalentDB()
 	LoadoutReminder.EQUIP:InitEquipDB()
 	LoadoutReminder.OPTIONS:Init()
@@ -43,95 +46,104 @@ function LoadoutReminder.MAIN:ADDON_LOADED(addon_name)
 	-- restore frame position
 	local reminderFrame = LoadoutReminder.GGUI:GetFrame(LoadoutReminder.MAIN.FRAMES, LoadoutReminder.CONST.FRAMES.REMINDER_FRAME)
 	reminderFrame:RestoreSavedConfig(UIParent)
+
+	-- Make first check after everything is loaded
+	LoadoutReminder.MAIN.CheckSituations()
 end
 
-function LoadoutReminder.MAIN:PrintAlreadyLoadedMessage(set)
-	local reminderFrame = LoadoutReminder.GGUI:GetFrame(LoadoutReminder.MAIN.FRAMES, LoadoutReminder.CONST.FRAMES.REMINDER_FRAME)
-	-- hide frame if its visible
-	reminderFrame:Hide()
+function LoadoutReminder.MAIN:ADDON_LOADED(addon_name)
+	if addon_name ~= LoadoutReminderAddonName then
+		return
+	end
+	-- init as soon as player specialization is available -- polling
+	LoadoutReminder.MAIN:Init()
 end
 
-function LoadoutReminder.MAIN:CheckAndShowGeneral()
-	print("TLR: Check and Show General")
-	local reminderFrame = LoadoutReminder.GGUI:GetFrame(LoadoutReminder.MAIN.FRAMES, LoadoutReminder.CONST.FRAMES.REMINDER_FRAME)
+function LoadoutReminder.MAIN.CheckSituations()
+	local instanceTypeReminder = LoadoutReminder.MAIN:CheckInstanceTypes()
+	local bossReminder = LoadoutReminder.MAIN:CheckTargetForBoss()
 
-	reminderFrame.content.bossInfo:Hide() -- do not show on reload info
+	-- if any reminder is triggered: show frame, otherwise hide
+	if instanceTypeReminder or bossReminder then
+		LoadoutReminder.UTIL:ToggleFrame(true)
+	else
+		LoadoutReminder.UTIL:ToggleFrame(false)
+	end
+end
 
-	local currentTalentSet, assignedTalentSet = LoadoutReminder.TALENTS:CheckGeneralTalentSet()
-	local currentAddonSet, assignedAddonSet = LoadoutReminder.ADDONS:CheckGeneralAddonSet()
-	local currentEquipSet, assignedEquipSet = LoadoutReminder.EQUIP:CheckGeneralEquipSet()
+function LoadoutReminder.MAIN:CheckInstanceTypes()
+	--print("TLR: Check and Show General")
+
+	if not LoadoutReminder.UTIL:IsNecessaryInfoLoaded() then
+		return
+	end
+
+	local instanceType = LoadoutReminder.UTIL:GetCurrentInstanceType()
+	local talentReminderInfo = LoadoutReminder.TALENTS:CheckInstanceTalentSet()
+	-- local addonReminderInfo = LoadoutReminder.ADDONS:CheckInstanceAddonSet()
+	-- local equipReminderInfo = LoadoutReminder.EQUIP:CheckInstanceEquipSet()
 
 	-- Update Talent Reminder
-	if assignedTalentSet then
-		print("Update Talent Reminder: " .. tostring(currentTalentSet) .. "/" .. tostring(assignedTalentSet))
-		if currentTalentSet ~= nil then
-			reminderFrame.content.talentFrame.info:SetText("Current Talent Set: \"" .. currentTalentSet .. "\"")
-		else
-			reminderFrame.content.talentFrame.info:SetText("Current Talent Set not recognized")
-		end
-
-		LoadoutReminder.TALENTS:UpdateLoadButtonMacro(assignedTalentSet)
+	if talentReminderInfo then
+		LoadoutReminder.REMINDER_FRAME:UpdateDisplay(talentReminderInfo, LoadoutReminder.CONST.INSTANCE_TYPES_DISPLAY_NAMES[instanceType])
 	end
 
 	-- if any loadout is to be reminded of -> show 
-	if assignedTalentSet or assignedAddonSet or assignedEquipSet then
-		reminderFrame:Show()
+	if (talentReminderInfo and not talentReminderInfo:IsAssignedSet()) or 
+		(addonReminderInfo and not addonReminderInfo:IsAssignedSet()) or
+		(equipReminderInfo and not equipReminderInfo:IsAssignedSet()) then
+		return true
 	end
+
+	return false
 end
 
-function LoadoutReminder.MAIN:CheckAndShowNewTarget()
-	
+function LoadoutReminder.MAIN:CheckTargetForBoss()
+	if not LoadoutReminder.UTIL:IsNecessaryInfoLoaded() then
+		return false
+	end
+
+	-- only check if this is the current raid is activated per boss
+	if not LoadoutReminder.TALENTS:HasRaidTalentsPerBoss() then
+		return false
+	end
+
+
 	-- get name of player's target
 	local npcID = LoadoutReminder.MAIN:GetTargetNPCID()
 	if not npcID then
-		return -- no target
+		return false -- no target
 	end
 	-- check npcID for boss
 	local boss = LoadoutReminder.CONST.BOSS_ID_MAP[npcID]
-	local reminderFrame = LoadoutReminder.GGUI:GetFrame(LoadoutReminder.MAIN.FRAMES, LoadoutReminder.CONST.FRAMES.REMINDER_FRAME)
 
 	if boss == nil then
-		return -- npc is no boss
+		return false -- npc is no boss
 	end
 
 	local bossSet = LoadoutReminderDB.TALENTS.BOSS[boss]
 
 	if bossSet == nil then
-		return -- no set assigned to this boss yet
+		return false -- no set assigned to this boss yet
 	end
 
 	local CURRENT_SET = LoadoutReminder.TALENTS:GetCurrentSet()
 
-	if CURRENT_SET == bossSet then
-		-- set is already assigned, hide frame
-		reminderFrame:Hide()
-		return 
-	end
+	-- if CURRENT_SET == bossSet then
+	-- 	-- correct set assigned, do not need to change instance type set
+	-- 	return false 
+	-- end
 
-	if CURRENT_SET ~= nil then
-		reminderFrame.content.talentFrame.info:SetText("Current Talent Set: \"" .. CURRENT_SET .. "\"")
-	else
-		reminderFrame.content.talentFrame.info:SetText("Current Talent Set not recognized")
-	end
+	local macroText = LoadoutReminder.TALENTS:GetMacroTextBySet(bossSet)
+	local reminderInfo = LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.TALENTS, 'Detected Boss: ', macroText, CURRENT_SET, bossSet)
 
-	local bossName = LoadoutReminder.CONST.BOSS_NAMES[boss] -- TODO: Localizations
-	if bossName then
-		reminderFrame.content.bossInfo:Show()
-		reminderFrame.content.bossInfo:SetText("Boss detected: " .. bossName)
-	else
-		reminderFrame.content.bossInfo:Hide()
-	end
+	LoadoutReminder.REMINDER_FRAME:UpdateDisplay(reminderInfo, LoadoutReminder.CONST.BOSS_NAMES[boss])
 
-	LoadoutReminder.TALENTS:UpdateLoadButtonMacro(bossSet)
-
-	reminderFrame:Show()
+	-- only give an update for boss detected if its not the same set
+	return not reminderInfo:IsAssignedSet()
 end
 
-function LoadoutReminder.MAIN:PLAYER_ENTERING_WORLD(isLogIn, isReload)
-		LoadoutReminder.MAIN:CheckAndShowGeneral()
-end
-
-function LoadoutReminder.MAIN:PLAYER_LOGIN()
+function LoadoutReminder.MAIN:InitializeSlashCommands()
 	SLASH_LOADOUTREMINDER1 = "/loadoutreminder"
 	SLASH_LOADOUTREMINDER2 = "/lor"
 	SlashCmdList["LOADOUTREMINDER"] = function(input)
@@ -148,7 +160,7 @@ function LoadoutReminder.MAIN:PLAYER_LOGIN()
 		end
 
 		if command == "check" then 
-			LoadoutReminder.MAIN:CheckAndShowGeneral()
+			LoadoutReminder.MAIN:CheckInstanceTypes()
 		end
 
 		if command == "" then
@@ -162,7 +174,7 @@ function LoadoutReminder.MAIN:PLAYER_LOGIN()
 end
 
 function LoadoutReminder.MAIN:PLAYER_TARGET_CHANGED() 
-	LoadoutReminder.MAIN:CheckAndShowNewTarget()
+	LoadoutReminder.MAIN.CheckSituations()
 end
 
 function LoadoutReminder.MAIN:GetTargetNPCID()

@@ -24,13 +24,13 @@ function LoadoutReminder.ADDONS:Init()
     return false
 end
 
----@return string | nil currentAddonSet, string | nil assignedAddonSet or nil if assigned set is already set
-function LoadoutReminder.ADDONS:CheckGeneralAddonSet()
+---@return LoadoutReminder.ReminderInfo
+function LoadoutReminder.ADDONS:CheckInstanceAddonSet()
     -- check currentSet against general set list
    local GENERAL_SETS = LoadoutReminderDB.ADDONS.GENERAL
    local CURRENT_SET = LoadoutReminder.ADDONS:GetCurrentSet()
 
-   return LoadoutReminder.UTIL:CheckCurrentSetAgainstGeneralSetList(CURRENT_SET, GENERAL_SETS)
+   return LoadoutReminder.UTIL:CheckCurrentSetAgainstInstanceSetList(CURRENT_SET, GENERAL_SETS)
 end
 
 -- Wrapper

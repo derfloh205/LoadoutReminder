@@ -55,43 +55,56 @@ function LoadoutReminder.TALENTS:GetCurrentSet()
 end
 
 function LoadoutReminder.TALENTS:TRAIT_CONFIG_UPDATED()
-	LoadoutReminder.MAIN:CheckAndShowGeneral()
+	LoadoutReminder.MAIN:CheckInstanceTypes()
 	-- make another check slightly delayed
 	C_Timer.After(1, function ()
-		LoadoutReminder.MAIN:CheckAndShowGeneral()
+		LoadoutReminder.MAIN:CheckInstanceTypes()
 	end)
 end
 
 function LoadoutReminder.TALENTS:CONFIG_COMMIT_FAILED()
-	LoadoutReminder.MAIN:CheckAndShowGeneral()
+	LoadoutReminder.MAIN:CheckInstanceTypes()
 end
 
 function LoadoutReminder.TALENTS:TRAIT_TREE_CHANGED() 
-	LoadoutReminder.MAIN:CheckAndShowGeneral()
+	LoadoutReminder.MAIN:CheckInstanceTypes()
 end
 
----@return string | nil currentTalentSet, string | nil assignedTalentSet or nil if assigned set is already set
-function LoadoutReminder.TALENTS:CheckGeneralTalentSet()
-   -- check currentSet against general set list (dont forget the speck id)
-   local specID = GetSpecialization()
-   local GENERAL_SETS = LoadoutReminderDB.TALENTS.GENERAL[specID]
-   local CURRENT_SET = LoadoutReminder.TALENTS:GetCurrentSet()
-
-   return LoadoutReminder.UTIL:CheckCurrentSetAgainstGeneralSetList(CURRENT_SET, GENERAL_SETS)
+function LoadoutReminder.TALENTS:GetMacroTextBySet(assignedSet)
+	if assignedSet == LoadoutReminder.CONST.STARTER_BUILD then
+		-- care for the snowflake..
+		return "/run C_ClassTalents.SetStarterBuildActive(true)"
+	else
+		return "/lon " .. assignedSet
+	end
 end
 
-function LoadoutReminder.TALENTS:UpdateLoadButtonMacro(SET_TO_LOAD)
-    local reminderFrame = LoadoutReminder.GGUI:GetFrame(LoadoutReminder.MAIN.FRAMES, LoadoutReminder.CONST.FRAMES.REMINDER_FRAME)
-    local macroText = ""
-    if SET_TO_LOAD == LoadoutReminder.CONST.STARTER_BUILD then
-        -- care for the snowflake..
-        macroText = "/run C_ClassTalents.SetStarterBuildActive(true)"
-    else
-        macroText = "/lon " .. SET_TO_LOAD
-    end
+---@return LoadoutReminder.ReminderInfo | nil
+function LoadoutReminder.TALENTS:CheckInstanceTalentSet()
 
-    ---@type GGUI.Button
-	local loadSetButton = reminderFrame.content.talentFrame.loadButton
-	loadSetButton:SetMacroText(macroText)
-	loadSetButton:SetText("Change Talents to '"..SET_TO_LOAD.."'", nil, true)
+	if LoadoutReminder.TALENTS:HasRaidTalentsPerBoss() then
+		return
+	end
+
+	local specID = GetSpecialization()
+	local INSTANCE_SETS = LoadoutReminderDB.TALENTS.GENERAL[specID]
+	local CURRENT_SET = LoadoutReminder.TALENTS:GetCurrentSet()
+
+	local currentSet, assignedSet = LoadoutReminder.UTIL:CheckCurrentSetAgainstInstanceSetList(CURRENT_SET, INSTANCE_SETS)
+
+	if currentSet and assignedSet then
+		local macroText = LoadoutReminder.TALENTS:GetMacroTextBySet(assignedSet)
+		return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.TALENTS, 'Detected Situation: ', macroText, currentSet, assignedSet)
+	end
+end
+
+function LoadoutReminder.TALENTS:HasRaidTalentsPerBoss()
+	local _, _, _, _, _, _, _, instanceID = GetInstanceInfo()
+	local raid = LoadoutReminder.CONST.INSTANCE_IDS[instanceID]
+
+	if not raid then
+		return false
+	end
+
+	return LoadoutReminderOptions.TALENTS.RAIDS_PER_BOSS[raid]
 end
