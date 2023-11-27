@@ -2,14 +2,13 @@ _, LoadoutReminder = ...
 
 LoadoutReminder.REMINDER_FRAME = {}
 
----@param reminderInfo LoadoutReminder.ReminderInfo
+---@param reminderInfo LoadoutReminder.ReminderInfo | nil
 ---@param situationText string
-function LoadoutReminder.REMINDER_FRAME:UpdateDisplay(reminderInfo, situationText)
+function LoadoutReminder.REMINDER_FRAME:UpdateDisplay(reminderType, reminderInfo, situationText)
     local reminderFrame = LoadoutReminder.GGUI:GetFrame(LoadoutReminder.MAIN.FRAMES, LoadoutReminder.CONST.FRAMES.REMINDER_FRAME)
-    local displayFrame = reminderFrame.content.displayFrames[reminderInfo.reminderType]
+    local displayFrame = reminderFrame.content.displayFrames[reminderType]
 
-    if reminderInfo:IsAssignedSet() then
-        print("detected assigned set, hide displayFrame")
+    if not reminderInfo or reminderInfo:IsAssignedSet() then
         displayFrame:collapse()
         displayFrame:Hide()
         return
@@ -19,7 +18,7 @@ function LoadoutReminder.REMINDER_FRAME:UpdateDisplay(reminderInfo, situationTex
     end
 
     if reminderInfo.currentSet ~= nil then
-        displayFrame.info:SetText("Current Set: \"" .. reminderInfo.currentSet .. "\"")
+        displayFrame.info:SetText("Current ".. reminderInfo.infoText ..": \"" .. reminderInfo.currentSet .. "\"")
     else
         displayFrame.info:SetText("Current Set not recognized")
     end
@@ -33,5 +32,5 @@ function LoadoutReminder.REMINDER_FRAME:UpdateDisplay(reminderInfo, situationTex
     ---@type GGUI.Button
 	local loadSetButton = displayFrame.loadButton
 	loadSetButton:SetMacroText(reminderInfo.macroText)
-	loadSetButton:SetText("Switch to '"..reminderInfo.assignedSet.."'", nil, true)
+	loadSetButton:SetText(reminderInfo.buttonText .. "'" .. reminderInfo.assignedSet .. "'", nil, true)
 end

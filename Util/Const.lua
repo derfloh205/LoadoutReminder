@@ -98,6 +98,7 @@ LoadoutReminder.CONST.REMINDER_TYPES = {
     EQUIP = 'EQUIP',
     TALENTS = 'TALENTS',
     ADDONS = 'ADDONS',
+    SPEC = 'SPEC',
 }
 
 ---@enum LoadoutReminder.Raids

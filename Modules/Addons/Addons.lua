@@ -30,7 +30,26 @@ function LoadoutReminder.ADDONS:CheckInstanceAddonSet()
    local GENERAL_SETS = LoadoutReminderDB.ADDONS.GENERAL
    local CURRENT_SET = LoadoutReminder.ADDONS:GetCurrentSet()
 
-   return LoadoutReminder.UTIL:CheckCurrentSetAgainstInstanceSetList(CURRENT_SET, GENERAL_SETS)
+   local currentSet, assignedSet = LoadoutReminder.UTIL:CheckCurrentSetAgainstInstanceSetList(CURRENT_SET, GENERAL_SETS)
+
+   if currentSet and assignedSet then
+		local macroText = LoadoutReminder.ADDONS:GetMacroTextByListAddon(assignedSet)
+		local buttonText = 'Switch Addons to: '
+		return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.ADDONS, 'Detected Situation: ', macroText, buttonText,"Addon Set", currentSet, assignedSet)
+   end
+end
+
+---@return LoadoutReminder.ReminderInfo | nil
+function LoadoutReminder.ADDONS:CheckBossAddonSet(boss)
+	local bossSet = LoadoutReminderDB.ADDONS.BOSS[boss]
+
+	if bossSet == nil then
+		return nil
+	end
+
+	local currentSet = LoadoutReminder.ADDONS:GetCurrentSet()
+	local macroText = LoadoutReminder.ADDONS:GetMacroTextBySet(bossSet)
+	return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.ADDONS, 'Detected Boss: ', macroText, currentSet, bossSet)
 end
 
 -- Wrapper
@@ -47,6 +66,10 @@ function LoadoutReminder.ADDONS.BETTER_ADDON_LIST:GetAddonSets()
         return BetterAddonListDB.sets
     end
     return {}
+end
+
+function LoadoutReminder.ADDONS:GetMacroTextByListAddon(assignedSet)
+	return LoadoutReminder.ADDONS.LIST_ADDON:GetMacroText(assignedSet)
 end
 
 --- find out what set is currently activated by iterating the addonlist
@@ -85,6 +108,10 @@ function LoadoutReminder.ADDONS.BETTER_ADDON_LIST:GetCurrentSet()
 			return set
 		end
 	end
+end
+
+function LoadoutReminder.ADDONS.BETTER_ADDON_LIST:GetMacroText(assignedSet)
+	return "/addons load " .. assignedSet .. "\n/reload"
 end
 
 function LoadoutReminder.ADDONS.ADDON_CONTROL_PANEL:GetAddonSets()

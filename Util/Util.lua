@@ -33,14 +33,38 @@ function LoadoutReminder.UTIL:CheckCurrentSetAgainstInstanceSetList(currentSet, 
 	return currentSet, instanceSet
 end
 
+local tryCount = 4
 function LoadoutReminder.UTIL:IsNecessaryInfoLoaded()
 	local _, type = IsInInstance()
-	return GetSpecialization() ~= nil and type ~= nil
+	local talentSetRecognizeable = LoadoutReminder.TALENTS:CurrentSetRecognizable()
+	local equipSetsLoaded = LoadoutReminder.EQUIP:AreEquipSetsLoaded()
+	-- print("load infos: ")
+	-- print("instanceType: " .. tostring(type))
+	-- print("talentSetRecognizeable: " .. tostring(talentSetRecognizeable))
+	-- print("equipSetsLoaded: " .. tostring(equipSetsLoaded))
+	-- only try X times then load everything anyway
+	if tryCount > 0 then
+		tryCount = tryCount - 1
+	else
+		return true
+	end
+	return GetSpecialization() ~= nil and type ~= nil and talentSetRecognizeable and equipSetsLoaded
 end
 
-function LoadoutReminder.UTIL:ToggleFrame(visible)
+function LoadoutReminder.UTIL:UpdateReminderFrame(visibility, activeRemindersCount)
 	-- TODO: introduce option to hide in combat
 	---@type GGUI.Frame | GGUI.Widget
 	local reminderFrame = LoadoutReminder.GGUI:GetFrame(LoadoutReminder.MAIN.FRAMES, LoadoutReminder.CONST.FRAMES.REMINDER_FRAME)
-	reminderFrame:SetVisible(visible)
+
+	if activeRemindersCount == 1 then
+		reminderFrame:SetStatus('ONE')
+	elseif activeRemindersCount == 2 then
+		reminderFrame:SetStatus('TWO')
+	elseif activeRemindersCount == 3 then
+		reminderFrame:SetStatus('THREE')
+	elseif activeRemindersCount == 4 then
+		reminderFrame:SetStatus('FOUR')
+	end
+
+	reminderFrame:SetVisible(visibility)
 end

@@ -22,13 +22,34 @@ LoadoutReminderDB = LoadoutReminderDB or {
 		GENERAL = {},
 		BOSS = {},
 	},
+	SPEC = {
+		GENERAL = {},
+		BOSS = {},
+	},
 }
 
 LoadoutReminderOptions = LoadoutReminderOptions or {
 	TALENTS = {
 		RAIDS_PER_BOSS = {}
-	}
+	},
+	EQUIP = {
+		RAIDS_PER_BOSS = {}
+	},
+	ADDONS = {
+		RAIDS_PER_BOSS = {}
+	},
+	SPEC = {
+		RAIDS_PER_BOSS = {}
+	},
 }
+
+function LoadoutReminder.MAIN:InitSpecIDTables()
+	-- init db for every spec for this character
+	for specIndex = 1, GetNumSpecializations() do
+		LoadoutReminderDB.TALENTS.GENERAL[specIndex] = LoadoutReminderDB.TALENTS.GENERAL[specIndex] or {}
+		LoadoutReminderDB.TALENTS.BOSS[specIndex] = LoadoutReminderDB.TALENTS.BOSS[specIndex] or {}
+    end
+end
 
 function LoadoutReminder.MAIN:Init()
 	if not LoadoutReminder.UTIL:IsNecessaryInfoLoaded() then
@@ -38,8 +59,7 @@ function LoadoutReminder.MAIN:Init()
 	end
 
 	LoadoutReminder.MAIN:InitializeSlashCommands()
-	LoadoutReminder.TALENTS:InitTalentDB()
-	LoadoutReminder.EQUIP:InitEquipDB()
+	LoadoutReminder.MAIN:InitSpecIDTables()
 	LoadoutReminder.OPTIONS:Init()
 	LoadoutReminder.REMINDER_FRAME.FRAMES:Init()	
 
@@ -60,87 +80,98 @@ function LoadoutReminder.MAIN:ADDON_LOADED(addon_name)
 end
 
 function LoadoutReminder.MAIN.CheckSituations()
-	local instanceTypeReminder = LoadoutReminder.MAIN:CheckInstanceTypes()
-	local bossReminder = LoadoutReminder.MAIN:CheckTargetForBoss()
+	local activeInstanceReminders = LoadoutReminder.MAIN:CheckInstanceTypes()
+	local activeBossReminders = LoadoutReminder.MAIN:CheckBoss()
+
+	local combinedActiveCount = LoadoutReminder.ActiveReminders:GetCombinedActiveRemindersCount({activeInstanceReminders, activeBossReminders})
 
 	-- if any reminder is triggered: show frame, otherwise hide
-	if instanceTypeReminder or bossReminder then
-		LoadoutReminder.UTIL:ToggleFrame(true)
+	print('combinedActiveCount: ' .. tostring(combinedActiveCount))
+	print('activeInstanceReminders: ' .. tostring(activeInstanceReminders:GetCount()))
+	print('activeBossReminders: ' .. tostring(activeBossReminders:GetCount()))
+	if combinedActiveCount > 0 then
+		-- set status of frame depending on how many things are to be reminded of
+		LoadoutReminder.UTIL:UpdateReminderFrame(true, LoadoutReminder.ActiveReminders:GetCombinedActiveRemindersCount({activeInstanceReminders, activeBossReminders}))
 	else
-		LoadoutReminder.UTIL:ToggleFrame(false)
+		LoadoutReminder.UTIL:UpdateReminderFrame(false)
 	end
 end
 
+---@return LoadoutReminder.ActiveReminders | nil
 function LoadoutReminder.MAIN:CheckInstanceTypes()
-	--print("TLR: Check and Show General")
 
 	if not LoadoutReminder.UTIL:IsNecessaryInfoLoaded() then
-		return
+		return nil
 	end
 
 	local instanceType = LoadoutReminder.UTIL:GetCurrentInstanceType()
 	local talentReminderInfo = LoadoutReminder.TALENTS:CheckInstanceTalentSet()
-	-- local addonReminderInfo = LoadoutReminder.ADDONS:CheckInstanceAddonSet()
-	-- local equipReminderInfo = LoadoutReminder.EQUIP:CheckInstanceEquipSet()
+	local addonReminderInfo = LoadoutReminder.ADDONS:CheckInstanceAddonSet()
+	local equipReminderInfo = LoadoutReminder.EQUIP:CheckInstanceEquipSet()
+	local specReminderInfo = LoadoutReminder.SPEC:CheckInstanceSpecSet()
 
 	-- Update Talent Reminder
-	if talentReminderInfo then
-		LoadoutReminder.REMINDER_FRAME:UpdateDisplay(talentReminderInfo, LoadoutReminder.CONST.INSTANCE_TYPES_DISPLAY_NAMES[instanceType])
-	end
+	LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.TALENTS, talentReminderInfo, LoadoutReminder.CONST.INSTANCE_TYPES_DISPLAY_NAMES[instanceType])		
 
-	-- if any loadout is to be reminded of -> show 
-	if (talentReminderInfo and not talentReminderInfo:IsAssignedSet()) or 
-		(addonReminderInfo and not addonReminderInfo:IsAssignedSet()) or
-		(equipReminderInfo and not equipReminderInfo:IsAssignedSet()) then
-		return true
-	end
+	-- Update Addon Reminder
+	LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.ADDONS, addonReminderInfo, LoadoutReminder.CONST.INSTANCE_TYPES_DISPLAY_NAMES[instanceType])
+	
+	-- Update Equip Reminder
+	LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.EQUIP, equipReminderInfo, LoadoutReminder.CONST.INSTANCE_TYPES_DISPLAY_NAMES[instanceType])
+	
+	-- Update Spec Reminder
+	LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.SPEC, specReminderInfo, LoadoutReminder.CONST.INSTANCE_TYPES_DISPLAY_NAMES[instanceType])
 
-	return false
+	return LoadoutReminder.ActiveReminders(
+		talentReminderInfo and not talentReminderInfo:IsAssignedSet(), 
+		addonReminderInfo and not addonReminderInfo:IsAssignedSet(),
+		equipReminderInfo and not equipReminderInfo:IsAssignedSet(),
+		specReminderInfo and not specReminderInfo:IsAssignedSet()
+	)
 end
 
-function LoadoutReminder.MAIN:CheckTargetForBoss()
+---@return LoadoutReminder.ActiveReminders | nil
+function LoadoutReminder.MAIN:CheckBoss()
+	local activeReminders = LoadoutReminder.ActiveReminders(false, false, false, false)
 	if not LoadoutReminder.UTIL:IsNecessaryInfoLoaded() then
-		return false
+		return activeReminders
 	end
-
-	-- only check if this is the current raid is activated per boss
-	if not LoadoutReminder.TALENTS:HasRaidTalentsPerBoss() then
-		return false
-	end
-
 
 	-- get name of player's target
 	local npcID = LoadoutReminder.MAIN:GetTargetNPCID()
 	if not npcID then
-		return false -- no target
+		return activeReminders -- no target
 	end
 	-- check npcID for boss
 	local boss = LoadoutReminder.CONST.BOSS_ID_MAP[npcID]
 
 	if boss == nil then
-		return false -- npc is no boss
+		return activeReminders -- npc is no boss
 	end
 
-	local bossSet = LoadoutReminderDB.TALENTS.BOSS[boss]
+	local talentReminderInfo = LoadoutReminder.TALENTS:CheckBossTalentSet(boss)
+	local addonReminderInfo = LoadoutReminder.ADDONS:CheckBossAddonSet(boss)
+	local equipReminderInfo = LoadoutReminder.EQUIP:CheckBossEquipSet(boss)
+	local specReminderInfo = LoadoutReminder.SPEC:CheckBossSpecSet(boss)
 
-	if bossSet == nil then
-		return false -- no set assigned to this boss yet
-	end
+	-- Update Talent Reminder
+	LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.TALENTS, talentReminderInfo, LoadoutReminder.CONST.BOSS_NAMES[boss])		
 
-	local CURRENT_SET = LoadoutReminder.TALENTS:GetCurrentSet()
+	-- Update Addon Reminder
+	LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.ADDONS, addonReminderInfo, LoadoutReminder.CONST.BOSS_NAMES[boss])
+	
+	-- Update Equip Reminder
+	LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.EQUIP, equipReminderInfo, LoadoutReminder.CONST.BOSS_NAMES[boss])
+	
+	-- Update Spec Reminder
+	LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.SPEC, specReminderInfo, LoadoutReminder.CONST.BOSS_NAMES[boss])
 
-	-- if CURRENT_SET == bossSet then
-	-- 	-- correct set assigned, do not need to change instance type set
-	-- 	return false 
-	-- end
-
-	local macroText = LoadoutReminder.TALENTS:GetMacroTextBySet(bossSet)
-	local reminderInfo = LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.TALENTS, 'Detected Boss: ', macroText, CURRENT_SET, bossSet)
-
-	LoadoutReminder.REMINDER_FRAME:UpdateDisplay(reminderInfo, LoadoutReminder.CONST.BOSS_NAMES[boss])
-
-	-- only give an update for boss detected if its not the same set
-	return not reminderInfo:IsAssignedSet()
+	return LoadoutReminder.ActiveReminders(
+		talentReminderInfo and not talentReminderInfo:IsAssignedSet(), 
+		addonReminderInfo and not addonReminderInfo:IsAssignedSet(),
+		equipReminderInfo and not equipReminderInfo:IsAssignedSet(),
+		specReminderInfo and not specReminderInfo:IsAssignedSet()
+	)
 end
 
 function LoadoutReminder.MAIN:InitializeSlashCommands()

@@ -6,10 +6,8 @@ LoadoutReminder.TALENTS:RegisterEvent("TRAIT_CONFIG_UPDATED")
 LoadoutReminder.TALENTS:RegisterEvent("CONFIG_COMMIT_FAILED")
 LoadoutReminder.TALENTS:RegisterEvent("TRAIT_TREE_CHANGED")
 
-function LoadoutReminder.TALENTS:InitTalentDB()
-	local playerSpecID = GetSpecialization()
-	LoadoutReminderDB.TALENTS.GENERAL[playerSpecID] = LoadoutReminderDB.TALENTS.GENERAL[playerSpecID] or {}
-	LoadoutReminderDB.TALENTS.BOSS[playerSpecID] = LoadoutReminderDB.TALENTS.BOSS[playerSpecID] or {}
+function LoadoutReminder.TALENTS:CurrentSetRecognizable()
+	return LoadoutReminder.TALENTS:GetCurrentSet() ~= nil
 end
 
 ---@return TraitConfigInfo[]
@@ -45,7 +43,19 @@ function LoadoutReminder.TALENTS:GetCurrentSet()
 	if configID then
 		local configInfo = C_Traits.GetConfigInfo(configID);
 		if configInfo then
-			return configInfo.name
+			local configName = configInfo.name
+
+			-- only return if it can be found in the current list of available sets
+			local availableSets = LoadoutReminder.TALENTS:GetTalentSets()
+
+			local setExists = LoadoutReminder.GUTIL:Find(availableSets, function (set)
+				return set.name == configName
+			end)
+			if setExists then
+				return configName
+			else
+				return nil
+			end
 		end
 		-- otherwise wtf?
 		return nil
@@ -55,19 +65,19 @@ function LoadoutReminder.TALENTS:GetCurrentSet()
 end
 
 function LoadoutReminder.TALENTS:TRAIT_CONFIG_UPDATED()
-	LoadoutReminder.MAIN:CheckInstanceTypes()
+	LoadoutReminder.MAIN.CheckSituations()
 	-- make another check slightly delayed
 	C_Timer.After(1, function ()
-		LoadoutReminder.MAIN:CheckInstanceTypes()
+		LoadoutReminder.MAIN.CheckSituations()
 	end)
 end
 
 function LoadoutReminder.TALENTS:CONFIG_COMMIT_FAILED()
-	LoadoutReminder.MAIN:CheckInstanceTypes()
+	LoadoutReminder.MAIN.CheckSituations()
 end
 
 function LoadoutReminder.TALENTS:TRAIT_TREE_CHANGED() 
-	LoadoutReminder.MAIN:CheckInstanceTypes()
+	LoadoutReminder.MAIN.CheckSituations()
 end
 
 function LoadoutReminder.TALENTS:GetMacroTextBySet(assignedSet)
@@ -94,8 +104,24 @@ function LoadoutReminder.TALENTS:CheckInstanceTalentSet()
 
 	if currentSet and assignedSet then
 		local macroText = LoadoutReminder.TALENTS:GetMacroTextBySet(assignedSet)
-		return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.TALENTS, 'Detected Situation: ', macroText, currentSet, assignedSet)
+		local buttonText = 'Switch Talents to: '
+		return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.TALENTS, 'Detected Situation: ', macroText, buttonText, "Talent Set", currentSet, assignedSet)
 	end
+end
+
+---@return LoadoutReminder.ReminderInfo | nil
+function LoadoutReminder.TALENTS:CheckBossTalentSet(boss)
+	local specID = GetSpecialization()
+	local bossSet = LoadoutReminderDB.TALENTS.BOSS[specID][boss]
+
+	if bossSet == nil then
+		return nil
+	end
+
+	local currentSet = LoadoutReminder.TALENTS:GetCurrentSet()
+
+	local macroText = LoadoutReminder.TALENTS:GetMacroTextBySet(bossSet)
+	return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.TALENTS, 'Detected Boss: ', macroText, currentSet, bossSet)
 end
 
 function LoadoutReminder.TALENTS:HasRaidTalentsPerBoss()

@@ -17,6 +17,7 @@ Util/Const.lua
 Util/Util.lua
 
 Classes/ReminderInfo.lua
+Classes/ActiveReminders.lua
 
 Main/LoadoutReminder.lua
 
@@ -24,6 +25,7 @@ Modules/Options/Options.lua
 Modules/ReminderFrame/ReminderFrame.lua
 Modules/ReminderFrame/Frames.lua
 
+Modules/Specializations/Specializations.lua
 Modules/Talents/Talents.lua
 Modules/Addons/Addons.lua
 Modules/Equip/Equip.lua
