@@ -75,9 +75,6 @@ function LoadoutReminder.SPEC:GetMacroTextBySet(assignedSet)
 end
 
 function LoadoutReminder.SPEC:PLAYER_SPECIALIZATION_CHANGED()
-    -- Reload options
-    -- LoadoutReminder.OPTIONS.optionsPanel = nil
-    -- _G['LoadoutReminderOptionsPanel'] = nil
-    -- LoadoutReminder.OPTIONS:Init(true)
+    LoadoutReminder.OPTIONS:ReloadDropdowns()
     LoadoutReminder.MAIN:CheckSituations()
 end

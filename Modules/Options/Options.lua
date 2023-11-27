@@ -236,59 +236,60 @@ function LoadoutReminder.OPTIONS:CreateTabOptionsForType(tab, dropdownData, save
     local generalDropdownSpacingY = -60
     local generalDropdownBaseOffsetX = -80
     local generalDropdownBaseOffsetY = -80
-
+    tab.dropdowns = {}
     -- Row 1
 
     local initialValueDUNGEON = (savePerSpecID and generalSaveTable[playerSpecID].DUNGEON) or generalSaveTable.DUNGEON
-
     ---@type GGUI.Dropdown
-    table.insert(dropdowns, LoadoutReminder.GGUI.Dropdown({
+    tab.dropdowns.DUNGEON = LoadoutReminder.GGUI.Dropdown({
         parent=generalTab.content, anchorParent=generalTab.content,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=generalDropdownBaseOffsetX,offsetY=generalDropdownBaseOffsetY,label="Dungeon",
         initialData=dropdownData, initialValue=initialValueDUNGEON, initialLabel=initialValueDUNGEON or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackInstanceTypes("DUNGEON", label)
         end,
-    }))
+    })
 
-    local initialValueRAID = (savePerSpecID and generalSaveTable[playerSpecID].RAID) or generalSaveTable.RAID
-    table.insert(dropdowns, LoadoutReminder.GGUI.Dropdown({
+    local initialValueRAID =(savePerSpecID and generalSaveTable[playerSpecID].RAID) or generalSaveTable.RAID
+
+    ---@type GGUI.Dropdown
+    tab.dropdowns.RAID = LoadoutReminder.GGUI.Dropdown({
         parent=generalTab.content, anchorParent=generalTab.content,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=generalDropdownBaseOffsetX+generalDropdownSpacingX,offsetY=generalDropdownBaseOffsetY,label="Raid",
         initialData=dropdownData, initialValue=initialValueRAID, initialLabel=initialValueRAID or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackInstanceTypes("RAID", label)
         end,
-    }))
+    })
     local initialValueARENA = (savePerSpecID and generalSaveTable[playerSpecID].ARENA) or generalSaveTable.ARENA
-    table.insert(dropdowns, LoadoutReminder.GGUI.Dropdown({
+    tab.dropdowns.ARENA = LoadoutReminder.GGUI.Dropdown({
         parent=generalTab.content, anchorParent=generalTab.content,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=generalDropdownBaseOffsetX+generalDropdownSpacingX*2,offsetY=generalDropdownBaseOffsetY,label="Arena",
         initialData=dropdownData, initialValue=initialValueARENA, initialLabel=initialValueARENA or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackInstanceTypes("ARENA", label)
         end,
-    }))
+    })
 
     -- Row 2
     local initialValueBG = (savePerSpecID and generalSaveTable[playerSpecID].BG) or generalSaveTable.BG
-    table.insert(dropdowns, LoadoutReminder.GGUI.Dropdown({
+        tab.dropdowns.BG = LoadoutReminder.GGUI.Dropdown({
         parent=generalTab.content, anchorParent=generalTab.content,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=generalDropdownBaseOffsetX,offsetY=generalDropdownBaseOffsetY+generalDropdownSpacingY,label="Battlegrounds",
         initialData=dropdownData, initialValue=initialValueBG, initialLabel=initialValueBG or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackInstanceTypes("BG", label)
         end,
-    }))
-    local initialValueOPENWORLD = (savePerSpecID and generalSaveTable[playerSpecID].OPENWORLD) or generalSaveTable.OPENWORLD
-    table.insert(dropdowns, LoadoutReminder.GGUI.Dropdown({
+    })
+    local initialValueOPENWORLD =(savePerSpecID and generalSaveTable[playerSpecID].OPENWORLD) or generalSaveTable.OPENWORLD
+    tab.dropdowns.OPENWORLD = LoadoutReminder.GGUI.Dropdown({
         parent=generalTab.content, anchorParent=generalTab.content,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=generalDropdownBaseOffsetX+generalDropdownSpacingX,offsetY=generalDropdownBaseOffsetY+generalDropdownSpacingY,label="Open World",
         initialData=dropdownData, initialValue=initialValueOPENWORLD, initialLabel=initialValueOPENWORLD or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackInstanceTypes("OPENWORLD", label)
         end,
-    }))
+    })
 
     local subTabContentX = 400
     local subTabContentY = 400
@@ -331,102 +332,110 @@ function LoadoutReminder.OPTIONS:CreateTabOptionsForType(tab, dropdownData, save
     end})
 
     ---@type GGUI.Dropdown
-    table.insert(dropdowns, LoadoutReminder.GGUI.Dropdown({
+    tab.dropdowns.AMIRDRASSIL_GNARLROOT = 
+    LoadoutReminder.GGUI.Dropdown({
         parent=amirdrassilTab.content, anchorParent=amirdrassilTab.button.frame,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=bossDropdownBaseOffsetX,offsetY=bossDropdownBaseOffsetY,label=LoadoutReminder.CONST.BOSS_NAMES.AMIRDRASSIL_GNARLROOT,
         initialData=dropdownData, initialValue=bossSaveTable.AMIRDRASSIL_GNARLROOT, initialLabel=bossSaveTable.AMIRDRASSIL_GNARLROOT or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackBosses("AMIRDRASSIL_GNARLROOT", label)
         end,
-    }))
+    })
 
     ---@type GGUI.Dropdown
-    table.insert(dropdowns, LoadoutReminder.GGUI.Dropdown({
+    tab.dropdowns.AMIRDRASSIL_IGIRA = 
+    LoadoutReminder.GGUI.Dropdown({
         parent=amirdrassilTab.content, anchorParent=amirdrassilTab.button.frame,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=bossDropdownBaseOffsetX + bossDropdownSpacingX,offsetY=bossDropdownBaseOffsetY,label=LoadoutReminder.CONST.BOSS_NAMES.AMIRDRASSIL_IGIRA,
         initialData=dropdownData, initialValue=bossSaveTable.AMIRDRASSIL_IGIRA, initialLabel=bossSaveTable.AMIRDRASSIL_IGIRA or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackBosses("AMIRDRASSIL_IGIRA", label)
         end,
-    }))
+    })
 
     -- Row 1
 
     ---@type GGUI.Dropdown
-    table.insert(dropdowns, LoadoutReminder.GGUI.Dropdown({
+    tab.dropdowns.AMIRDRASSIL_VOLCOROSS = 
+    LoadoutReminder.GGUI.Dropdown({
         parent=amirdrassilTab.content, anchorParent=amirdrassilTab.button.frame,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=bossDropdownBaseOffsetX + bossDropdownSpacingX*2,offsetY=bossDropdownBaseOffsetY,label=LoadoutReminder.CONST.BOSS_NAMES.AMIRDRASSIL_VOLCOROSS,
         initialData=dropdownData, initialValue=bossSaveTable.AMIRDRASSIL_VOLCOROSS, initialLabel=bossSaveTable.AMIRDRASSIL_VOLCOROSS or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackBosses("AMIRDRASSIL_VOLCOROSS", label)
         end,
-    }))
+    })
 
     -- Row 2
 
     ---@type GGUI.Dropdown
-    table.insert(dropdowns, LoadoutReminder.GGUI.Dropdown({
+    tab.dropdowns.AMIRDRASSIL_COUNCIL_OF_DREAMS = 
+    LoadoutReminder.GGUI.Dropdown({
         parent=amirdrassilTab.content, anchorParent=amirdrassilTab.button.frame,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=bossDropdownBaseOffsetX,offsetY=bossDropdownBaseOffsetY*2,label=LoadoutReminder.CONST.BOSS_NAMES.AMIRDRASSIL_COUNCIL_OF_DREAMS,
         initialData=dropdownData, initialValue=bossSaveTable.AMIRDRASSIL_COUNCIL_OF_DREAMS, initialLabel=bossSaveTable.AMIRDRASSIL_COUNCIL_OF_DREAMS or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackBosses("AMIRDRASSIL_COUNCIL_OF_DREAMS", label)
         end,
-    }))
+    })
 
     ---@type GGUI.Dropdown
-    table.insert(dropdowns, LoadoutReminder.GGUI.Dropdown({
+    tab.dropdowns.AMIRDRASSIL_LARODAR = 
+    LoadoutReminder.GGUI.Dropdown({
         parent=amirdrassilTab.content, anchorParent=amirdrassilTab.button.frame,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=bossDropdownBaseOffsetX + bossDropdownSpacingX,offsetY=bossDropdownBaseOffsetY*2,label=LoadoutReminder.CONST.BOSS_NAMES.AMIRDRASSIL_LARODAR,
         initialData=dropdownData, initialValue=bossSaveTable.AMIRDRASSIL_LARODAR, initialLabel=bossSaveTable.AMIRDRASSIL_LARODAR or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackBosses("AMIRDRASSIL_LARODAR", label)
         end,
-    }))
+    })
 
 
     ---@type GGUI.Dropdown
-    table.insert(dropdowns, LoadoutReminder.GGUI.Dropdown({
+    tab.dropdowns.AMIRDRASSIL_NYMUE = 
+    LoadoutReminder.GGUI.Dropdown({
         parent=amirdrassilTab.content, anchorParent=amirdrassilTab.button.frame,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=bossDropdownBaseOffsetX + bossDropdownSpacingX*2,offsetY=bossDropdownBaseOffsetY*2,label=LoadoutReminder.CONST.BOSS_NAMES.AMIRDRASSIL_NYMUE,
         initialData=dropdownData, initialValue=bossSaveTable.AMIRDRASSIL_NYMUE, initialLabel=bossSaveTable.AMIRDRASSIL_NYMUE or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackBosses("AMIRDRASSIL_NYMUE", label)
         end,
-    }))
+    })
 
     -- Row 3
 
     ---@type GGUI.Dropdown
-    table.insert(dropdowns, LoadoutReminder.GGUI.Dropdown({
+    tab.dropdowns.AMIRDRASSIL_SMOLDERON = 
+    LoadoutReminder.GGUI.Dropdown({
         parent=amirdrassilTab.content, anchorParent=amirdrassilTab.button.frame,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=bossDropdownBaseOffsetX,offsetY=bossDropdownBaseOffsetY*3,label=LoadoutReminder.CONST.BOSS_NAMES.AMIRDRASSIL_SMOLDERON,
         initialData=dropdownData, initialValue=bossSaveTable.AMIRDRASSIL_SMOLDERON, initialLabel=bossSaveTable.AMIRDRASSIL_SMOLDERON or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackBosses("AMIRDRASSIL_SMOLDERON", label)
         end,
-    }))
+    })
 
     ---@type GGUI.Dropdown
-    table.insert(dropdowns, LoadoutReminder.GGUI.Dropdown({
+    tab.dropdowns.AMIRDRASSIL_TINDRAL_SAGESWIFT = 
+    LoadoutReminder.GGUI.Dropdown({
         parent=amirdrassilTab.content, anchorParent=amirdrassilTab.button.frame,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=bossDropdownBaseOffsetX + bossDropdownSpacingX,offsetY=bossDropdownBaseOffsetY*3,label=LoadoutReminder.CONST.BOSS_NAMES.AMIRDRASSIL_TINDRAL_SAGESWIFT,
         initialData=dropdownData, initialValue=bossSaveTable.AMIRDRASSIL_TINDRAL_SAGESWIFT, initialLabel=bossSaveTable.AMIRDRASSIL_TINDRAL_SAGESWIFT or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackBosses("AMIRDRASSIL_TINDRAL_SAGESWIFT", label)
         end,
-    }))
-
+    })
 
     ---@type GGUI.Dropdown
-    table.insert(dropdowns, LoadoutReminder.GGUI.Dropdown({
+    tab.dropdowns.AMIRDRASSIL_FYRAKK = 
+    LoadoutReminder.GGUI.Dropdown({
         parent=amirdrassilTab.content, anchorParent=amirdrassilTab.button.frame,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=bossDropdownBaseOffsetX + bossDropdownSpacingX*2,offsetY=bossDropdownBaseOffsetY*3,label=LoadoutReminder.CONST.BOSS_NAMES.AMIRDRASSIL_FYRAKK,
         initialData=dropdownData, initialValue=bossSaveTable.AMIRDRASSIL_FYRAKK, initialLabel=bossSaveTable.AMIRDRASSIL_FYRAKK or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackBosses("AMIRDRASSIL_FYRAKK", label)
         end,
-    }))
+    })
 
     ---@type GGUI.Tab
     raidsTab.content.aberrusTab = LoadoutReminder.GGUI.Tab({
@@ -451,102 +460,104 @@ function LoadoutReminder.OPTIONS:CreateTabOptionsForType(tab, dropdownData, save
     end})
 
     ---@type GGUI.Dropdown
-    table.insert(dropdowns, LoadoutReminder.GGUI.Dropdown({
+    tab.dropdowns.ABERRUS_KAZZARA = LoadoutReminder.GGUI.Dropdown({
         parent=aberrusTab.content, anchorParent=amirdrassilTab.button.frame,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=bossDropdownBaseOffsetX,offsetY=bossDropdownBaseOffsetY,label=LoadoutReminder.CONST.BOSS_NAMES.ABERRUS_KAZZARA,
         initialData=dropdownData, initialValue=bossSaveTable.ABERRUS_KAZZARA, initialLabel=bossSaveTable.ABERRUS_KAZZARA or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackBosses("ABERRUS_KAZZARA", label)
         end,
-    }))
+    })
 
     ---@type GGUI.Dropdown
-    table.insert(dropdowns, LoadoutReminder.GGUI.Dropdown({
+    tab.dropdowns.ABERRUS_AMALGAMATION_CHAMBER = 
+    LoadoutReminder.GGUI.Dropdown({
         parent=aberrusTab.content, anchorParent=amirdrassilTab.button.frame,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=bossDropdownBaseOffsetX + bossDropdownSpacingX,offsetY=bossDropdownBaseOffsetY,label=LoadoutReminder.CONST.BOSS_NAMES.ABERRUS_AMALGAMATION_CHAMBER,
         initialData=dropdownData, initialValue=bossSaveTable.ABERRUS_AMALGAMATION_CHAMBER, initialLabel=bossSaveTable.ABERRUS_AMALGAMATION_CHAMBER or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackBosses("ABERRUS_AMALGAMATION_CHAMBER", label)
         end,
-    }))
+    })
 
     -- Row 1
 
     ---@type GGUI.Dropdown
-    table.insert(dropdowns, LoadoutReminder.GGUI.Dropdown({
+    tab.dropdowns.ABERRUS_FORGOTTEN_EXPERIMENTS = 
+    LoadoutReminder.GGUI.Dropdown({
         parent=aberrusTab.content, anchorParent=amirdrassilTab.button.frame,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=bossDropdownBaseOffsetX + bossDropdownSpacingX*2,offsetY=bossDropdownBaseOffsetY,label=LoadoutReminder.CONST.BOSS_NAMES.ABERRUS_FORGOTTEN_EXPERIMENTS,
         initialData=dropdownData, initialValue=bossSaveTable.ABERRUS_FORGOTTEN_EXPERIMENTS, initialLabel=bossSaveTable.ABERRUS_FORGOTTEN_EXPERIMENTS or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackBosses("ABERRUS_FORGOTTEN_EXPERIMENTS", label)
         end,
-    }))
+    })
 
     -- Row 2
 
     ---@type GGUI.Dropdown
-    table.insert(dropdowns, LoadoutReminder.GGUI.Dropdown({
+    tab.dropdowns.ABERRUS_ASSAULT = LoadoutReminder.GGUI.Dropdown({
         parent=aberrusTab.content, anchorParent=amirdrassilTab.button.frame,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=bossDropdownBaseOffsetX,offsetY=bossDropdownBaseOffsetY*2,label=LoadoutReminder.CONST.BOSS_NAMES.ABERRUS_ASSAULT,
         initialData=dropdownData, initialValue=bossSaveTable.ABERRUS_ASSAULT, initialLabel=bossSaveTable.ABERRUS_ASSAULT or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackBosses("ABERRUS_ASSAULT", label)
         end,
-    }))
+    })
 
     ---@type GGUI.Dropdown
-    table.insert(dropdowns, LoadoutReminder.GGUI.Dropdown({
+    tab.dropdowns.ABERRUS_RASHOK = LoadoutReminder.GGUI.Dropdown({
         parent=aberrusTab.content, anchorParent=amirdrassilTab.button.frame,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=bossDropdownBaseOffsetX + bossDropdownSpacingX,offsetY=bossDropdownBaseOffsetY*2,label=LoadoutReminder.CONST.BOSS_NAMES.ABERRUS_RASHOK,
         initialData=dropdownData, initialValue=bossSaveTable.ABERRUS_RASHOK, initialLabel=bossSaveTable.ABERRUS_RASHOK or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackBosses("ABERRUS_RASHOK", label)
         end,
-    }))
+    })
 
 
     ---@type GGUI.Dropdown
-    table.insert(dropdowns, LoadoutReminder.GGUI.Dropdown({
+    tab.dropdowns.ABERRUS_ZSKARN = LoadoutReminder.GGUI.Dropdown({
         parent=aberrusTab.content, anchorParent=amirdrassilTab.button.frame,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=bossDropdownBaseOffsetX + bossDropdownSpacingX*2,offsetY=bossDropdownBaseOffsetY*2,label=LoadoutReminder.CONST.BOSS_NAMES.ABERRUS_ZSKARN,
         initialData=dropdownData, initialValue=bossSaveTable.ABERRUS_ZSKARN, initialLabel=bossSaveTable.ABERRUS_ZSKARN or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackBosses("ABERRUS_ZSKARN", label)
         end,
-    }))
+    })
 
     -- Row 3
 
     ---@type GGUI.Dropdown
-    table.insert(dropdowns, LoadoutReminder.GGUI.Dropdown({
+    tab.dropdowns.ABERRUS_MAGMORAX = LoadoutReminder.GGUI.Dropdown({
         parent=aberrusTab.content, anchorParent=amirdrassilTab.button.frame,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=bossDropdownBaseOffsetX,offsetY=bossDropdownBaseOffsetY*3,label=LoadoutReminder.CONST.BOSS_NAMES.ABERRUS_MAGMORAX,
         initialData=dropdownData, initialValue=bossSaveTable.ABERRUS_MAGMORAX, initialLabel=bossSaveTable.ABERRUS_MAGMORAX or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackBosses("ABERRUS_MAGMORAX", label)
         end,
-    }))
+    })
 
     ---@type GGUI.Dropdown
-    table.insert(dropdowns, LoadoutReminder.GGUI.Dropdown({
+    tab.dropdowns.ABERRUS_ECHO = LoadoutReminder.GGUI.Dropdown({
         parent=aberrusTab.content, anchorParent=amirdrassilTab.button.frame,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=bossDropdownBaseOffsetX + bossDropdownSpacingX,offsetY=bossDropdownBaseOffsetY*3,label=LoadoutReminder.CONST.BOSS_NAMES.ABERRUS_ECHO,
         initialData=dropdownData, initialValue=bossSaveTable.ABERRUS_ECHO, initialLabel=bossSaveTable.ABERRUS_ECHO or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackBosses("ABERRUS_ECHO", label)
         end,
-    }))
-
+    })
 
     ---@type GGUI.Dropdown
-    table.insert(dropdowns, LoadoutReminder.GGUI.Dropdown({
+    tab.dropdowns.ABERRUS_SARKARETH = 
+    LoadoutReminder.GGUI.Dropdown({
         parent=aberrusTab.content, anchorParent=amirdrassilTab.button.frame,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=bossDropdownBaseOffsetX + bossDropdownSpacingX*2,offsetY=bossDropdownBaseOffsetY*3,label=LoadoutReminder.CONST.BOSS_NAMES.ABERRUS_SARKARETH,
         initialData=dropdownData, initialValue=bossSaveTable.ABERRUS_SARKARETH, initialLabel=bossSaveTable.ABERRUS_SARKARETH or "Not set yet",
         clickCallback=function (self, label, _)
             dropdownClickCallbackBosses("ABERRUS_SARKARETH", label)
         end,
-    }))
+    })
     
     LoadoutReminder.GGUI.TabSystem({amirdrassilTab, aberrusTab})
     LoadoutReminder.GGUI.TabSystem({generalTab, raidsTab})
@@ -554,8 +565,6 @@ function LoadoutReminder.OPTIONS:CreateTabOptionsForType(tab, dropdownData, save
     return dropdowns
 end
 
-function LoadoutReminder.OPTIONS:ResetDropdowns()
-    for _, dropdown in pairs(LoadoutReminder.OPTIONS.DROPDOWNS.TALENTS) do
-        -- TODO
-    end
+function LoadoutReminder.OPTIONS:ReloadDropdowns()
+    -- TODO
 end
