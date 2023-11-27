@@ -34,7 +34,7 @@ function LoadoutReminder.SPEC:CheckBossSpecSet(boss)
 
 	local currentSet = LoadoutReminder.SPEC:GetCurrentSet()
 	local macroText = LoadoutReminder.SPEC:GetMacroTextBySet(bossSet)
-	return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.SPEC, 'Detected Boss: ', macroText, currentSet, bossSet)
+	return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.SPEC, 'Detected Boss: ', macroText, 'Switch Spec to: ', 'Spec', currentSet, bossSet)
 end
 
 function LoadoutReminder.SPEC:GetCurrentSet()

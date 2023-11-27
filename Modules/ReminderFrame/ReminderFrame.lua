@@ -4,13 +4,15 @@ LoadoutReminder.REMINDER_FRAME = {}
 
 ---@param reminderInfo LoadoutReminder.ReminderInfo | nil
 ---@param situationText string
-function LoadoutReminder.REMINDER_FRAME:UpdateDisplay(reminderType, reminderInfo, situationText)
+function LoadoutReminder.REMINDER_FRAME:UpdateDisplay(reminderType, reminderInfo, situationText, isBossCheck)
     local reminderFrame = LoadoutReminder.GGUI:GetFrame(LoadoutReminder.MAIN.FRAMES, LoadoutReminder.CONST.FRAMES.REMINDER_FRAME)
     local displayFrame = reminderFrame.content.displayFrames[reminderType]
 
     if not reminderInfo or reminderInfo:IsAssignedSet() then
-        displayFrame:collapse()
-        displayFrame:Hide()
+        if not isBossCheck then
+            displayFrame:collapse()
+            displayFrame:Hide()
+        end
         return
     else
         displayFrame:decollapse()

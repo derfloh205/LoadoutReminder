@@ -86,9 +86,9 @@ function LoadoutReminder.MAIN.CheckSituations()
 	local combinedActiveCount = LoadoutReminder.ActiveReminders:GetCombinedActiveRemindersCount({activeInstanceReminders, activeBossReminders})
 
 	-- if any reminder is triggered: show frame, otherwise hide
-	print('combinedActiveCount: ' .. tostring(combinedActiveCount))
-	print('activeInstanceReminders: ' .. tostring(activeInstanceReminders:GetCount()))
-	print('activeBossReminders: ' .. tostring(activeBossReminders:GetCount()))
+	-- print('combinedActiveCount: ' .. tostring(combinedActiveCount))
+	-- print('activeInstanceReminders: ' .. tostring(activeInstanceReminders:GetCount()))
+	-- print('activeBossReminders: ' .. tostring(activeBossReminders:GetCount()))
 	if combinedActiveCount > 0 then
 		-- set status of frame depending on how many things are to be reminded of
 		LoadoutReminder.UTIL:UpdateReminderFrame(true, LoadoutReminder.ActiveReminders:GetCombinedActiveRemindersCount({activeInstanceReminders, activeBossReminders}))
@@ -104,11 +104,18 @@ function LoadoutReminder.MAIN:CheckInstanceTypes()
 		return nil
 	end
 
+	-- print("Check Instance Reminders")
 	local instanceType = LoadoutReminder.UTIL:GetCurrentInstanceType()
 	local talentReminderInfo = LoadoutReminder.TALENTS:CheckInstanceTalentSet()
 	local addonReminderInfo = LoadoutReminder.ADDONS:CheckInstanceAddonSet()
 	local equipReminderInfo = LoadoutReminder.EQUIP:CheckInstanceEquipSet()
 	local specReminderInfo = LoadoutReminder.SPEC:CheckInstanceSpecSet()
+
+	-- print("talentReminderInfo: " .. tostring(talentReminderInfo))
+	-- print("addonReminderInfo: " .. tostring(addonReminderInfo))
+	-- print("equipReminderInfo: " .. tostring(equipReminderInfo))
+	-- print("specReminderInfo: " .. tostring(specReminderInfo))
+
 
 	-- Update Talent Reminder
 	LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.TALENTS, talentReminderInfo, LoadoutReminder.CONST.INSTANCE_TYPES_DISPLAY_NAMES[instanceType])		
@@ -149,22 +156,29 @@ function LoadoutReminder.MAIN:CheckBoss()
 		return activeReminders -- npc is no boss
 	end
 
+	
+	-- print("check boss reminders..")
 	local talentReminderInfo = LoadoutReminder.TALENTS:CheckBossTalentSet(boss)
 	local addonReminderInfo = LoadoutReminder.ADDONS:CheckBossAddonSet(boss)
 	local equipReminderInfo = LoadoutReminder.EQUIP:CheckBossEquipSet(boss)
 	local specReminderInfo = LoadoutReminder.SPEC:CheckBossSpecSet(boss)
 
+	-- print("talentReminderInfo: " .. tostring(talentReminderInfo))
+	-- print("addonReminderInfo: " .. tostring(addonReminderInfo))
+	-- print("equipReminderInfo: " .. tostring(equipReminderInfo))
+	-- print("specReminderInfo: " .. tostring(specReminderInfo))
+
 	-- Update Talent Reminder
-	LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.TALENTS, talentReminderInfo, LoadoutReminder.CONST.BOSS_NAMES[boss])		
+	LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.TALENTS, talentReminderInfo, LoadoutReminder.CONST.BOSS_NAMES[boss], true)		
 
 	-- Update Addon Reminder
-	LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.ADDONS, addonReminderInfo, LoadoutReminder.CONST.BOSS_NAMES[boss])
+	LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.ADDONS, addonReminderInfo, LoadoutReminder.CONST.BOSS_NAMES[boss], true)
 	
 	-- Update Equip Reminder
-	LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.EQUIP, equipReminderInfo, LoadoutReminder.CONST.BOSS_NAMES[boss])
+	LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.EQUIP, equipReminderInfo, LoadoutReminder.CONST.BOSS_NAMES[boss], true)
 	
 	-- Update Spec Reminder
-	LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.SPEC, specReminderInfo, LoadoutReminder.CONST.BOSS_NAMES[boss])
+	LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.SPEC, specReminderInfo, LoadoutReminder.CONST.BOSS_NAMES[boss], true)
 
 	return LoadoutReminder.ActiveReminders(
 		talentReminderInfo and not talentReminderInfo:IsAssignedSet(), 

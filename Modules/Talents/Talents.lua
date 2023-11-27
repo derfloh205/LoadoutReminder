@@ -113,15 +113,16 @@ end
 function LoadoutReminder.TALENTS:CheckBossTalentSet(boss)
 	local specID = GetSpecialization()
 	local bossSet = LoadoutReminderDB.TALENTS.BOSS[specID][boss]
-
+	
 	if bossSet == nil then
 		return nil
 	end
-
+	
 	local currentSet = LoadoutReminder.TALENTS:GetCurrentSet()
-
+	
 	local macroText = LoadoutReminder.TALENTS:GetMacroTextBySet(bossSet)
-	return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.TALENTS, 'Detected Boss: ', macroText, currentSet, bossSet)
+	local reminderInfo = LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.TALENTS, 'Detected Boss: ', macroText, 'Switch Talents to: ', 'Talent Set', currentSet, bossSet)
+	return reminderInfo
 end
 
 function LoadoutReminder.TALENTS:HasRaidTalentsPerBoss()

@@ -49,7 +49,7 @@ function LoadoutReminder.ADDONS:CheckBossAddonSet(boss)
 
 	local currentSet = LoadoutReminder.ADDONS:GetCurrentSet()
 	local macroText = LoadoutReminder.ADDONS:GetMacroTextBySet(bossSet)
-	return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.ADDONS, 'Detected Boss: ', macroText, currentSet, bossSet)
+	return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.ADDONS, 'Detected Boss: ', macroText, 'Switch Addons to: ', "Addon Set", currentSet, bossSet)
 end
 
 -- Wrapper

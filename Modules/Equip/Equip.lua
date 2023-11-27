@@ -57,7 +57,7 @@ function LoadoutReminder.EQUIP:CheckBossEquipSet(boss)
 
 	local currentSet = LoadoutReminder.EQUIP:GetCurrentSet()
 	local macroText = LoadoutReminder.EQUIP:GetMacroTextBySet(bossSet)
-	return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.EQUIP, 'Detected Boss: ', macroText, currentSet, bossSet)
+	return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.EQUIP, 'Detected Boss: ', macroText, 'Switch Equip to: ', 'Equip Set', currentSet, bossSet)
 end
 
 function LoadoutReminder.EQUIP:GetCurrentSet()
