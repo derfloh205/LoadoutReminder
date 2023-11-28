@@ -17,15 +17,46 @@ function LoadoutReminder.TALENTS:InitTalentManagement()
     for name, plugin in pairs(DEPENDENCY_MAP) do
         if select(2, C_AddOns.IsAddOnLoaded(name)) then
             LoadoutReminder.TALENTS.TALENT_MANAGER = plugin
+			LoadoutReminder.TALENTS.TALENT_MANAGER:InitHooks()
             return
         end
     end
 
 	LoadoutReminder.TALENTS.TALENT_MANAGER = LoadoutReminder.TALENTS.BLIZZARD
+	LoadoutReminder.TALENTS.TALENT_MANAGER:InitHooks()
 end
 
 --- TALENT LOADOUT MANAGER: https://github.com/NumyAddon/TalentLoadoutManager
 LoadoutReminder.TALENTS.TALENT_LOADOUT_MANAGER = {}
+
+function LoadoutReminder.TALENTS.TALENT_LOADOUT_MANAGER:InitHooks()
+	-- refresh dropdowns on create and delete and import
+	-- Create
+	if TalentLoadoutManagerAPI.CharacterAPI.CreateCustomLoadoutFromCurrentTalents then
+		hooksecurefunc(TalentLoadoutManagerAPI.CharacterAPI, 'CreateCustomLoadoutFromCurrentTalents', function ()
+			LoadoutReminder.OPTIONS:ReloadDropdowns()
+		end)
+	end
+	-- Delete
+	if TalentLoadoutManagerAPI.GlobalAPI.DeleteLoadout then
+		hooksecurefunc(TalentLoadoutManagerAPI.GlobalAPI, 'DeleteLoadout', function ()
+			LoadoutReminder.OPTIONS:ReloadDropdowns()
+		end)
+	end
+	-- Import
+	if TalentLoadoutManagerAPI.CharacterAPI.ImportCustomLoadout then
+		hooksecurefunc(TalentLoadoutManagerAPI.CharacterAPI, 'ImportCustomLoadout', function ()
+			LoadoutReminder.OPTIONS:ReloadDropdowns()
+		end)
+	end
+	if TalentLoadoutManagerAPI.GlobalAPI.ImportCustomLoadout then
+		hooksecurefunc(TalentLoadoutManagerAPI.GlobalAPI, 'ImportCustomLoadout', function ()
+			LoadoutReminder.OPTIONS:ReloadDropdowns()
+		end)
+	end
+
+	-- find usages and rename set on rename
+end
 
 function LoadoutReminder.TALENTS.TALENT_LOADOUT_MANAGER:GetTalentSets()
 	---@type TalentLoadoutManagerAPI_LoadoutInfo[]
@@ -58,6 +89,11 @@ end
 
 -- Base Implementation
 LoadoutReminder.TALENTS.BLIZZARD = {}
+
+function LoadoutReminder.TALENTS.BLIZZARD:InitHooks()
+	-- TODO: refresh dropdowns on delete and create and on import
+	-- TODO: find and adapt loadout when renamed
+end
 
 ---@return string[]
 function LoadoutReminder.TALENTS.BLIZZARD:GetTalentSets()
