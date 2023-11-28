@@ -30,32 +30,39 @@ end
 LoadoutReminder.TALENTS.TALENT_LOADOUT_MANAGER = {}
 
 function LoadoutReminder.TALENTS.TALENT_LOADOUT_MANAGER:InitHooks()
-	-- refresh dropdowns on create and delete and import
-	-- Create
-	if TalentLoadoutManagerAPI.CharacterAPI.CreateCustomLoadoutFromCurrentTalents then
-		hooksecurefunc(TalentLoadoutManagerAPI.CharacterAPI, 'CreateCustomLoadoutFromCurrentTalents', function ()
+	-- When List changes (Create, Import, Delete)
+	TalentLoadoutManagerAPI:RegisterCallback(TalentLoadoutManagerAPI.Event.LoadoutListUpdated, function ()
+		if LoadoutReminder.OPTIONS.optionsPanel then
+			-- handle calls before options are initialized
 			LoadoutReminder.OPTIONS:ReloadDropdowns()
-		end)
-	end
-	-- Delete
-	if TalentLoadoutManagerAPI.GlobalAPI.DeleteLoadout then
-		hooksecurefunc(TalentLoadoutManagerAPI.GlobalAPI, 'DeleteLoadout', function ()
+		end
+	end, LoadoutReminder.TALENTS)
+
+	-- should be triggered after a rename?
+	TalentLoadoutManagerAPI:RegisterCallback(TalentLoadoutManagerAPI.Event.LoadoutUpdated, function ()
+		if LoadoutReminder.OPTIONS.optionsPanel then
+			-- handle calls before options are initialized
 			LoadoutReminder.OPTIONS:ReloadDropdowns()
-		end)
-	end
-	-- Import
-	if TalentLoadoutManagerAPI.CharacterAPI.ImportCustomLoadout then
-		hooksecurefunc(TalentLoadoutManagerAPI.CharacterAPI, 'ImportCustomLoadout', function ()
-			LoadoutReminder.OPTIONS:ReloadDropdowns()
-		end)
-	end
-	if TalentLoadoutManagerAPI.GlobalAPI.ImportCustomLoadout then
-		hooksecurefunc(TalentLoadoutManagerAPI.GlobalAPI, 'ImportCustomLoadout', function ()
-			LoadoutReminder.OPTIONS:ReloadDropdowns()
-		end)
-	end
+		end
+	end, LoadoutReminder.TALENTS)	
 
 	-- find usages and rename set on rename
+	if TalentLoadoutManagerAPI.GlobalAPI.RenameLoadout then
+		hooksecurefunc(TalentLoadoutManagerAPI.GlobalAPI, 'RenameLoadout', function (self, id, newName)
+			-- get new sets and compare to old sets and if any name from the old set is not in the new set then it was renamed
+			local oldLoadout = TalentLoadoutManagerAPI.GlobalAPI:GetLoadoutInfoByID(id) 
+
+			-- update saved loadouts
+			for specID, instanceTalents in pairs(LoadoutReminderDB.TALENTS.GENERAL) do
+				for instanceType, assignedTalentSet in pairs(instanceTalents) do
+					if assignedTalentSet == oldLoadout.name then
+						LoadoutReminderDB.TALENTS.GENERAL[specID][instanceType] = newName
+						return
+					end
+				end
+			end
+		end)
+	end
 end
 
 function LoadoutReminder.TALENTS.TALENT_LOADOUT_MANAGER:GetTalentSets()
@@ -78,7 +85,7 @@ function LoadoutReminder.TALENTS.TALENT_LOADOUT_MANAGER:GetMacroTextBySet(assign
 		return loadout.name == assignedSet
 	end)
 	if not assignedLoadout then
-		print("LOR Error: could not find '"..assignedSet.."' in list of TalentLoadoutManager Loadouts\nWas it maybe renamed?")
+		--print("LOR Error: could not find '"..assignedSet.."' in list of TalentLoadoutManager Loadouts\nWas it maybe renamed?")
 		return
 	end
 	-- Starter Build will be handled by TLM
