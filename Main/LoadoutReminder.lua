@@ -75,6 +75,7 @@ function LoadoutReminder.MAIN:ADDON_LOADED(addon_name)
 	if addon_name ~= LoadoutReminderAddonName then
 		return
 	end
+	LoadoutReminder.TALENTS:InitTalentManagement()
 	-- init as soon as player specialization is available -- polling
 	LoadoutReminder.MAIN:Init()
 end

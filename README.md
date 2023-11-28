@@ -4,7 +4,7 @@ Currently Supported Addon List Addons:
 BetterAddonList
 
 Currently Supported Talent Loadout Management Addons:
--
+Talent Loadout Manager
 
 Currently Supported Equipment Set Management Addons:
 -

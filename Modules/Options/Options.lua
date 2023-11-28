@@ -23,10 +23,10 @@ function LoadoutReminder.OPTIONS:GetTalentsData()
             value=LoadoutReminder.CONST.STARTER_BUILD
         }
     }
-    table.foreach(talentSets, function(_, configInfo)
+    table.foreach(talentSets, function(_, configName)
         table.insert(talentsDropdownData, {
-            label=configInfo.name,
-            value=configInfo.name,
+            label=configName,
+            value=configName,
         })
     end)
     return talentsDropdownData

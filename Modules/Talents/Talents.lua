@@ -6,24 +6,74 @@ LoadoutReminder.TALENTS:RegisterEvent("TRAIT_CONFIG_UPDATED")
 LoadoutReminder.TALENTS:RegisterEvent("CONFIG_COMMIT_FAILED")
 LoadoutReminder.TALENTS:RegisterEvent("TRAIT_TREE_CHANGED")
 
-function LoadoutReminder.TALENTS:CurrentSetRecognizable()
-	return LoadoutReminder.TALENTS:GetCurrentSet() ~= nil
+LoadoutReminder.TALENTS.TALENT_MANAGER = {}
+
+function LoadoutReminder.TALENTS:InitTalentManagement()
+	-- check if optdep is loaded and set to it, otherwise use base implementation
+    local DEPENDENCY_MAP = {
+        [LoadoutReminder.CONST.TALENT_MANAGEMENT_ADDONS.TALENTLOADOUTMANAGER] = LoadoutReminder.TALENTS.TALENT_LOADOUT_MANAGER,
+    }
+
+    for name, plugin in pairs(DEPENDENCY_MAP) do
+        if select(2, C_AddOns.IsAddOnLoaded(name)) then
+            LoadoutReminder.TALENTS.TALENT_MANAGER = plugin
+            return
+        end
+    end
+
+	LoadoutReminder.TALENTS.TALENT_MANAGER = LoadoutReminder.TALENTS.BLIZZARD
 end
 
----@return TraitConfigInfo[]
-function LoadoutReminder.TALENTS:GetTalentSets()
+--- TALENT LOADOUT MANAGER: https://github.com/NumyAddon/TalentLoadoutManager
+LoadoutReminder.TALENTS.TALENT_LOADOUT_MANAGER = {}
+
+function LoadoutReminder.TALENTS.TALENT_LOADOUT_MANAGER:GetTalentSets()
+	---@type TalentLoadoutManagerAPI_LoadoutInfo[]
+	local loadouts = TalentLoadoutManagerAPI.GlobalAPI:GetLoadouts()
+	local loadoutsByName = LoadoutReminder.GUTIL:Map(loadouts, function (loadoutInfo)
+		return loadoutInfo.name
+	end)
+	return loadoutsByName
+end
+function LoadoutReminder.TALENTS.TALENT_LOADOUT_MANAGER:GetCurrentSet()
+	---@type TalentLoadoutManagerAPI_LoadoutInfo
+	local loadout = TalentLoadoutManagerAPI.CharacterAPI:GetActiveLoadoutInfo()
+	return (loadout and loadout.name) or nil
+end
+function LoadoutReminder.TALENTS.TALENT_LOADOUT_MANAGER:GetMacroTextBySet(assignedSet)
+	---@type TalentLoadoutManagerAPI_LoadoutInfo[]
+	local loadouts = TalentLoadoutManagerAPI.GlobalAPI:GetLoadouts()
+	local assignedLoadout = LoadoutReminder.GUTIL:Find(loadouts, function (loadout)
+		return loadout.name == assignedSet
+	end)
+	if not assignedLoadout then
+		print("LOR Error: could not find '"..assignedSet.."' in list of TalentLoadoutManager Loadouts\nWas it maybe renamed?")
+		return
+	end
+	-- Starter Build will be handled by TLM
+	local macroText =  "/run TalentLoadoutManagerAPI.CharacterAPI:LoadLoadout("..assignedLoadout.id..", true)"
+	return macroText
+end
+
+
+-- Base Implementation
+LoadoutReminder.TALENTS.BLIZZARD = {}
+
+---@return string[]
+function LoadoutReminder.TALENTS.BLIZZARD:GetTalentSets()
 	local specID = PlayerUtil.GetCurrentSpecID()
 
 	local configIDs = C_ClassTalents.GetConfigIDsBySpecID(specID)
 
 	local talentSets = LoadoutReminder.GUTIL:Map(configIDs, function (configID)
-		return C_Traits.GetConfigInfo(configID)
+		local configInfo = C_Traits.GetConfigInfo(configID)
+		return configInfo.name
 	end)
 	return talentSets
 end
 
 --- find out what set is currently activated
-function LoadoutReminder.TALENTS:GetCurrentSet()
+function LoadoutReminder.TALENTS.BLIZZARD:GetCurrentSet()
 
 	if C_ClassTalents.GetStarterBuildActive() then
 		return LoadoutReminder.CONST.STARTER_BUILD
@@ -64,6 +114,34 @@ function LoadoutReminder.TALENTS:GetCurrentSet()
 	end
 end
 
+---@return string macroText
+function LoadoutReminder.TALENTS.BLIZZARD:GetMacroTextBySet(assignedSet)
+	if assignedSet == LoadoutReminder.CONST.STARTER_BUILD then
+		-- care for the snowflake..
+		return "/run C_ClassTalents.SetStarterBuildActive(true)"
+	else
+		return "/lon " .. assignedSet
+	end
+end
+
+-- Wrappers
+---@return string macroText
+function LoadoutReminder.TALENTS:GetMacroTextBySet(assignedSet)
+	return LoadoutReminder.TALENTS.TALENT_MANAGER:GetMacroTextBySet(assignedSet)
+end
+
+---@return string[]
+function LoadoutReminder.TALENTS:GetTalentSets()
+	return LoadoutReminder.TALENTS.TALENT_MANAGER:GetTalentSets()
+end
+
+--- find out what set is currently activated
+function LoadoutReminder.TALENTS:GetCurrentSet()
+	return LoadoutReminder.TALENTS.TALENT_MANAGER:GetCurrentSet()
+end
+
+-- EVENTS
+
 function LoadoutReminder.TALENTS:TRAIT_CONFIG_UPDATED()
 	LoadoutReminder.MAIN.CheckSituations()
 	-- make another check slightly delayed
@@ -80,13 +158,9 @@ function LoadoutReminder.TALENTS:TRAIT_TREE_CHANGED()
 	LoadoutReminder.MAIN.CheckSituations()
 end
 
-function LoadoutReminder.TALENTS:GetMacroTextBySet(assignedSet)
-	if assignedSet == LoadoutReminder.CONST.STARTER_BUILD then
-		-- care for the snowflake..
-		return "/run C_ClassTalents.SetStarterBuildActive(true)"
-	else
-		return "/lon " .. assignedSet
-	end
+-- Base
+function LoadoutReminder.TALENTS:CurrentSetRecognizable()
+	return LoadoutReminder.TALENTS:GetCurrentSet() ~= nil
 end
 
 ---@return LoadoutReminder.ReminderInfo | nil

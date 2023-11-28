@@ -89,6 +89,10 @@ LoadoutReminder.CONST.ADDON_LIST_ADDONS = {
     ADDON_CONTROL_PANEL = "AddonControlPanel",
 }
 
+LoadoutReminder.CONST.TALENT_MANAGEMENT_ADDONS = {
+    TALENTLOADOUTMANAGER = "TalentLoadoutManager",
+}
+
 ---@enum LoadoutReminder.InstanceTypes
 LoadoutReminder.CONST.INSTANCE_TYPES = {
     DUNGEON = 'DUNGEON',
