@@ -20,13 +20,13 @@ function LoadoutReminder.REMINDER_FRAME:UpdateDisplay(reminderType, reminderInfo
     end
 
     if reminderInfo.currentSet ~= nil then
-        displayFrame.info:SetText("Current ".. reminderInfo.infoText ..": \"" .. reminderInfo.currentSet .. "\"")
+        displayFrame.info:SetText("Current ".. tostring(reminderInfo.infoText) ..": \"" .. tostring(reminderInfo.currentSet) .. "\"")
     else
         displayFrame.info:SetText("Current Set not recognized")
     end
 
     if situationText then
-        reminderFrame.content.situationInfo:SetText(reminderInfo.situationInfo .. situationText)
+        reminderFrame.content.situationInfo:SetText(tostring(reminderInfo.situationInfo) .. situationText)
     end
 
     -- update button
@@ -34,5 +34,5 @@ function LoadoutReminder.REMINDER_FRAME:UpdateDisplay(reminderType, reminderInfo
     ---@type GGUI.Button
 	local loadSetButton = displayFrame.loadButton
 	loadSetButton:SetMacroText(reminderInfo.macroText)
-	loadSetButton:SetText(reminderInfo.buttonText .. "'" .. reminderInfo.assignedSet .. "'", nil, true)
+	loadSetButton:SetText(reminderInfo.buttonText .. "'" .. tostring(reminderInfo.assignedSet) .. "'", nil, true)
 end

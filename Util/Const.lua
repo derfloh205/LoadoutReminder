@@ -9,6 +9,8 @@ LoadoutReminder.CONST.FRAMES = {
 }
 
 LoadoutReminder.CONST.STARTER_BUILD = "Starter Build"
+LoadoutReminder.CONST.LABEL_NO_SET = '-'
+LoadoutReminder.CONST.NO_EQUIP_SET = '<No Set>'
 
 LoadoutReminder.CONST.DEFAULT_BACKDROP_OPTIONS = {
     bgFile = "Interface\\CharacterFrame\\UI-Party-Background",
@@ -46,6 +48,7 @@ LoadoutReminder.CONST.BOSS_NAMES = {
 LoadoutReminder.CONST.BOSS_ID_MAP = {
     -- Amirdrassil
     [209333] = 'AMIRDRASSIL_GNARLROOT',
+    -- [205647] = 'AMIRDRASSIL_GNARLROOT', --debug Kalecgos
     [200926] = 'AMIRDRASSIL_IGIRA',
     [208478] = 'AMIRDRASSIL_VOLCOROSS',
         -- Council of Dreams: Urctos, Aerwynn, Pip

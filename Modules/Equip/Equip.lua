@@ -3,6 +3,7 @@ _, LoadoutReminder = ...
 LoadoutReminder.EQUIP = CreateFrame("Frame")
 LoadoutReminder.EQUIP:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end)
 LoadoutReminder.EQUIP:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+LoadoutReminder.EQUIP:RegisterEvent("EQUIPMENT_SETS_CHANGED")
 
 function LoadoutReminder.EQUIP:AreEquipSetsLoaded()
     local ids = C_EquipmentSet.GetEquipmentSetIDs()
@@ -26,66 +27,63 @@ function LoadoutReminder.EQUIP:CheckInstanceEquipSet()
 		return
 	end
 
-	local INSTANCE_SETS = LoadoutReminderDB.EQUIP.GENERAL
+	local INSTANCE_SETS = LoadoutReminderDBV2.EQUIP.GENERAL
 	local CURRENT_SET = LoadoutReminder.EQUIP:GetCurrentSet()
 
-	local currentSet, assignedSet = LoadoutReminder.UTIL:CheckCurrentSetAgainstInstanceSetList(CURRENT_SET, INSTANCE_SETS)
+	local currentSetID, assignedSetID = LoadoutReminder.UTIL:CheckCurrentSetAgainstInstanceSetList(CURRENT_SET, INSTANCE_SETS)
 
     -- print("equip: ")
     -- print("currentSet: " .. tostring(currentSet))
     -- print("assignedSet: " .. tostring(assignedSet))
+    local currentSetName = (currentSetID and LoadoutReminder.EQUIP:GetEquipSetNameByID(currentSetID)) or LoadoutReminder.CONST.NO_EQUIP_SET
+    local assignedSetName = (assignedSetID and LoadoutReminder.EQUIP:GetEquipSetNameByID(assignedSetID)) or nil
 
-    if currentSet == nil then
-        -- suggest changing set anyway
-        currentSet = '<No Set>'
-    end
-
-	if currentSet and assignedSet then
-		local macroText = LoadoutReminder.EQUIP:GetMacroTextBySet(assignedSet)
+	if currentSetName and assignedSetName then
+		local macroText = LoadoutReminder.EQUIP:GetMacroTextBySet(assignedSetID)
 		local buttonText = 'Switch Equip to: '
-		return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.EQUIP, 'Detected Situation: ', macroText, buttonText, "Equip Set", currentSet, assignedSet)
+		return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.EQUIP, 'Detected Situation: ', macroText, buttonText, "Equip Set", currentSetName, assignedSetName)
 	end
 end
 
 ---@return LoadoutReminder.ReminderInfo | nil
 function LoadoutReminder.EQUIP:CheckBossEquipSet(boss)
-	local bossSet = LoadoutReminderDB.EQUIP.BOSS[boss]
+	local bossSet = LoadoutReminderDBV2.EQUIP.BOSS[boss]
 
 	if bossSet == nil then
 		return nil
 	end
 
 	local currentSet = LoadoutReminder.EQUIP:GetCurrentSet()
-	local macroText = LoadoutReminder.EQUIP:GetMacroTextBySet(bossSet)
-	return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.EQUIP, 'Detected Boss: ', macroText, 'Switch Equip to: ', 'Equip Set', currentSet, bossSet)
+    local currentSetName = (currentSet and LoadoutReminder.EQUIP:GetEquipSetNameByID(currentSet)) or LoadoutReminder.CONST.NO_EQUIP_SET
+    local bossSetName = LoadoutReminder.EQUIP:GetEquipSetNameByID(bossSet)
+    if  bossSetName then
+        local macroText = LoadoutReminder.EQUIP:GetMacroTextBySet(bossSet)
+        return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.EQUIP, 'Detected Boss: ', macroText, 'Switch Equip to: ', 'Equip Set', currentSetName, bossSetName)
+    end
 end
 
+---@return number | nil equipSetID
 function LoadoutReminder.EQUIP:GetCurrentSet()
     local setIDs = C_EquipmentSet.GetEquipmentSetIDs()
 
     for _, setID in pairs(setIDs) do
-        local setName = select(1, C_EquipmentSet.GetEquipmentSetInfo(setID))
         local isEquipped = select(4, C_EquipmentSet.GetEquipmentSetInfo(setID))
-        if setName and isEquipped then
-            return setName
+        if isEquipped then
+            return setID
         end
     end
 
     return nil
 end
 
+---@return number[] equipSetIDs
 function LoadoutReminder.EQUIP:GetEquipSets()
-    local setIDs = C_EquipmentSet.GetEquipmentSetIDs()
-    local setList = {}
+    return C_EquipmentSet.GetEquipmentSetIDs()
+end
 
-    for _, setID in pairs(setIDs) do
-        local setName = select(1, C_EquipmentSet.GetEquipmentSetInfo(setID))
-        if setName then
-            table.insert(setList, setName)
-        end
-    end
-
-    return setList
+function LoadoutReminder.EQUIP:GetEquipSetNameByID(setID)
+    local setName = select(1, C_EquipmentSet.GetEquipmentSetInfo(setID))
+    return setName
 end
 
 function LoadoutReminder.EQUIP:HasRaidEquipPerBoss()
@@ -99,10 +97,15 @@ function LoadoutReminder.EQUIP:HasRaidEquipPerBoss()
 	return LoadoutReminderOptions.EQUIP.RAIDS_PER_BOSS[raid]
 end
 
-function LoadoutReminder.EQUIP:GetMacroTextBySet(assignedSet)
-    return '/equipset ' .. assignedSet
+function LoadoutReminder.EQUIP:GetMacroTextBySet(assignedSetID)
+    local setName = LoadoutReminder.EQUIP:GetEquipSetNameByID(assignedSetID)
+    return '/equipset ' .. tostring(setName)
 end
 
 function LoadoutReminder.EQUIP:PLAYER_EQUIPMENT_CHANGED()
+    LoadoutReminder.MAIN:CheckSituations()
+end
+function LoadoutReminder.EQUIP:EQUIPMENT_SETS_CHANGED()
+    LoadoutReminder.OPTIONS:ReloadDropdowns()
     LoadoutReminder.MAIN:CheckSituations()
 end

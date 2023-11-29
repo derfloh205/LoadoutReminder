@@ -69,3 +69,32 @@ function LoadoutReminder.UTIL:UpdateReminderFrame(visibility, activeRemindersCou
 
 	reminderFrame:SetVisible(visibility)
 end
+
+function LoadoutReminder.UTIL:FindAndReplaceSetInDB(oldSet, newSet, saveTable, perSpecID)
+	-- update saved loadouts for GENERAL 
+	for specID, instanceTalents in pairs(saveTable.GENERAL) do
+		for instanceType, assignedTalentSet in pairs(instanceTalents) do
+			if assignedTalentSet == oldSet then
+				if perSpecID then
+					saveTable.GENERAL[specID][instanceType] = newSet
+				else
+					saveTable.GENERAL[instanceType] = newSet
+				end
+				return
+			end
+		end
+	end
+	-- update saved loadouts for BOSSES 
+	for specID, instanceTalents in pairs(saveTable.BOSS) do
+		for instanceType, assignedTalentSet in pairs(instanceTalents) do
+			if assignedTalentSet == oldSet then
+				if perSpecID then
+					saveTable.BOSS[specID][instanceType] = newSet
+				else
+					saveTable.BOSS[instanceType] = newSet
+				end
+				return
+			end
+		end
+	end
+end

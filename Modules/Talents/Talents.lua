@@ -35,6 +35,7 @@ function LoadoutReminder.TALENTS.TALENT_LOADOUT_MANAGER:InitHooks()
 		if LoadoutReminder.OPTIONS.optionsPanel then
 			-- handle calls before options are initialized
 			LoadoutReminder.OPTIONS:ReloadDropdowns()
+			LoadoutReminder.MAIN:CheckSituations()
 		end
 	end, LoadoutReminder.TALENTS)
 
@@ -43,54 +44,61 @@ function LoadoutReminder.TALENTS.TALENT_LOADOUT_MANAGER:InitHooks()
 		if LoadoutReminder.OPTIONS.optionsPanel then
 			-- handle calls before options are initialized
 			LoadoutReminder.OPTIONS:ReloadDropdowns()
+			LoadoutReminder.MAIN:CheckSituations()
 		end
 	end, LoadoutReminder.TALENTS)	
 
-	-- find usages and rename set on rename
-	if TalentLoadoutManagerAPI.GlobalAPI.RenameLoadout then
-		hooksecurefunc(TalentLoadoutManagerAPI.GlobalAPI, 'RenameLoadout', function (self, id, newName)
-			-- get new sets and compare to old sets and if any name from the old set is not in the new set then it was renamed
-			local oldLoadout = TalentLoadoutManagerAPI.GlobalAPI:GetLoadoutInfoByID(id) 
+	-- -- find usages and rename set on rename
+	-- if TalentLoadoutManagerAPI.GlobalAPI.RenameLoadout then
+	-- 	hooksecurefunc(TalentLoadoutManagerAPI.GlobalAPI, 'RenameLoadout', function (self, id, newName)
+	-- 		-- get new sets and compare to old sets and if any name from the old set is not in the new set then it was renamed
+	-- 		local oldLoadout = TalentLoadoutManagerAPI.GlobalAPI:GetLoadoutInfoByID(id) 
+	-- 		LoadoutReminder.UTIL:FindAndReplaceSetInDB(oldLoadout.name, newName, LoadoutReminderDBV2.TALENTS, true)
+	-- 	end)
+	-- end
 
-			-- update saved loadouts
-			for specID, instanceTalents in pairs(LoadoutReminderDB.TALENTS.GENERAL) do
-				for instanceType, assignedTalentSet in pairs(instanceTalents) do
-					if assignedTalentSet == oldLoadout.name then
-						LoadoutReminderDB.TALENTS.GENERAL[specID][instanceType] = newName
-						return
-					end
-				end
-			end
+	-- onDelete: remove from db
+	if TalentLoadoutManagerAPI.GlobalAPI.DeleteLoadout then
+		hooksecurefunc(TalentLoadoutManagerAPI.GlobalAPI, 'DeleteLoadout', function ()
+			-- get new sets and compare to old sets and if any name from the old set is not in the new set then it was renamed
+			print("delete hook")
+			-- TODO: check saved sets for this spec id and then set to nil if not able to find it in current talent list
+			-- local talentSets = 
+			-- some loop
+			-- old approach: LoadoutReminder.UTIL:FindAndReplaceSetInDB(loadoutToDelete.name, nil, LoadoutReminderDBV2.TALENTS, true)
 		end)
 	end
 end
 
+---@return (string | number)[] loadoutIDs
 function LoadoutReminder.TALENTS.TALENT_LOADOUT_MANAGER:GetTalentSets()
 	---@type TalentLoadoutManagerAPI_LoadoutInfo[]
 	local loadouts = TalentLoadoutManagerAPI.GlobalAPI:GetLoadouts()
 	local loadoutsByName = LoadoutReminder.GUTIL:Map(loadouts, function (loadoutInfo)
-		return loadoutInfo.name
+		return loadoutInfo.id
 	end)
 	return loadoutsByName
 end
+---@return string | number | nil loadoutID
 function LoadoutReminder.TALENTS.TALENT_LOADOUT_MANAGER:GetCurrentSet()
 	---@type TalentLoadoutManagerAPI_LoadoutInfo
 	local loadout = TalentLoadoutManagerAPI.CharacterAPI:GetActiveLoadoutInfo()
-	return (loadout and loadout.name) or nil
+	return (loadout and loadout.id) or nil
 end
-function LoadoutReminder.TALENTS.TALENT_LOADOUT_MANAGER:GetMacroTextBySet(assignedSet)
-	---@type TalentLoadoutManagerAPI_LoadoutInfo[]
-	local loadouts = TalentLoadoutManagerAPI.GlobalAPI:GetLoadouts()
-	local assignedLoadout = LoadoutReminder.GUTIL:Find(loadouts, function (loadout)
-		return loadout.name == assignedSet
-	end)
-	if not assignedLoadout then
-		--print("LOR Error: could not find '"..assignedSet.."' in list of TalentLoadoutManager Loadouts\nWas it maybe renamed?")
-		return
-	end
+function LoadoutReminder.TALENTS.TALENT_LOADOUT_MANAGER:GetMacroTextBySet(assignedSetID)
 	-- Starter Build will be handled by TLM
-	local macroText =  "/run TalentLoadoutManagerAPI.CharacterAPI:LoadLoadout("..assignedLoadout.id..", true)"
+	local setText = assignedSetID
+	if type(setText) == 'string' then
+		setText = "'" .. setText .. "'"
+	end
+	local macroText =  "/run TalentLoadoutManagerAPI.CharacterAPI:LoadLoadout("..setText..", true)"
 	return macroText
+end
+---@param loadoutID number TLM LoadoutID or Blizzard ConfigID
+---@return string | nil configName
+function LoadoutReminder.TALENTS.TALENT_LOADOUT_MANAGER:GetTalentSetNameByID(loadoutID)
+	local loadoutInfo = TalentLoadoutManagerAPI.GlobalAPI:GetLoadoutInfoByID(loadoutID)
+	return (loadoutInfo and loadoutInfo.name) or nil
 end
 
 
@@ -102,24 +110,21 @@ function LoadoutReminder.TALENTS.BLIZZARD:InitHooks()
 	-- TODO: find and adapt loadout when renamed
 end
 
----@return string[]
+---@return number[] configIDs
 function LoadoutReminder.TALENTS.BLIZZARD:GetTalentSets()
 	local specID = PlayerUtil.GetCurrentSpecID()
 
 	local configIDs = C_ClassTalents.GetConfigIDsBySpecID(specID)
 
-	local talentSets = LoadoutReminder.GUTIL:Map(configIDs, function (configID)
-		local configInfo = C_Traits.GetConfigInfo(configID)
-		return configInfo.name
-	end)
-	return talentSets
+	return configIDs
 end
 
 --- find out what set is currently activated
+---@return number | nil configID
 function LoadoutReminder.TALENTS.BLIZZARD:GetCurrentSet()
 
 	if C_ClassTalents.GetStarterBuildActive() then
-		return LoadoutReminder.CONST.STARTER_BUILD
+		return Constants.TraitConsts.STARTER_BUILD_TRAIT_CONFIG_ID
 	end
 
 	-- from wowpedia
@@ -133,38 +138,25 @@ function LoadoutReminder.TALENTS.BLIZZARD:GetCurrentSet()
 
 	local configID = GetSelectedLoadoutConfigID()
 
-	if configID then
-		local configInfo = C_Traits.GetConfigInfo(configID);
-		if configInfo then
-			local configName = configInfo.name
-
-			-- only return if it can be found in the current list of available sets
-			local availableSets = LoadoutReminder.TALENTS:GetTalentSets()
-
-			local setExists = LoadoutReminder.GUTIL:Find(availableSets, function (set)
-				return set.name == configName
-			end)
-			if setExists then
-				return configName
-			else
-				return nil
-			end
-		end
-		-- otherwise wtf?
-		return nil
-	else
-		return nil -- no set selected yet?
-	end
+	return configID
 end
 
 ---@return string macroText
-function LoadoutReminder.TALENTS.BLIZZARD:GetMacroTextBySet(assignedSet)
-	if assignedSet == LoadoutReminder.CONST.STARTER_BUILD then
+function LoadoutReminder.TALENTS.BLIZZARD:GetMacroTextBySet(assignedConfigID)
+	if assignedConfigID == Constants.TraitConsts.STARTER_BUILD_TRAIT_CONFIG_ID then
 		-- care for the snowflake..
 		return "/run C_ClassTalents.SetStarterBuildActive(true)"
 	else
-		return "/lon " .. assignedSet
+		local configInfo = C_Traits.GetConfigInfo(assignedConfigID)
+		return "/lon " .. configInfo.name
 	end
+end
+
+---@param configID number
+---@return string | nil configName
+function LoadoutReminder.TALENTS.BLIZZARD:GetTalentSetNameByID(configID)
+	local configInfo = C_Traits.GetConfigInfo(configID)
+	return (configInfo and configInfo.name) or nil
 end
 
 -- Wrappers
@@ -181,6 +173,10 @@ end
 --- find out what set is currently activated
 function LoadoutReminder.TALENTS:GetCurrentSet()
 	return LoadoutReminder.TALENTS.TALENT_MANAGER:GetCurrentSet()
+end
+
+function LoadoutReminder.TALENTS:GetTalentSetNameByID(talentSetID)
+	return LoadoutReminder.TALENTS.TALENT_MANAGER:GetTalentSetNameByID(talentSetID)
 end
 
 -- EVENTS
@@ -209,37 +205,46 @@ end
 ---@return LoadoutReminder.ReminderInfo | nil
 function LoadoutReminder.TALENTS:CheckInstanceTalentSet()
 
-	if LoadoutReminder.TALENTS:HasRaidTalentsPerBoss() then
+	if LoadoutReminder.TALENTS:HasRaidTalentsPerBoss() then 
 		return
 	end
 
 	local specID = GetSpecialization()
-	local INSTANCE_SETS = LoadoutReminderDB.TALENTS.GENERAL[specID]
+	local INSTANCE_SETS = LoadoutReminderDBV2.TALENTS.GENERAL[specID]
 	local CURRENT_SET = LoadoutReminder.TALENTS:GetCurrentSet()
 
-	local currentSet, assignedSet = LoadoutReminder.UTIL:CheckCurrentSetAgainstInstanceSetList(CURRENT_SET, INSTANCE_SETS)
+	local currentSetID, assignedSetID = LoadoutReminder.UTIL:CheckCurrentSetAgainstInstanceSetList(CURRENT_SET, INSTANCE_SETS)
 
-	if currentSet and assignedSet then
-		local macroText = LoadoutReminder.TALENTS:GetMacroTextBySet(assignedSet)
+	if currentSetID and assignedSetID then
+		local macroText = LoadoutReminder.TALENTS:GetMacroTextBySet(assignedSetID)
 		local buttonText = 'Switch Talents to: '
-		return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.TALENTS, 'Detected Situation: ', macroText, buttonText, "Talent Set", currentSet, assignedSet)
+		local currentSetName = LoadoutReminder.TALENTS:GetTalentSetNameByID(currentSetID)
+		local assignedSetName = LoadoutReminder.TALENTS:GetTalentSetNameByID(assignedSetID)
+		if currentSetName and assignedSetName then
+			return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.TALENTS, 'Detected Situation: ', macroText, buttonText, "Talent Set", currentSetName, assignedSetName)
+		end
 	end
 end
 
 ---@return LoadoutReminder.ReminderInfo | nil
 function LoadoutReminder.TALENTS:CheckBossTalentSet(boss)
 	local specID = GetSpecialization()
-	local bossSet = LoadoutReminderDB.TALENTS.BOSS[specID][boss]
+	local bossSet = LoadoutReminderDBV2.TALENTS.BOSS[specID][boss]
 	
 	if bossSet == nil then
 		return nil
 	end
 	
 	local currentSet = LoadoutReminder.TALENTS:GetCurrentSet()
+
+	if currentSet then
+		local currentSetName = LoadoutReminder.TALENTS:GetTalentSetNameByID(currentSet)
+		local bossSetName = LoadoutReminder.TALENTS:GetTalentSetNameByID(bossSet)
+		local macroText = LoadoutReminder.TALENTS:GetMacroTextBySet(bossSet)
+		local reminderInfo = LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.TALENTS, 'Detected Boss: ', macroText, 'Switch Talents to: ', 'Talent Set', currentSetName, bossSetName)
+		return reminderInfo
+	end
 	
-	local macroText = LoadoutReminder.TALENTS:GetMacroTextBySet(bossSet)
-	local reminderInfo = LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.TALENTS, 'Detected Boss: ', macroText, 'Switch Talents to: ', 'Talent Set', currentSet, bossSet)
-	return reminderInfo
 end
 
 function LoadoutReminder.TALENTS:HasRaidTalentsPerBoss()

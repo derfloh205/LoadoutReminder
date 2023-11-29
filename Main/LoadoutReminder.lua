@@ -9,7 +9,7 @@ LoadoutReminder.MAIN.FRAMES = {}
 
 LoadoutReminderGGUIConfig = LoadoutReminderGGUIConfig or {}
 
-LoadoutReminderDB = LoadoutReminderDB or {
+LoadoutReminderDBV2 = LoadoutReminderDBV2 or {
 	TALENTS = {
 		GENERAL = {},
 		BOSS = {},
@@ -46,8 +46,8 @@ LoadoutReminderOptions = LoadoutReminderOptions or {
 function LoadoutReminder.MAIN:InitSpecIDTables()
 	-- init db for every spec for this character
 	for specIndex = 1, GetNumSpecializations() do
-		LoadoutReminderDB.TALENTS.GENERAL[specIndex] = LoadoutReminderDB.TALENTS.GENERAL[specIndex] or {}
-		LoadoutReminderDB.TALENTS.BOSS[specIndex] = LoadoutReminderDB.TALENTS.BOSS[specIndex] or {}
+		LoadoutReminderDBV2.TALENTS.GENERAL[specIndex] = LoadoutReminderDBV2.TALENTS.GENERAL[specIndex] or {}
+		LoadoutReminderDBV2.TALENTS.BOSS[specIndex] = LoadoutReminderDBV2.TALENTS.BOSS[specIndex] or {}
     end
 end
 

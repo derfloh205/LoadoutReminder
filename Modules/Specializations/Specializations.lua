@@ -12,7 +12,7 @@ function LoadoutReminder.SPEC:CheckInstanceSpecSet()
 		return
 	end
 
-	local INSTANCE_SETS = LoadoutReminderDB.SPEC.GENERAL
+	local INSTANCE_SETS = LoadoutReminderDBV2.SPEC.GENERAL
 	local CURRENT_SET = LoadoutReminder.SPEC:GetCurrentSet()
 
 	local currentSet, assignedSet = LoadoutReminder.UTIL:CheckCurrentSetAgainstInstanceSetList(CURRENT_SET, INSTANCE_SETS)
@@ -26,7 +26,7 @@ end
 
 ---@return LoadoutReminder.ReminderInfo | nil
 function LoadoutReminder.SPEC:CheckBossSpecSet(boss)
-	local bossSet = LoadoutReminderDB.SPEC.BOSS[boss]
+	local bossSet = LoadoutReminderDBV2.SPEC.BOSS[boss]
 
 	if bossSet == nil then
 		return nil

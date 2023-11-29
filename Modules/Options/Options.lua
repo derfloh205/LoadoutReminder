@@ -10,23 +10,25 @@ LoadoutReminder.OPTIONS.DROPDOWNS = {
 
 function LoadoutReminder.OPTIONS:GetTalentsData()
     -- #### TALENTS
-    local talentSets = LoadoutReminder.TALENTS:GetTalentSets()
+    ---@type number|string[]
+    local talentSetIDs = LoadoutReminder.TALENTS:GetTalentSets()
 
     -- convert to dropdown data, always include starter build label
     local talentsDropdownData = {
         {
-            label='-',
+            label=LoadoutReminder.CONST.LABEL_NO_SET,
             value=nil
         },
         {
             label=LoadoutReminder.CONST.STARTER_BUILD,
-            value=LoadoutReminder.CONST.STARTER_BUILD
+            value=Constants.TraitConsts.STARTER_BUILD_TRAIT_CONFIG_ID
         }
     }
-    table.foreach(talentSets, function(_, configName)
+    table.foreach(talentSetIDs, function(_, configID)
+        local setName = LoadoutReminder.TALENTS:GetTalentSetNameByID(configID)
         table.insert(talentsDropdownData, {
-            label=configName,
-            value=configName,
+            label=setName,
+            value=configID,
         })
     end)
     return talentsDropdownData
@@ -38,7 +40,7 @@ function LoadoutReminder.OPTIONS:GetAddonsData()
     -- convert to dropdown data, always include starter build label
     local addonsDropdownData = {
         {
-            label='-',
+            label=LoadoutReminder.CONST.LABEL_NO_SET,
             value=nil
         }
     }
@@ -57,15 +59,16 @@ function LoadoutReminder.OPTIONS:GetEquipData()
     -- convert to dropdown data, always include starter build label
     local equipDropdownData = {
         {
-            label='-',
+            label=LoadoutReminder.CONST.LABEL_NO_SET,
             value=nil
         }
     }
 
-    table.foreach(equipSets, function(_, setName)
+    table.foreach(equipSets, function(_, setID)
+        local setName = LoadoutReminder.EQUIP:GetEquipSetNameByID(setID)
         table.insert(equipDropdownData, {
             label=setName,
-            value=setName,
+            value=setID,
         })
     end)
     return equipDropdownData
@@ -76,7 +79,7 @@ function LoadoutReminder.OPTIONS:GetSpecData()
     -- convert to dropdown data, always include starter build label
     local specDropdownData = {
         {
-            label='-',
+            label=LoadoutReminder.CONST.LABEL_NO_SET,
             value=nil
         }
     }
@@ -89,7 +92,7 @@ function LoadoutReminder.OPTIONS:GetSpecData()
     end)
     return specDropdownData
 end
-function LoadoutReminder.OPTIONS:Init(reload)
+function LoadoutReminder.OPTIONS:Init()
 
     LoadoutReminder.OPTIONS.optionsPanel = CreateFrame("Frame", "LoadoutReminderOptionsPanel")
 
@@ -121,8 +124,8 @@ function LoadoutReminder.OPTIONS:Init(reload)
     local talentsDropdownData = LoadoutReminder.OPTIONS:GetTalentsData()
     
     LoadoutReminder.OPTIONS:CreateTabOptionsForType(LoadoutReminder.OPTIONS.optionsPanel.talentsTab, talentsDropdownData, true, 
-        LoadoutReminderDB.TALENTS.GENERAL, LoadoutReminderDB.TALENTS.BOSS, 
-        LoadoutReminderOptions.TALENTS.RAIDS_PER_BOSS)
+        LoadoutReminderDBV2.TALENTS.GENERAL, LoadoutReminderDBV2.TALENTS.BOSS, 
+        LoadoutReminderOptions.TALENTS.RAIDS_PER_BOSS, LoadoutReminder.TALENTS.GetTalentSetNameByID)
 
     -- ### ADDONS
 
@@ -147,7 +150,7 @@ function LoadoutReminder.OPTIONS:Init(reload)
         local addonsDropdownData = LoadoutReminder.OPTIONS:GetAddonsData()
 
         LoadoutReminder.OPTIONS:CreateTabOptionsForType(LoadoutReminder.OPTIONS.optionsPanel.addonsTab, addonsDropdownData, false, 
-        LoadoutReminderDB.ADDONS.GENERAL, LoadoutReminderDB.ADDONS.BOSS, 
+        LoadoutReminderDBV2.ADDONS.GENERAL, LoadoutReminderDBV2.ADDONS.BOSS, 
         LoadoutReminderOptions.ADDONS.RAIDS_PER_BOSS)
     end
 
@@ -170,8 +173,8 @@ function LoadoutReminder.OPTIONS:Init(reload)
     local equipDropdownData = LoadoutReminder.OPTIONS:GetEquipData()
 
     LoadoutReminder.OPTIONS:CreateTabOptionsForType(LoadoutReminder.OPTIONS.optionsPanel.equipTab, equipDropdownData, false, 
-        LoadoutReminderDB.EQUIP.GENERAL, LoadoutReminderDB.EQUIP.BOSS, 
-        LoadoutReminderOptions.EQUIP.RAIDS_PER_BOSS)
+        LoadoutReminderDBV2.EQUIP.GENERAL, LoadoutReminderDBV2.EQUIP.BOSS, 
+        LoadoutReminderOptions.EQUIP.RAIDS_PER_BOSS, LoadoutReminder.EQUIP.GetEquipSetNameByID)
 
     -- #### SPECIALIZATIONS
 
@@ -192,7 +195,7 @@ function LoadoutReminder.OPTIONS:Init(reload)
     local specDropdownData = LoadoutReminder.OPTIONS:GetSpecData()
 
     LoadoutReminder.OPTIONS:CreateTabOptionsForType(LoadoutReminder.OPTIONS.optionsPanel.specTab, specDropdownData, false, 
-        LoadoutReminderDB.SPEC.GENERAL, LoadoutReminderDB.SPEC.BOSS, 
+        LoadoutReminderDBV2.SPEC.GENERAL, LoadoutReminderDBV2.SPEC.BOSS, 
         LoadoutReminderOptions.SPEC.RAIDS_PER_BOSS)
 
     LoadoutReminder.GGUI.TabSystem({LoadoutReminder.OPTIONS.optionsPanel.talentsTab, LoadoutReminder.OPTIONS.optionsPanel.addonsTab, LoadoutReminder.OPTIONS.optionsPanel.equipTab, LoadoutReminder.OPTIONS.optionsPanel.specTab})
@@ -206,7 +209,7 @@ end
 ---@param bossSaveTable table
 ---@param bossToggleSaveTable table
 ---@param savePerSpecID boolean
-function LoadoutReminder.OPTIONS:CreateTabOptionsForType(tab, dropdownData, savePerSpecID, generalSaveTable, bossSaveTable, bossToggleSaveTable)
+function LoadoutReminder.OPTIONS:CreateTabOptionsForType(tab, dropdownData, savePerSpecID, generalSaveTable, bossSaveTable, bossToggleSaveTable, configNameFunction)
     local typeTabContentX=500
     local typeTabContentY=500
 
@@ -241,12 +244,12 @@ function LoadoutReminder.OPTIONS:CreateTabOptionsForType(tab, dropdownData, save
         sizeX=typeTabContentX, sizeY=typeTabContentY,
     })
 
-    local function dropdownClickCallbackInstanceTypes(setID, setName)
+    local function dropdownClickCallbackInstanceTypes(setID, setIdentifier)
         if savePerSpecID then
             local playerSpecID = GetSpecialization()
-            generalSaveTable[playerSpecID][setID] = setName
+            generalSaveTable[playerSpecID][setID] = setIdentifier
         else
-            generalSaveTable[setID] = setName
+            generalSaveTable[setID] = setIdentifier
         end
         LoadoutReminder.MAIN:CheckSituations()
     end
@@ -261,12 +264,21 @@ function LoadoutReminder.OPTIONS:CreateTabOptionsForType(tab, dropdownData, save
     }
     -- Instance Types
     local function createInstanceDropdown(saveTable, savePerSpecID, instanceType, parent, offsetX, offsetY)
-        local initialValue = (savePerSpecID and saveTable[playerSpecID][instanceType]) or saveTable[instanceType]
+
+        local initialLabel = (savePerSpecID and saveTable[playerSpecID][instanceType]) or saveTable[instanceType]
+        local initialValue = nil
+        -- get config name from supposed ID (e.g. Talents) or use name directly
+        if initialLabel and configNameFunction then
+            initialValue = initialLabel
+            initialLabel = configNameFunction(self, initialLabel)
+        else
+            initialValue = initialLabel
+        end
         ---@type GGUI.Dropdown
         tab.dropdowns.INSTANCES[instanceType] = LoadoutReminder.GGUI.Dropdown({
         parent=parent, anchorParent=parent,
         anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=offsetX,offsetY=offsetY,label=LoadoutReminder.CONST.INSTANCE_TYPES_DISPLAY_NAMES[instanceType],
-        initialData=dropdownData, initialValue=initialValue, initialLabel=initialValue or "-",
+        initialData=dropdownData, initialValue=initialValue, initialLabel=initialLabel or LoadoutReminder.CONST.LABEL_NO_SET,
         clickCallback=function (self, _, data)
             dropdownClickCallbackInstanceTypes(instanceType, data)
         end,
@@ -313,12 +325,20 @@ function LoadoutReminder.OPTIONS:CreateTabOptionsForType(tab, dropdownData, save
     
         -- Bosses
         local function createBossDropdown(saveTable, savePerSpecID, boss, parent, offsetX, offsetY)
-            local initialValue = (savePerSpecID and saveTable[playerSpecID][boss]) or saveTable[boss]
+            local initialLabel =(savePerSpecID and saveTable[playerSpecID][boss]) or saveTable[boss]
+            local initialValue = nil
+            -- get config name from supposed ID (e.g. Talents) or use name directly
+            if initialLabel and configNameFunction then
+                initialValue = initialLabel
+                initialLabel = configNameFunction(self, initialLabel)
+            else
+                initialValue = initialLabel
+            end
             ---@type GGUI.Dropdown
             tab.dropdowns.RAID_BOSSES[boss] = LoadoutReminder.GGUI.Dropdown({
             parent=parent, anchorParent=parent,
             anchorA="TOPLEFT",anchorB="TOPLEFT", offsetX=offsetX,offsetY=offsetY,label=LoadoutReminder.CONST.BOSS_NAMES[boss],
-            initialData=dropdownData, initialValue=initialValue, initialLabel=initialValue or "-",
+            initialData=dropdownData, initialValue=initialValue, initialLabel=initialLabel or LoadoutReminder.CONST.LABEL_NO_SET,
             clickCallback=function (self, _, data)
                 dropdownClickCallbackBosses(boss, data)
             end,
@@ -391,36 +411,57 @@ function LoadoutReminder.OPTIONS:ReloadDropdowns()
     local playerSpecID = GetSpecialization()
 
     local bySpecIDTabs = {
-        TALENTS = {LoadoutReminder.OPTIONS.optionsPanel.talentsTab, LoadoutReminder.OPTIONS:GetTalentsData()}
+        TALENTS = {LoadoutReminder.OPTIONS.optionsPanel.talentsTab, LoadoutReminder.OPTIONS:GetTalentsData(), LoadoutReminder.TALENTS.GetTalentSetNameByID}
     }
+
     local normalTabs = {
         ADDONS = {LoadoutReminder.OPTIONS.optionsPanel.addonsTab, LoadoutReminder.OPTIONS:GetAddonsData()},
-        EQUIP = {LoadoutReminder.OPTIONS.optionsPanel.equipTab, LoadoutReminder.OPTIONS:GetEquipData()},
+        EQUIP = {LoadoutReminder.OPTIONS.optionsPanel.equipTab, LoadoutReminder.OPTIONS:GetEquipData(), LoadoutReminder.EQUIP.GetEquipSetNameByID},
         SPEC = {LoadoutReminder.OPTIONS.optionsPanel.specTab, LoadoutReminder.OPTIONS:GetSpecData()}
     }
     -- instanceTypes
     for _, instanceType in pairs(LoadoutReminder.CONST.INSTANCE_TYPES) do
         for reminderType, data in pairs(bySpecIDTabs) do
             local tab = data[1]
-            local dropdownData = data[2]
-
             if tab then
+                local dropdownData = data[2]
+                local configNameFunction = data[3]
+
+                local initialLabel = LoadoutReminderDBV2[reminderType].GENERAL[playerSpecID][instanceType]
+                local initialValue = nil
+                -- get config name from supposed ID (e.g. Talents) or use name directly
+                if initialLabel and configNameFunction then
+                    initialValue = initialLabel
+                    initialLabel = configNameFunction(self, initialLabel)
+                else
+                    initialValue = initialLabel
+                end
+
                 local instanceDropdown = tab.dropdowns.INSTANCES[instanceType]
-                local assignedSet = LoadoutReminderDB[reminderType].GENERAL[playerSpecID][instanceType]
+
                 
-                instanceDropdown:SetData({data=dropdownData, initialValue=assignedSet, initialLabel=assignedSet})
+                instanceDropdown:SetData({data=dropdownData, initialValue= initialValue, initialLabel=initialLabel or LoadoutReminder.CONST.LABEL_NO_SET})
             end
         end
 
         for reminderType, data in pairs(normalTabs) do
             local tab = data[1]
-            local dropdownData = data[2]
-
             if tab then
+                local dropdownData = data[2]
+                local configNameFunction = data[3]
+
                 local instanceDropdown = tab.dropdowns.INSTANCES[instanceType]
-                local assignedSet = LoadoutReminderDB[reminderType].GENERAL[instanceType] or '-'
+                local initialLabel = LoadoutReminderDBV2[reminderType].GENERAL[instanceType]
+                local initialValue = nil
+
+                if initialLabel and configNameFunction then
+                    initialValue = initialLabel
+                    initialLabel = configNameFunction(self, initialLabel)
+                else
+                    initialValue = initialLabel
+                end
                 
-                instanceDropdown:SetData({data=dropdownData, initialValue=assignedSet, initialLabel=assignedSet})
+                instanceDropdown:SetData({data=dropdownData, initialValue=initialValue, initialLabel=initialLabel or LoadoutReminder.CONST.LABEL_NO_SET})
             end
         end
     end
@@ -429,25 +470,45 @@ function LoadoutReminder.OPTIONS:ReloadDropdowns()
     for boss, _ in pairs(LoadoutReminder.CONST.BOSS_NAMES) do
         for reminderType, data in pairs(bySpecIDTabs) do
             local tab = data[1]
-            local dropdownData = data[2]
 
             if tab then
-                local instanceDropdown = tab.dropdowns.RAID_BOSSES[boss]
-                local assignedSet = LoadoutReminderDB[reminderType].BOSS[playerSpecID][boss]
+                local dropdownData = data[2]
+                local configNameFunction = data[3]
                 
-                instanceDropdown:SetData({data=dropdownData, initialValue=assignedSet, initialLabel=assignedSet})
+                local initialLabel =LoadoutReminderDBV2[reminderType].BOSS[playerSpecID][boss]
+                local initialValue = nil
+                -- get config name from supposed ID (e.g. Talents) or use name directly
+                if initialLabel and configNameFunction then
+                    initialValue = initialLabel
+                    initialLabel = configNameFunction(self, initialLabel)
+                else
+                    initialValue = initialLabel
+                end
+                
+                local instanceDropdown = tab.dropdowns.RAID_BOSSES[boss]
+                
+                instanceDropdown:SetData({data=dropdownData, initialValue= initialValue, initialLabel=initialLabel or LoadoutReminder.CONST.LABEL_NO_SET})
             end
         end
-
+        
         for reminderType, data in pairs(normalTabs) do
             local tab = data[1]
-            local dropdownData = data[2]
-
             if tab then
+                local dropdownData = data[2]
+                local configNameFunction = data[3]
+
                 local instanceDropdown = tab.dropdowns.RAID_BOSSES[boss]
-                local assignedSet = LoadoutReminderDB[reminderType].BOSS[boss] or '-'
+                local initialLabel = LoadoutReminderDBV2[reminderType].BOSS[boss]
+                local initialValue = nil
+
+                if initialLabel and configNameFunction then
+                    initialValue = initialLabel
+                    initialLabel = configNameFunction(self, initialLabel)
+                else
+                    initialValue = initialLabel
+                end
                 
-                instanceDropdown:SetData({data=dropdownData, initialValue=assignedSet, initialLabel=assignedSet})
+                instanceDropdown:SetData({data=dropdownData, initialValue=initialValue, initialLabel=initialLabel or LoadoutReminder.CONST.LABEL_NO_SET})
             end
         end
     end

@@ -30,7 +30,7 @@ end
 ---@return LoadoutReminder.ReminderInfo
 function LoadoutReminder.ADDONS:CheckInstanceAddonSet()
     -- check currentSet against general set list
-   local GENERAL_SETS = LoadoutReminderDB.ADDONS.GENERAL
+   local GENERAL_SETS = LoadoutReminderDBV2.ADDONS.GENERAL
    local CURRENT_SET = LoadoutReminder.ADDONS:GetCurrentSet()
 
    local currentSet, assignedSet = LoadoutReminder.UTIL:CheckCurrentSetAgainstInstanceSetList(CURRENT_SET, GENERAL_SETS)
@@ -44,7 +44,7 @@ end
 
 ---@return LoadoutReminder.ReminderInfo | nil
 function LoadoutReminder.ADDONS:CheckBossAddonSet(boss)
-	local bossSet = LoadoutReminderDB.ADDONS.BOSS[boss]
+	local bossSet = LoadoutReminderDBV2.ADDONS.BOSS[boss]
 
 	if bossSet == nil then
 		return nil
