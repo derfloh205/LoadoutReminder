@@ -155,6 +155,9 @@ end
 ---@param configID number
 ---@return string | nil configName
 function LoadoutReminder.TALENTS.BLIZZARD:GetTalentSetNameByID(configID)
+	if configID == Constants.TraitConsts.STARTER_BUILD_TRAIT_CONFIG_ID then
+		return 'Starter Build'
+	end
 	local configInfo = C_Traits.GetConfigInfo(configID)
 	return (configInfo and configInfo.name) or nil
 end
