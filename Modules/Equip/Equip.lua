@@ -35,7 +35,7 @@ function LoadoutReminder.EQUIP:CheckInstanceEquipSet()
     -- print("equip: ")
     -- print("currentSet: " .. tostring(currentSet))
     -- print("assignedSet: " .. tostring(assignedSet))
-    local currentSetName = (currentSetID and LoadoutReminder.EQUIP:GetEquipSetNameByID(currentSetID)) or LoadoutReminder.CONST.NO_EQUIP_SET
+    local currentSetName = (currentSetID and LoadoutReminder.EQUIP:GetEquipSetNameByID(currentSetID)) or LoadoutReminder.CONST.NO_SET_NAME
     local assignedSetName = (assignedSetID and LoadoutReminder.EQUIP:GetEquipSetNameByID(assignedSetID)) or nil
 
 	if currentSetName and assignedSetName then
@@ -54,7 +54,7 @@ function LoadoutReminder.EQUIP:CheckBossEquipSet(boss)
 	end
 
 	local currentSet = LoadoutReminder.EQUIP:GetCurrentSet()
-    local currentSetName = (currentSet and LoadoutReminder.EQUIP:GetEquipSetNameByID(currentSet)) or LoadoutReminder.CONST.NO_EQUIP_SET
+    local currentSetName = (currentSet and LoadoutReminder.EQUIP:GetEquipSetNameByID(currentSet)) or LoadoutReminder.CONST.NO_SET_NAME
     local bossSetName = LoadoutReminder.EQUIP:GetEquipSetNameByID(bossSet)
     if  bossSetName then
         local macroText = LoadoutReminder.EQUIP:GetMacroTextBySet(bossSet)

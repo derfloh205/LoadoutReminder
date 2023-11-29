@@ -35,6 +35,8 @@ function LoadoutReminder.ADDONS:CheckInstanceAddonSet()
 
    local currentSet, assignedSet = LoadoutReminder.UTIL:CheckCurrentSetAgainstInstanceSetList(CURRENT_SET, GENERAL_SETS)
 
+   currentSet = currentSet or LoadoutReminder.CONST.NO_SET_NAME
+
    if currentSet and assignedSet then
 		local macroText = LoadoutReminder.ADDONS:GetMacroTextByListAddon(assignedSet)
 		local buttonText = 'Switch Addons to: '
@@ -50,9 +52,12 @@ function LoadoutReminder.ADDONS:CheckBossAddonSet(boss)
 		return nil
 	end
 
-	local currentSet = LoadoutReminder.ADDONS:GetCurrentSet()
-	local macroText = LoadoutReminder.ADDONS:GetMacroTextByListAddon(bossSet)
-	return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.ADDONS, 'Detected Boss: ', macroText, 'Switch Addons to: ', "Addon Set", currentSet, bossSet)
+	local currentSet = LoadoutReminder.ADDONS:GetCurrentSet() or LoadoutReminder.CONST.NO_SET_NAME
+
+	if currentSet and bossSet then
+		local macroText = LoadoutReminder.ADDONS:GetMacroTextByListAddon(bossSet)
+		return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.ADDONS, 'Detected Boss: ', macroText, 'Switch Addons to: ', "Addon Set", currentSet, bossSet)
+	end
 end
 
 -- Wrapper

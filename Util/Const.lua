@@ -10,7 +10,7 @@ LoadoutReminder.CONST.FRAMES = {
 
 LoadoutReminder.CONST.STARTER_BUILD = "Starter Build"
 LoadoutReminder.CONST.LABEL_NO_SET = '-'
-LoadoutReminder.CONST.NO_EQUIP_SET = '<No Set>'
+LoadoutReminder.CONST.NO_SET_NAME = '<No Set>'
 
 LoadoutReminder.CONST.DEFAULT_BACKDROP_OPTIONS = {
     bgFile = "Interface\\CharacterFrame\\UI-Party-Background",
