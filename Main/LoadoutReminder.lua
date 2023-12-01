@@ -4,6 +4,7 @@ LoadoutReminder.MAIN = CreateFrame("Frame")
 LoadoutReminder.MAIN:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end)
 LoadoutReminder.MAIN:RegisterEvent("ADDON_LOADED")
 LoadoutReminder.MAIN:RegisterEvent("PLAYER_TARGET_CHANGED")
+LoadoutReminder.MAIN:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 LoadoutReminder.MAIN.FRAMES = {}
 
@@ -220,6 +221,13 @@ function LoadoutReminder.MAIN:InitializeSlashCommands()
 end
 
 function LoadoutReminder.MAIN:PLAYER_TARGET_CHANGED() 
+	LoadoutReminder.MAIN.CheckSituations()
+end
+function LoadoutReminder.MAIN:PLAYER_ENTERING_WORLD(isInitialLogin, isReloadingUi) 
+	-- only when entering/exiting an instance, not on login or reload (thats where ADDON_LOADED fires)
+	if isInitialLogin or isReloadingUi then
+		return
+	end
 	LoadoutReminder.MAIN.CheckSituations()
 end
 
