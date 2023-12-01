@@ -17,6 +17,12 @@ function LoadoutReminder.ADDONS:Init()
     }
 
     for name, plugin in pairs(DEPENDENCY_MAP) do
+		local loading, loaded = C_AddOns.IsAddOnLoaded(name)
+		-- try to load the addons on demand if not loaded
+		if not loaded then
+			C_AddOns.LoadAddOn(name)
+		end
+
         if C_AddOns.IsAddOnLoaded(name) then
             LoadoutReminder.ADDONS.LIST_ADDON = plugin
 			LoadoutReminder.ADDONS.AVAILABLE = true
