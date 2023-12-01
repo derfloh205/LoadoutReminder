@@ -415,7 +415,7 @@ function LoadoutReminder.OPTIONS:ReloadDropdowns()
     }
 
     local normalTabs = {
-        ADDONS = {LoadoutReminder.OPTIONS.optionsPanel.addonsTab, LoadoutReminder.OPTIONS:GetAddonsData()},
+        ADDONS = (LoadoutReminder.ADDONS.AVAILABLE and {LoadoutReminder.OPTIONS.optionsPanel.addonsTab, LoadoutReminder.OPTIONS:GetAddonsData()}) or nil,
         EQUIP = {LoadoutReminder.OPTIONS.optionsPanel.equipTab, LoadoutReminder.OPTIONS:GetEquipData(), LoadoutReminder.EQUIP.GetEquipSetNameByID},
         SPEC = {LoadoutReminder.OPTIONS.optionsPanel.specTab, LoadoutReminder.OPTIONS:GetSpecData()}
     }
