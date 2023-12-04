@@ -1,5 +1,6 @@
 _, LoadoutReminder = ...
 
+---@class LoadoutReminder.TALENTS : Frame
 LoadoutReminder.TALENTS = CreateFrame("Frame")
 LoadoutReminder.TALENTS:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end)
 LoadoutReminder.TALENTS:RegisterEvent("TRAIT_CONFIG_UPDATED")
@@ -212,11 +213,8 @@ function LoadoutReminder.TALENTS:CheckInstanceTalentSet()
 		return
 	end
 
-	local specID = GetSpecialization()
-	local INSTANCE_SETS = LoadoutReminderDBV2.TALENTS.GENERAL[specID]
-	local CURRENT_SET = LoadoutReminder.TALENTS:GetCurrentSet()
-
-	local currentSetID, assignedSetID = LoadoutReminder.UTIL:CheckCurrentSetAgainstInstanceSetList(CURRENT_SET, INSTANCE_SETS)
+	local currentSetID = LoadoutReminder.TALENTS:GetCurrentSet()
+	local assignedSetID = LoadoutReminder.DB.TALENTS:GetInstanceSet()
 
 	if currentSetID and assignedSetID then
 		local macroText = LoadoutReminder.TALENTS:GetMacroTextBySet(assignedSetID)
@@ -230,9 +228,8 @@ function LoadoutReminder.TALENTS:CheckInstanceTalentSet()
 end
 
 ---@return LoadoutReminder.ReminderInfo | nil
-function LoadoutReminder.TALENTS:CheckBossTalentSet(boss)
-	local specID = GetSpecialization()
-	local bossSet = LoadoutReminderDBV2.TALENTS.BOSS[specID][boss]
+function LoadoutReminder.TALENTS:CheckBossTalentSet(raid, boss)
+	local bossSet = LoadoutReminder.DB.TALENTS:GetRaidSet(raid, boss)
 	
 	if bossSet == nil then
 		return nil
@@ -258,5 +255,5 @@ function LoadoutReminder.TALENTS:HasRaidTalentsPerBoss()
 		return false
 	end
 
-	return LoadoutReminderOptions.TALENTS.RAIDS_PER_BOSS[raid]
+	return LoadoutReminderOptionsV2.TALENTS.RAIDS_PER_BOSS[raid]
 end

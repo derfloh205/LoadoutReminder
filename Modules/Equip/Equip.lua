@@ -1,5 +1,6 @@
 _, LoadoutReminder = ...
 
+---@class LoadoutReminder.EQUIP : Frame
 LoadoutReminder.EQUIP = CreateFrame("Frame")
 LoadoutReminder.EQUIP:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end)
 LoadoutReminder.EQUIP:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
@@ -27,10 +28,8 @@ function LoadoutReminder.EQUIP:CheckInstanceEquipSet()
 		return
 	end
 
-	local INSTANCE_SETS = LoadoutReminderDBV2.EQUIP.GENERAL
-	local CURRENT_SET = LoadoutReminder.EQUIP:GetCurrentSet()
-
-	local currentSetID, assignedSetID = LoadoutReminder.UTIL:CheckCurrentSetAgainstInstanceSetList(CURRENT_SET, INSTANCE_SETS)
+	local currentSetID = LoadoutReminder.EQUIP:GetCurrentSet()
+	local assignedSetID = LoadoutReminder.DB.EQUIP:GetInstanceSet()
 
     -- print("equip: ")
     -- print("currentSet: " .. tostring(currentSet))
@@ -46,8 +45,8 @@ function LoadoutReminder.EQUIP:CheckInstanceEquipSet()
 end
 
 ---@return LoadoutReminder.ReminderInfo | nil
-function LoadoutReminder.EQUIP:CheckBossEquipSet(boss)
-	local bossSet = LoadoutReminderDBV2.EQUIP.BOSS[boss]
+function LoadoutReminder.EQUIP:CheckBossEquipSet(raid, boss)
+	local bossSet = LoadoutReminder.DB.EQUIP:GetRaidSet(raid, boss)
 
 	if bossSet == nil then
 		return nil
@@ -94,7 +93,7 @@ function LoadoutReminder.EQUIP:HasRaidEquipPerBoss()
 		return false
 	end
 
-	return LoadoutReminderOptions.EQUIP.RAIDS_PER_BOSS[raid]
+	return LoadoutReminderOptionsV2.EQUIP.RAIDS_PER_BOSS[raid]
 end
 
 function LoadoutReminder.EQUIP:GetMacroTextBySet(assignedSetID)

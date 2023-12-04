@@ -19,18 +19,8 @@ function LoadoutReminder.UTIL:GetCurrentInstanceType()
 	end
 end
 
----@return string | nil, string | nil
-function LoadoutReminder.UTIL:CheckCurrentSetAgainstInstanceSetList(currentSet, generalSets)
-	local instanceType = LoadoutReminder.UTIL:GetCurrentInstanceType()
-
-	local instanceSet = generalSets[instanceType]
-
-	if instanceSet == currentSet or instanceSet == nil then
-		-- same set or no set assigned to this instance type
-		return
-	end
-
-	return currentSet, instanceSet
+function LoadoutReminder.UTIL:GetCurrentRaid()
+	return LoadoutReminder.CONST.INSTANCE_IDS[select(8, GetInstanceInfo())]
 end
 
 local tryCount = 10

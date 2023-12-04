@@ -17,47 +17,10 @@ LoadoutReminder.MAIN.READY = false
 
 LoadoutReminderGGUIConfig = LoadoutReminderGGUIConfig or {}
 
-LoadoutReminderDBV2 = LoadoutReminderDBV2 or {
-	TALENTS = {
-		GENERAL = {},
-		BOSS = {},
-	},
-	ADDONS = {
-		GENERAL = {},
-		BOSS = {},
-	},
-	EQUIP = {
-		GENERAL = {},
-		BOSS = {},
-	},
-	SPEC = {
-		GENERAL = {},
-		BOSS = {},
-	},
-}
+LoadoutReminderDBV3 = LoadoutReminderDBV3 or {}
 
-LoadoutReminderOptions = LoadoutReminderOptions or {
-	TALENTS = {
-		RAIDS_PER_BOSS = {}
-	},
-	EQUIP = {
-		RAIDS_PER_BOSS = {}
-	},
-	ADDONS = {
-		RAIDS_PER_BOSS = {}
-	},
-	SPEC = {
-		RAIDS_PER_BOSS = {}
-	},
+LoadoutReminderOptionsV2 = LoadoutReminderOptionsV2 or {
 }
-
-function LoadoutReminder.MAIN:InitSpecIDTables()
-	-- init db for every spec for this character
-	for specIndex = 1, GetNumSpecializations() do
-		LoadoutReminderDBV2.TALENTS.GENERAL[specIndex] = LoadoutReminderDBV2.TALENTS.GENERAL[specIndex] or {}
-		LoadoutReminderDBV2.TALENTS.BOSS[specIndex] = LoadoutReminderDBV2.TALENTS.BOSS[specIndex] or {}
-    end
-end
 
 function LoadoutReminder.MAIN:Init()
 	if not LoadoutReminder.UTIL:IsNecessaryInfoLoaded() then
@@ -66,8 +29,8 @@ function LoadoutReminder.MAIN:Init()
 		return	
 	end
 
+	LoadoutReminder.ADDONS:Init()
 	LoadoutReminder.MAIN:InitializeSlashCommands()
-	LoadoutReminder.MAIN:InitSpecIDTables()
 	LoadoutReminder.OPTIONS:Init()
 	LoadoutReminder.REMINDER_FRAME.FRAMES:Init()	
 
@@ -92,6 +55,7 @@ function LoadoutReminder.MAIN:ADDON_LOADED(addon_name)
 end
 
 function LoadoutReminder.MAIN.CheckSituations()
+
 	-- check only when player is not in combat and only if everything was initialized
 	if not LoadoutReminder.MAIN.READY or UnitAffectingCombat('player') then
 		return
@@ -121,7 +85,7 @@ function LoadoutReminder.MAIN:CheckInstanceTypes()
 		return nil
 	end
 
-	-- print("Check Instance Reminders")
+	--print("Check Instance Reminders")
 	local instanceType = LoadoutReminder.UTIL:GetCurrentInstanceType()
 	local talentReminderInfo = LoadoutReminder.TALENTS:CheckInstanceTalentSet()
 	local addonReminderInfo = (LoadoutReminder.ADDONS.AVAILABLE and LoadoutReminder.ADDONS:CheckInstanceAddonSet()) or nil
@@ -173,12 +137,16 @@ function LoadoutReminder.MAIN:CheckBoss()
 		return activeReminders -- npc is no boss
 	end
 
-	
+	local raid = LoadoutReminder.UTIL:GetCurrentRaid()-- or LoadoutReminder.CONST.RAIDS.AMIRDRASSIL -- DEBUG
+
+	if not raid then
+		return
+	end
 	-- print("check boss reminders..")
-	local talentReminderInfo = LoadoutReminder.TALENTS:CheckBossTalentSet(boss)
-	local addonReminderInfo = (LoadoutReminder.ADDONS.AVAILABLE and LoadoutReminder.ADDONS:CheckBossAddonSet(boss)) or nil
-	local equipReminderInfo = LoadoutReminder.EQUIP:CheckBossEquipSet(boss)
-	local specReminderInfo = LoadoutReminder.SPEC:CheckBossSpecSet(boss)
+	local talentReminderInfo = LoadoutReminder.TALENTS:CheckBossTalentSet(raid, boss)
+	local addonReminderInfo = (LoadoutReminder.ADDONS.AVAILABLE and LoadoutReminder.ADDONS:CheckBossAddonSet(raid, boss)) or nil
+	local equipReminderInfo = LoadoutReminder.EQUIP:CheckBossEquipSet(raid, boss)
+	local specReminderInfo = LoadoutReminder.SPEC:CheckBossSpecSet(raid, boss)
 
 	-- print("talentReminderInfo: " .. tostring(talentReminderInfo))
 	-- print("addonReminderInfo: " .. tostring(addonReminderInfo))

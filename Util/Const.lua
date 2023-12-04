@@ -48,7 +48,8 @@ LoadoutReminder.CONST.BOSS_NAMES = {
 LoadoutReminder.CONST.BOSS_ID_MAP = {
     -- Amirdrassil
     [209333] = 'AMIRDRASSIL_GNARLROOT',
-    -- [205647] = 'AMIRDRASSIL_GNARLROOT', --debug Kalecgos
+    --[205647] = 'AMIRDRASSIL_GNARLROOT', --debug Kalecgos
+    --[213930] = 'AMIRDRASSIL_GNARLROOT', --debug Koszaru
     [200926] = 'AMIRDRASSIL_IGIRA',
     [208478] = 'AMIRDRASSIL_VOLCOROSS',
         -- Council of Dreams: Urctos, Aerwynn, Pip
@@ -109,9 +110,9 @@ LoadoutReminder.CONST.INSTANCE_TYPES = {
 LoadoutReminder.CONST.INSTANCE_TYPES_DISPLAY_NAMES = {
     DUNGEON = 'Dungeon',
     RAID = 'Raid',
-    OPENWORLD = 'Open World',
     BG = 'Battleground',
     ARENA = 'Arena',
+    OPENWORLD = 'Open World',
 }
 
 ---@enum LoadoutReminder.REMINDER_TYPES
@@ -126,6 +127,11 @@ LoadoutReminder.CONST.REMINDER_TYPES = {
 LoadoutReminder.CONST.RAIDS = {
     AMIRDRASSIL = 'AMIRDRASSIL',
     ABERRUS = 'ABERRUS',
+}
+
+LoadoutReminder.CONST.RAID_DISPLAY_NAMES = {
+    AMIRDRASSIL = 'Amirdrassil',
+    ABERRUS = 'Aberrus',
 }
 
 --- List: https://wowpedia.fandom.com/wiki/InstanceID

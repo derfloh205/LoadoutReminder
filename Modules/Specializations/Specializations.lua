@@ -1,5 +1,6 @@
 _, LoadoutReminder = ...
 
+---@class LoadoutReminder.SPEC : Frame
 LoadoutReminder.SPEC = CreateFrame("Frame")
 LoadoutReminder.SPEC:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end)
 LoadoutReminder.SPEC:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
@@ -12,10 +13,8 @@ function LoadoutReminder.SPEC:CheckInstanceSpecSet()
 		return
 	end
 
-	local INSTANCE_SETS = LoadoutReminderDBV2.SPEC.GENERAL
-	local CURRENT_SET = LoadoutReminder.SPEC:GetCurrentSet()
-
-	local currentSet, assignedSet = LoadoutReminder.UTIL:CheckCurrentSetAgainstInstanceSetList(CURRENT_SET, INSTANCE_SETS)
+	local currentSet = LoadoutReminder.SPEC:GetCurrentSet()
+	local assignedSet = LoadoutReminder.DB.SPEC:GetInstanceSet()
 
 	if currentSet and assignedSet then
 		local macroText = LoadoutReminder.SPEC:GetMacroTextBySet(assignedSet)
@@ -25,8 +24,8 @@ function LoadoutReminder.SPEC:CheckInstanceSpecSet()
 end
 
 ---@return LoadoutReminder.ReminderInfo | nil
-function LoadoutReminder.SPEC:CheckBossSpecSet(boss)
-	local bossSet = LoadoutReminderDBV2.SPEC.BOSS[boss]
+function LoadoutReminder.SPEC:CheckBossSpecSet(raid, boss)
+	local bossSet = LoadoutReminder.DB.SPEC:GetRaidSet(raid, boss)
 
 	if bossSet == nil then
 		return nil
@@ -61,7 +60,7 @@ function LoadoutReminder.SPEC:HasRaidSpecPerBoss()
 		return false
 	end
 
-	return LoadoutReminderOptions.SPEC.RAIDS_PER_BOSS[raid]
+	return LoadoutReminderOptionsV2.SPEC.RAIDS_PER_BOSS[raid]
 end
 
 function LoadoutReminder.SPEC:GetMacroTextBySet(assignedSet)
