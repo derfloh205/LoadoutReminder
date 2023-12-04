@@ -408,6 +408,11 @@ end
 
 function LoadoutReminder.OPTIONS:ReloadDropdowns()
 
+    -- only if everything is initialized
+    if not LoadoutReminder.MAIN.READY then
+        return
+    end
+
     local playerSpecID = GetSpecialization()
 
     local bySpecIDTabs = {

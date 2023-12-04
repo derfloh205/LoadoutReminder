@@ -1,13 +1,19 @@
 LoadoutReminderAddonName, LoadoutReminder = ...
 
+---@class LoadoutReminder.MAIN : Frame
 LoadoutReminder.MAIN = CreateFrame("Frame")
 LoadoutReminder.MAIN:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end)
 LoadoutReminder.MAIN:RegisterEvent("ADDON_LOADED")
 LoadoutReminder.MAIN:RegisterEvent("PLAYER_TARGET_CHANGED")
 LoadoutReminder.MAIN:RegisterEvent("PLAYER_ENTERING_WORLD")
 LoadoutReminder.MAIN:RegisterEvent("PLAYER_LEAVE_COMBAT")
+LoadoutReminder.MAIN:RegisterEvent("TRAIT_CONFIG_LIST_UPDATED")
+LoadoutReminder.MAIN:RegisterEvent("TRAIT_CONFIG_CREATED")
+LoadoutReminder.MAIN:RegisterEvent("TRAIT_CONFIG_DELETED")
+LoadoutReminder.MAIN:RegisterEvent("TRAIT_CONFIG_UPDATED")
 
 LoadoutReminder.MAIN.FRAMES = {}
+LoadoutReminder.MAIN.READY = false
 
 LoadoutReminderGGUIConfig = LoadoutReminderGGUIConfig or {}
 
@@ -69,6 +75,9 @@ function LoadoutReminder.MAIN:Init()
 	local reminderFrame = LoadoutReminder.GGUI:GetFrame(LoadoutReminder.MAIN.FRAMES, LoadoutReminder.CONST.FRAMES.REMINDER_FRAME)
 	reminderFrame:RestoreSavedConfig(UIParent)
 
+	-- everything initalized
+	LoadoutReminder.MAIN.READY = true
+
 	-- Make first check after everything is loaded
 	LoadoutReminder.MAIN.CheckSituations()
 end
@@ -83,8 +92,8 @@ function LoadoutReminder.MAIN:ADDON_LOADED(addon_name)
 end
 
 function LoadoutReminder.MAIN.CheckSituations()
-	-- check only when player is not in combat
-	if UnitAffectingCombat('player') then
+	-- check only when player is not in combat and only if everything was initialized
+	if not LoadoutReminder.MAIN.READY or UnitAffectingCombat('player') then
 		return
 	end
 
@@ -224,6 +233,8 @@ function LoadoutReminder.MAIN:InitializeSlashCommands()
 		end
 	end
 end
+
+-- EVENTS
 function LoadoutReminder.MAIN:PLAYER_TARGET_CHANGED() 
 	LoadoutReminder.MAIN.CheckSituations()
 end
@@ -236,4 +247,28 @@ function LoadoutReminder.MAIN:PLAYER_ENTERING_WORLD(isInitialLogin, isReloadingU
 end
 function LoadoutReminder.MAIN:PLAYER_LEAVE_COMBAT() 
 	LoadoutReminder.MAIN.CheckSituations()
+end
+function LoadoutReminder.MAIN:TRAIT_CONFIG_LIST_UPDATED() 
+	RunNextFrame(function ()
+		LoadoutReminder.MAIN.CheckSituations()
+		LoadoutReminder.OPTIONS:ReloadDropdowns()
+	end)
+end
+function LoadoutReminder.MAIN:TRAIT_CONFIG_CREATED() 
+	RunNextFrame(function ()
+		LoadoutReminder.MAIN.CheckSituations()
+		LoadoutReminder.OPTIONS:ReloadDropdowns()
+	end)
+end
+function LoadoutReminder.MAIN:TRAIT_CONFIG_DELETED() 
+	RunNextFrame(function ()
+		LoadoutReminder.MAIN.CheckSituations()
+		LoadoutReminder.OPTIONS:ReloadDropdowns()
+	end)
+end
+function LoadoutReminder.MAIN:TRAIT_CONFIG_UPDATED() 
+	RunNextFrame(function ()
+		LoadoutReminder.MAIN.CheckSituations()
+		LoadoutReminder.OPTIONS:ReloadDropdowns()
+	end)
 end
