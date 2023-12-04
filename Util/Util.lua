@@ -98,3 +98,14 @@ function LoadoutReminder.UTIL:FindAndReplaceSetInDB(oldSet, newSet, saveTable, p
 		end
 	end
 end
+
+function LoadoutReminder.UTIL:GetTargetNPCID()
+	if UnitExists("target") then
+		local targetGUID = UnitGUID("target")
+		local _, _, _, _, _, npcID = strsplit("-", targetGUID)
+
+		return tonumber(npcID)
+	end
+
+	return nil
+end

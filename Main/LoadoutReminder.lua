@@ -5,6 +5,7 @@ LoadoutReminder.MAIN:SetScript("OnEvent", function(self, event, ...) self[event]
 LoadoutReminder.MAIN:RegisterEvent("ADDON_LOADED")
 LoadoutReminder.MAIN:RegisterEvent("PLAYER_TARGET_CHANGED")
 LoadoutReminder.MAIN:RegisterEvent("PLAYER_ENTERING_WORLD")
+LoadoutReminder.MAIN:RegisterEvent("PLAYER_LEAVE_COMBAT")
 
 LoadoutReminder.MAIN.FRAMES = {}
 
@@ -82,6 +83,11 @@ function LoadoutReminder.MAIN:ADDON_LOADED(addon_name)
 end
 
 function LoadoutReminder.MAIN.CheckSituations()
+	-- check only when player is not in combat
+	if UnitAffectingCombat('player') then
+		return
+	end
+
 	local activeInstanceReminders = LoadoutReminder.MAIN:CheckInstanceTypes()
 	local activeBossReminders = LoadoutReminder.MAIN:CheckBoss()
 
@@ -147,7 +153,7 @@ function LoadoutReminder.MAIN:CheckBoss()
 	end
 
 	-- get name of player's target
-	local npcID = LoadoutReminder.MAIN:GetTargetNPCID()
+	local npcID = LoadoutReminder.UTIL:GetTargetNPCID()
 	if not npcID then
 		return activeReminders -- no target
 	end
@@ -189,7 +195,6 @@ function LoadoutReminder.MAIN:CheckBoss()
 		specReminderInfo and not specReminderInfo:IsAssignedSet()
 	)
 end
-
 function LoadoutReminder.MAIN:InitializeSlashCommands()
 	SLASH_LOADOUTREMINDER1 = "/loadoutreminder"
 	SLASH_LOADOUTREMINDER2 = "/lor"
@@ -219,7 +224,6 @@ function LoadoutReminder.MAIN:InitializeSlashCommands()
 		end
 	end
 end
-
 function LoadoutReminder.MAIN:PLAYER_TARGET_CHANGED() 
 	LoadoutReminder.MAIN.CheckSituations()
 end
@@ -230,14 +234,6 @@ function LoadoutReminder.MAIN:PLAYER_ENTERING_WORLD(isInitialLogin, isReloadingU
 	end
 	LoadoutReminder.MAIN.CheckSituations()
 end
-
-function LoadoutReminder.MAIN:GetTargetNPCID()
-    if UnitExists("target") then
-        local targetGUID = UnitGUID("target")
-        local _, _, _, _, _, npcID = strsplit("-", targetGUID)
-
-        return tonumber(npcID)
-    end
-
-    return nil
+function LoadoutReminder.MAIN:PLAYER_LEAVE_COMBAT() 
+	LoadoutReminder.MAIN.CheckSituations()
 end
