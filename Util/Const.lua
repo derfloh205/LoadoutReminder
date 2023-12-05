@@ -127,7 +127,7 @@ LoadoutReminder.CONST.BOSS_ID_MAP = {
     [9999] = "DEFAULT",
     -- Amirdrassil
     [209333] = 'AMIRDRASSIL_GNARLROOT',
-    --[205647] = 'AMIRDRASSIL_GNARLROOT', --debug Kalecgos
+    --[205772] = 'AMIRDRASSIL_GNARLROOT', --debug Kalecgos
     --[213930] = 'AMIRDRASSIL_GNARLROOT', --debug Koszaru
     [200926] = 'AMIRDRASSIL_IGIRA',
     [208478] = 'AMIRDRASSIL_VOLCOROSS',

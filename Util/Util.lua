@@ -1,10 +1,14 @@
 _, LoadoutReminder = ...
 
 LoadoutReminder.UTIL = {}
+local debug = false
 
 function LoadoutReminder.UTIL:GetCurrentInstanceType()
 
-	
+	-- -- DEBUG
+	if debug then
+		return LoadoutReminder.CONST.INSTANCE_TYPES.RAID
+	end
 
 	local inInstance, instanceType = IsInInstance()
 	if inInstance then
@@ -23,6 +27,10 @@ function LoadoutReminder.UTIL:GetCurrentInstanceType()
 end
 
 function LoadoutReminder.UTIL:GetCurrentRaid()
+	-- DEBUG
+	if debug then
+		return LoadoutReminder.CONST.INSTANCE_IDS[2549] -- Amirdrassil
+	end
 	return LoadoutReminder.CONST.INSTANCE_IDS[select(8, GetInstanceInfo())]
 end
 ---@return LoadoutReminder.DIFFICULTY difficulty

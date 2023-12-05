@@ -2,6 +2,9 @@ _, LoadoutReminder = ...
 
 LoadoutReminder.OPTIONS = {}
 LoadoutReminder.OPTIONS.DROPDOWNS = {}
+LoadoutReminder.OPTIONS.PERBOSSCHECKBOXES = {}
+LoadoutReminder.OPTIONS.HELPICONS_DEFAULT_RAID = {}
+LoadoutReminder.OPTIONS.HELPICONS_DEFAULT_DIFF = {}
 
 function LoadoutReminder.OPTIONS:GetTalentsData()
     -- #### TALENTS
@@ -280,25 +283,43 @@ function LoadoutReminder.OPTIONS:CreateRaidTabList(parent, dropdownData)
         local perBossOptionKey = LoadoutReminder.OPTIONS:GetPerBossOptionKey(selectedDifficulty, raid)
 
         if raid ~= LoadoutReminder.CONST.RAIDS.DEFAULT then
+            ---@class LoadoutReminder.PerBossCheckbox : GGUI.Checkbox
             tab.content.perBossCheckbox = LoadoutReminder.GGUI.Checkbox({
                 parent=tab.content, 
                 anchorParent=tab.content, 
                 anchorA="TOP", anchorB="TOP", offsetX=-135, offsetY=10,
                 initialValue=LoadoutReminderOptionsV2[perBossOptionKey],
                 label="Boss Loadouts",
-                tooltip="When this is checked, you will be reminded for individual bosses for the selected raid.",
+                tooltip="When this is checked, you will be reminded for individual bosses for the selected raid of the selected difficulty.",
                 clickCallback=function (_, checked)
-                    print("clicked per boss cb: " .. raid .. ": " .. tostring(checked))
-                    LoadoutReminderOptionsV2[perBossOptionKey] = checked
+                    local difficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST.INSTANCE_TYPES.RAID)
+                    local key = LoadoutReminder.OPTIONS:GetPerBossOptionKey(difficulty, raid)
+                    LoadoutReminderOptionsV2[key] = checked
+                    LoadoutReminder.MAIN:CheckSituations()
                 end
             })
-        else
-            LoadoutReminder.GGUI.HelpIcon({parent=tab.content, anchorParent=tab.content,
-                anchorA="TOP", anchorB="TOP", offsetX=-90, offsetY=0,
-                text="You will be reminded of this loadout when loading into any raid (of the selected difficulty)\nwhere individual boss loadouts are toggled off",
-            })
-        end
+            tab.content.perBossCheckbox.Reload = function ()
+                local difficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST.INSTANCE_TYPES.RAID)
+                local key = LoadoutReminder.OPTIONS:GetPerBossOptionKey(difficulty, raid)
+                tab.content.perBossCheckbox:SetChecked(LoadoutReminderOptionsV2[key])
+            end
+            table.insert(LoadoutReminder.OPTIONS.PERBOSSCHECKBOXES, tab.content.perBossCheckbox)
 
+            tab.content.perBossCheckbox:Hide() -- cause initial difficulty is default and thats where we do not want the checkbox to show
+
+            ---@class GGUI.HelpIcon
+            table.insert(LoadoutReminder.OPTIONS.HELPICONS_DEFAULT_DIFF, LoadoutReminder.GGUI.HelpIcon({parent=tab.content, anchorParent=tab.content,
+                anchorA="TOP", anchorB="TOP", offsetX=-90, offsetY=0,
+                text="You will be reminded of this loadouts when loading into the selected raid of any difficulty\nwhere individual boss loadouts are toggled" .. 
+                LoadoutReminder.GUTIL:ColorizeText(" ON", LoadoutReminder.GUTIL.COLORS.GREEN),
+            }))
+        else
+            table.insert(LoadoutReminder.OPTIONS.HELPICONS_DEFAULT_RAID, LoadoutReminder.GGUI.HelpIcon({parent=tab.content, anchorParent=tab.content,
+                anchorA="TOP", anchorB="TOP", offsetX=-90, offsetY=0,
+                text="You will be reminded of this loadout when loading into any raid (of the selected difficulty)\nwhere individual boss loadouts are toggled" .. 
+                LoadoutReminder.GUTIL:ColorizeText(" OFF", LoadoutReminder.GUTIL.COLORS.RED),
+            }))
+        end
 
         local bosses = LoadoutReminder.GUTIL:Filter(LoadoutReminder.CONST.BOSS_ID_MAP, function (boss)
             return string.sub(boss, 1, string.len(raid)) == raid
@@ -315,10 +336,10 @@ function LoadoutReminder.OPTIONS:CreateRaidTabList(parent, dropdownData)
                     LoadoutReminder.DB.TALENTS:SaveRaidSet(raid, tabID, data)
                 end,
                 Get = function (_, tabID)
-                    return LoadoutReminder.DB.TALENTS:GetRaidSet(raid, tabID, selectedDifficulty)
+                    return LoadoutReminder.DB.TALENTS:GetRaidSet(raid, tabID, LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST.INSTANCE_TYPES.RAID))
                 end,
                 GetInitialData = function (_, tabID)
-                    local setID = LoadoutReminder.DB.TALENTS:GetRaidSet(raid, tabID, selectedDifficulty)
+                    local setID = LoadoutReminder.DB.TALENTS:GetRaidSet(raid, tabID, LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST.INSTANCE_TYPES.RAID))
                     local label = (setID and LoadoutReminder.TALENTS:GetTalentSetNameByID(setID)) or nil
                     return {
                         label=label,
@@ -331,10 +352,10 @@ function LoadoutReminder.OPTIONS:CreateRaidTabList(parent, dropdownData)
                     LoadoutReminder.DB.EQUIP:SaveRaidSet(raid, tabID, data)
                 end,
                 Get = function (_, tabID)
-                    return LoadoutReminder.DB.EQUIP:GetRaidSet(raid, tabID, selectedDifficulty)
+                    return LoadoutReminder.DB.EQUIP:GetRaidSet(raid, tabID, LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST.INSTANCE_TYPES.RAID))
                 end,
                 GetInitialData = function (_, tabID)
-                    local setID = LoadoutReminder.DB.EQUIP:GetRaidSet(raid, tabID, selectedDifficulty)
+                    local setID = LoadoutReminder.DB.EQUIP:GetRaidSet(raid, tabID, LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST.INSTANCE_TYPES.RAID))
                     local label = (setID and LoadoutReminder.EQUIP:GetEquipSetNameByID(setID)) or nil
                     return {
                         label=label,
@@ -347,10 +368,10 @@ function LoadoutReminder.OPTIONS:CreateRaidTabList(parent, dropdownData)
                     LoadoutReminder.DB.SPEC:SaveRaidSet(raid, tabID, data)
                 end,
                 Get = function (_, tabID)
-                    return LoadoutReminder.DB.SPEC:GetRaidSet(raid, tabID, selectedDifficulty)
+                    return LoadoutReminder.DB.SPEC:GetRaidSet(raid, tabID, LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST.INSTANCE_TYPES.RAID))
                 end,
                 GetInitialData = function (_, tabID)
-                    local setName = LoadoutReminder.DB.SPEC:GetRaidSet(raid, tabID, selectedDifficulty)
+                    local setName = LoadoutReminder.DB.SPEC:GetRaidSet(raid, tabID, LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST.INSTANCE_TYPES.RAID))
                     return {
                         label=setName,
                         value=setName
@@ -362,10 +383,10 @@ function LoadoutReminder.OPTIONS:CreateRaidTabList(parent, dropdownData)
                     LoadoutReminder.DB.ADDONS:SaveRaidSet(raid, tabID, data)
                 end,
                 Get = function (_, tabID)
-                    return LoadoutReminder.DB.ADDONS:GetRaidSet(raid, tabID, selectedDifficulty)
+                    return LoadoutReminder.DB.ADDONS:GetRaidSet(raid, tabID, LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST.INSTANCE_TYPES.RAID))
                 end,
                 GetInitialData = function (_, tabID)
-                    local setName = LoadoutReminder.DB.ADDONS:GetRaidSet(raid, tabID, selectedDifficulty)
+                    local setName = LoadoutReminder.DB.ADDONS:GetRaidSet(raid, tabID, LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST.INSTANCE_TYPES.RAID))
                     return {
                         label=setName,
                         value=setName
@@ -515,6 +536,10 @@ end
 
 function LoadoutReminder.OPTIONS:ReloadDropdowns()
 
+    if not LoadoutReminder.MAIN.READY then
+        return
+    end
+
     local dropdownData = {
         TALENTS = LoadoutReminder.OPTIONS:GetTalentsData(),
         EQUIP = LoadoutReminder.OPTIONS:GetEquipData(),
@@ -522,8 +547,19 @@ function LoadoutReminder.OPTIONS:ReloadDropdowns()
         ADDONS = LoadoutReminder.OPTIONS:GetAddonsData()
     }
 
+    local selectedDifficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST.INSTANCE_TYPES.RAID)
+
     for _, dropdown in pairs(LoadoutReminder.OPTIONS.DROPDOWNS) do
         dropdown:Reload(dropdownData)
+    end
+
+    for _, checkBox in pairs(LoadoutReminder.OPTIONS.PERBOSSCHECKBOXES) do
+        checkBox:Reload()
+        checkBox:SetVisible(selectedDifficulty ~= LoadoutReminder.CONST.DIFFICULTY.DEFAULT)
+    end
+
+    for _, helpIcon in pairs(LoadoutReminder.OPTIONS.HELPICONS_DEFAULT_DIFF) do
+        helpIcon:SetVisible(selectedDifficulty == LoadoutReminder.CONST.DIFFICULTY.DEFAULT)
     end
 end
 
@@ -540,9 +576,7 @@ function LoadoutReminder.OPTIONS:GetPerBossOptionKey(difficulty, raid)
 end
 
 function LoadoutReminder.OPTIONS:HasRaidLoadoutsPerBoss()
-	local _, _, _, _, _, _, _, instanceID = GetInstanceInfo()
-	local raid = LoadoutReminder.CONST.INSTANCE_IDS[instanceID]
-
+	local raid = LoadoutReminder.UTIL:GetCurrentRaid()
 	if not raid then
 		return false
 	end

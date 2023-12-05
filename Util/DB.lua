@@ -31,11 +31,12 @@ function LoadoutReminder.DB.TALENTS:GetInstanceSet(instanceType, difficulty)
 	difficulty = difficulty or LoadoutReminder.UTIL:GetInstanceDifficulty()
 	if instanceType == LoadoutReminder.CONST.INSTANCE_TYPES.RAID then
 		local function check(difficulty)
-			-- get instance set is for default raid set, which is saved in the default raid as the default "boss" of that difficulty
-		LoadoutReminderDBV3.RAIDS[difficulty] = LoadoutReminderDBV3.RAIDS[difficulty] or {}
-		LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT = LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT or {}
-		LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT.TALENTS = LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT.TALENTS or {}
-		return LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT.TALENTS[specID]
+		-- get instance set is for default raid set, which is saved in the default raid as the default "boss" of that difficulty
+			LoadoutReminderDBV3.RAIDS[difficulty] = LoadoutReminderDBV3.RAIDS[difficulty] or {}
+			LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT = LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT or {}
+			LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT.DEFAULT = LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT.DEFAULT or {}
+			LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT.DEFAULT.TALENTS = LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT.DEFAULT.TALENTS or {}
+			return LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT.DEFAULT.TALENTS[specID]
 		end
 		-- if we are checking the situation fall back to default difficulty if there is no set for the chosen difficulty
 		if checkSituation then
@@ -123,7 +124,8 @@ function LoadoutReminder.DB.EQUIP:GetInstanceSet(instanceType, difficulty)
 			-- get instance set is for default raid set, which is saved in the default raid as the default "boss" of that difficulty
 			LoadoutReminderDBV3.RAIDS[difficulty] = LoadoutReminderDBV3.RAIDS[difficulty] or {}
 			LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT = LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT or {}
-			return LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT.EQUIP
+			LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT.DEFAULT = LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT.DEFAULT or {}
+			return LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT.DEFAULT.EQUIP
 		end
 		-- if we are checking the situation fall back to default difficulty if there is no set for the chosen difficulty
 		if checkSituation then
@@ -206,7 +208,8 @@ function LoadoutReminder.DB.SPEC:GetInstanceSet(instanceType, difficulty)
 			-- get instance set is for default raid set, which is saved in the default raid as the default "boss" of that difficulty
 			LoadoutReminderDBV3.RAIDS[difficulty] = LoadoutReminderDBV3.RAIDS[difficulty] or {}
 			LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT = LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT or {}
-			return LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT.SPEC
+			LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT.DEFAULT = LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT.DEFAULT or {}
+			return LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT.DEFAULT.SPEC
 		end
 		-- if we are checking the situation fall back to default difficulty if there is no set for the chosen difficulty
 		if checkSituation then
@@ -288,7 +291,8 @@ function LoadoutReminder.DB.ADDONS:GetInstanceSet(instanceType, difficulty)
 			-- get instance set is for default raid set, which is saved in the default raid as the default "boss" of that difficulty
 			LoadoutReminderDBV3.RAIDS[difficulty] = LoadoutReminderDBV3.RAIDS[difficulty] or {}
 			LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT = LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT or {}
-			return LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT.ADDONS
+			LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT.DEFAULT = LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT.DEFAULT or {}
+			return LoadoutReminderDBV3.RAIDS[difficulty].DEFAULT.DEFAULT.ADDONS
 		end
 		-- if we are checking the situation fall back to default difficulty if there is no set for the chosen difficulty
 		if checkSituation then
