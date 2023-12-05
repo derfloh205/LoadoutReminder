@@ -442,6 +442,7 @@ function LoadoutReminder.OPTIONS:CreateTabListWithDropdowns(parent, idTable, nam
             parent=tab.content,anchorParent=tab.content,anchorA="TOP", anchorB="TOP", offsetY=titleOffsetY, 
             text=label, offsetX=titleOffsetX+baseOffsetX,
         })
+
         LoadoutReminder.OPTIONS:CreateReminderTypeDropdowns(tab.content, tab.content.title.frame, "TOP", "BOTTOM", 0, -20, dropdownData, dbFunctions, tabID)
         table.insert(tabs, tab)
         --

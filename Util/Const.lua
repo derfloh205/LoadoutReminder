@@ -22,7 +22,7 @@ LoadoutReminder.CONST.DEFAULT_BACKDROP_OPTIONS = {
 }
 
 LoadoutReminder.CONST.BOSS_NAMES = {
-    DEFAULT = "Default",
+    DEFAULT = "All Bosses",
     -- Amirdrassil
     AMIRDRASSIL_GNARLROOT = 'Gnarlroot',
     AMIRDRASSIL_IGIRA = 'Igira',
@@ -80,7 +80,7 @@ LoadoutReminder.CONST.DIFFICULTY = {
 }
 
 LoadoutReminder.CONST.DIFFICULTY_DISPLAY_NAMES = {
-    DEFAULT = "Default",
+    DEFAULT = "All Difficulties",
     LFR = "LFR",
     NORMAL = "Normal",
     HEROIC = "Heroic",
@@ -210,7 +210,7 @@ LoadoutReminder.CONST.RAIDS = {
 }
 
 LoadoutReminder.CONST.RAID_DISPLAY_NAMES = {
-    DEFAULT = "Raid Default",
+    DEFAULT = "All Raids",
     AMIRDRASSIL = 'Amirdrassil',
     ABERRUS = 'Aberrus',
 }

@@ -66,9 +66,9 @@ function LoadoutReminder.MAIN.CheckSituations()
 	local combinedActiveCount = LoadoutReminder.ActiveReminders:GetCombinedActiveRemindersCount({activeInstanceReminders, activeBossReminders})
 
 	-- if any reminder is triggered: show frame, otherwise hide
-	print('combinedActiveCount: ' .. tostring(combinedActiveCount))
-	print('activeInstanceReminders: ' .. tostring(activeInstanceReminders:GetCount()))
-	print('activeBossReminders: ' .. tostring(activeBossReminders:GetCount()))
+	-- print('combinedActiveCount: ' .. tostring(combinedActiveCount))
+	-- print('activeInstanceReminders: ' .. tostring(activeInstanceReminders:GetCount()))
+	-- print('activeBossReminders: ' .. tostring(activeBossReminders:GetCount()))
 	if combinedActiveCount > 0 then
 		-- set status of frame depending on how many things are to be reminded of
 		LoadoutReminder.UTIL:UpdateReminderFrame(true, LoadoutReminder.ActiveReminders:GetCombinedActiveRemindersCount({activeInstanceReminders, activeBossReminders}))
@@ -88,7 +88,7 @@ function LoadoutReminder.MAIN:CheckInstanceTypes()
 	local instanceType = LoadoutReminder.UTIL:GetCurrentInstanceType()
 
 	if LoadoutReminder.OPTIONS:HasRaidLoadoutsPerBoss() then
-		print("ic: has raid loadouts per boss")
+		-- print("ic: has raid loadouts per boss")
 		-- Hide ReminderFrames
 		LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.TALENTS, nil, LoadoutReminder.CONST.INSTANCE_TYPES_DISPLAY_NAMES[instanceType])		
 		LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.ADDONS, nil, LoadoutReminder.CONST.INSTANCE_TYPES_DISPLAY_NAMES[instanceType])
@@ -96,16 +96,16 @@ function LoadoutReminder.MAIN:CheckInstanceTypes()
 		LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.SPEC, nil, LoadoutReminder.CONST.INSTANCE_TYPES_DISPLAY_NAMES[instanceType])
 		return activeReminders
 	end
-	print("Check Instance Reminders")
+	-- print("Check Instance Reminders")
 	local talentReminderInfo = LoadoutReminder.TALENTS:CheckInstanceTalentSet()
 	local addonReminderInfo = (LoadoutReminder.ADDONS.AVAILABLE and LoadoutReminder.ADDONS:CheckInstanceAddonSet()) or nil
 	local equipReminderInfo = LoadoutReminder.EQUIP:CheckInstanceEquipSet()
 	local specReminderInfo = LoadoutReminder.SPEC:CheckInstanceSpecSet()
 
-	 print("talentReminderInfo: " .. tostring(talentReminderInfo))
-	 print("addonReminderInfo: " .. tostring(addonReminderInfo))
-	 print("equipReminderInfo: " .. tostring(equipReminderInfo))
-	 print("specReminderInfo: " .. tostring(specReminderInfo))
+	--  print("talentReminderInfo: " .. tostring(talentReminderInfo))
+	--  print("addonReminderInfo: " .. tostring(addonReminderInfo))
+	--  print("equipReminderInfo: " .. tostring(equipReminderInfo))
+	--  print("specReminderInfo: " .. tostring(specReminderInfo))
 
 
 	-- Update Talent Reminder
@@ -137,7 +137,6 @@ function LoadoutReminder.MAIN:CheckBoss()
 
 	-- no raid loadouts per boss -> do not remind
 	if not LoadoutReminder.OPTIONS:HasRaidLoadoutsPerBoss() then
-		print("bc: no raid loadouts")
 		-- Hide ReminderFrames
 		LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.TALENTS, nil, "", true)		
 		LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.ADDONS, nil, "", true)
