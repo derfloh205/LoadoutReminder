@@ -28,7 +28,7 @@ function LoadoutReminder.DB.TALENTS:GetInstanceSet(instanceType, difficulty)
     instanceType = instanceType or LoadoutReminder.UTIL:GetCurrentInstanceType()
 	local specID = GetSpecialization()
 	local checkSituation = difficulty == nil
-	difficulty = difficulty or LoadoutReminder.UTIL:GetInstanceDifficulty()
+	difficulty = difficulty or LoadoutReminder.UTIL:GetInstanceDifficulty() or LoadoutReminder.CONST.DIFFICULTY.DEFAULT
 	if instanceType == LoadoutReminder.CONST.INSTANCE_TYPES.RAID then
 		local function check(difficulty)
 		-- get instance set is for default raid set, which is saved in the default raid as the default "boss" of that difficulty
@@ -118,7 +118,7 @@ end
 function LoadoutReminder.DB.EQUIP:GetInstanceSet(instanceType, difficulty)
 	local checkSituation = difficulty == nil
     instanceType = instanceType or LoadoutReminder.UTIL:GetCurrentInstanceType()
-	difficulty = difficulty or LoadoutReminder.UTIL:GetInstanceDifficulty()
+	difficulty = difficulty or LoadoutReminder.UTIL:GetInstanceDifficulty() or LoadoutReminder.CONST.DIFFICULTY.DEFAULT
 	if instanceType == LoadoutReminder.CONST.INSTANCE_TYPES.RAID then
 		local function check(difficulty)
 			-- get instance set is for default raid set, which is saved in the default raid as the default "boss" of that difficulty
@@ -202,7 +202,7 @@ end
 function LoadoutReminder.DB.SPEC:GetInstanceSet(instanceType, difficulty)
 	local checkSituation = difficulty == nil
     instanceType = instanceType or LoadoutReminder.UTIL:GetCurrentInstanceType()
-	difficulty = difficulty or LoadoutReminder.UTIL:GetInstanceDifficulty()
+	difficulty = difficulty or LoadoutReminder.UTIL:GetInstanceDifficulty() or LoadoutReminder.CONST.DIFFICULTY.DEFAULT
 	if instanceType == LoadoutReminder.CONST.INSTANCE_TYPES.RAID then
 		local function check(difficulty)
 			-- get instance set is for default raid set, which is saved in the default raid as the default "boss" of that difficulty
@@ -285,7 +285,7 @@ end
 function LoadoutReminder.DB.ADDONS:GetInstanceSet(instanceType, difficulty)
 	local checkSituation = difficulty == nil
     instanceType = instanceType or LoadoutReminder.UTIL:GetCurrentInstanceType()
-	difficulty = difficulty or LoadoutReminder.UTIL:GetInstanceDifficulty()
+	difficulty = difficulty or LoadoutReminder.UTIL:GetInstanceDifficulty() or LoadoutReminder.CONST.DIFFICULTY.DEFAULT
 	if instanceType == LoadoutReminder.CONST.INSTANCE_TYPES.RAID then
 		local function check(difficulty)
 			-- get instance set is for default raid set, which is saved in the default raid as the default "boss" of that difficulty
