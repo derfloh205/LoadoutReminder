@@ -209,10 +209,6 @@ end
 ---@return LoadoutReminder.ReminderInfo | nil
 function LoadoutReminder.TALENTS:CheckInstanceTalentSet()
 
-	if LoadoutReminder.TALENTS:HasRaidTalentsPerBoss() then 
-		return
-	end
-
 	local currentSetID = LoadoutReminder.TALENTS:GetCurrentSet()
 	local assignedSetID = LoadoutReminder.DB.TALENTS:GetInstanceSet()
 
@@ -245,15 +241,4 @@ function LoadoutReminder.TALENTS:CheckBossTalentSet(raid, boss)
 		return reminderInfo
 	end
 	
-end
-
-function LoadoutReminder.TALENTS:HasRaidTalentsPerBoss()
-	local _, _, _, _, _, _, _, instanceID = GetInstanceInfo()
-	local raid = LoadoutReminder.CONST.INSTANCE_IDS[instanceID]
-
-	if not raid then
-		return false
-	end
-
-	return LoadoutReminderOptionsV2.TALENTS.RAIDS_PER_BOSS[raid]
 end

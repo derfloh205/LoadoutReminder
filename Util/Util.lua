@@ -3,6 +3,9 @@ _, LoadoutReminder = ...
 LoadoutReminder.UTIL = {}
 
 function LoadoutReminder.UTIL:GetCurrentInstanceType()
+
+	
+
 	local inInstance, instanceType = IsInInstance()
 	if inInstance then
 		if instanceType == 'party' then
@@ -21,6 +24,20 @@ end
 
 function LoadoutReminder.UTIL:GetCurrentRaid()
 	return LoadoutReminder.CONST.INSTANCE_IDS[select(8, GetInstanceInfo())]
+end
+---@return LoadoutReminder.DIFFICULTY difficulty
+function LoadoutReminder.UTIL:GetInstanceDifficulty()
+	return LoadoutReminder.CONST.DIFFICULTY_ID_MAP[select(3, GetInstanceInfo())]
+end
+function LoadoutReminder.UTIL:InstanceTypeSupportsDifficulty(instanceType)
+	if instanceType == LoadoutReminder.CONST.INSTANCE_TYPES.DUNGEON then
+		return true
+	end
+	if instanceType == LoadoutReminder.CONST.INSTANCE_TYPES.RAID then
+		return true
+	end
+	
+	return false
 end
 
 local tryCount = 10

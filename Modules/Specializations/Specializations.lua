@@ -9,10 +9,7 @@ LoadoutReminder.SPEC:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 
 ---@return LoadoutReminder.ReminderInfo | nil
 function LoadoutReminder.SPEC:CheckInstanceSpecSet()
-    if LoadoutReminder.SPEC:HasRaidSpecPerBoss() then
-		return
-	end
-
+	
 	local currentSet = LoadoutReminder.SPEC:GetCurrentSet()
 	local assignedSet = LoadoutReminder.DB.SPEC:GetInstanceSet()
 

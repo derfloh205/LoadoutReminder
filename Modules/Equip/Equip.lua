@@ -24,10 +24,6 @@ end
 
 ---@return LoadoutReminder.ReminderInfo | nil
 function LoadoutReminder.EQUIP:CheckInstanceEquipSet()
-    if LoadoutReminder.EQUIP:HasRaidEquipPerBoss() then
-		return
-	end
-
 	local currentSetID = LoadoutReminder.EQUIP:GetCurrentSet()
 	local assignedSetID = LoadoutReminder.DB.EQUIP:GetInstanceSet()
 

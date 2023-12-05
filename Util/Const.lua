@@ -22,6 +22,7 @@ LoadoutReminder.CONST.DEFAULT_BACKDROP_OPTIONS = {
 }
 
 LoadoutReminder.CONST.BOSS_NAMES = {
+    DEFAULT = "Default",
     -- Amirdrassil
     AMIRDRASSIL_GNARLROOT = 'Gnarlroot',
     AMIRDRASSIL_IGIRA = 'Igira',
@@ -44,8 +45,86 @@ LoadoutReminder.CONST.BOSS_NAMES = {
     ABERRUS_SARKARETH = 'Scalecommander Sarkareth',
 }
 
+LoadoutReminder.CONST.BOSS_SORT_ORDER = {
+    DEFAULT = 0,
+    -- Amirdrassil
+    AMIRDRASSIL_GNARLROOT = 1,
+    AMIRDRASSIL_IGIRA = 2,
+    AMIRDRASSIL_VOLCOROSS = 3,
+    AMIRDRASSIL_COUNCIL_OF_DREAMS = 4,
+    AMIRDRASSIL_LARODAR = 5,
+    AMIRDRASSIL_NYMUE = 6,
+    AMIRDRASSIL_SMOLDERON = 7,
+    AMIRDRASSIL_TINDRAL_SAGESWIFT = 8,
+    AMIRDRASSIL_FYRAKK = 9,
+    -- Aberrus
+    ABERRUS_KAZZARA = 1,
+    ABERRUS_AMALGAMATION_CHAMBER = 2,
+    ABERRUS_FORGOTTEN_EXPERIMENTS = 3,
+    ABERRUS_ASSAULT = 4,
+    ABERRUS_RASHOK = 5,
+    ABERRUS_ZSKARN = 6,
+    ABERRUS_MAGMORAX = 7,
+    ABERRUS_ECHO = 8,
+    ABERRUS_SARKARETH = 9,
+}
+
+---@enum LoadoutReminder.DIFFICULTY
+LoadoutReminder.CONST.DIFFICULTY = {
+    DEFAULT = "DEFAULT",
+    LFR = "LFR",
+    NORMAL = "NORMAL",
+    HEROIC = "HEROIC",
+    MYTHIC = "MYTHIC",
+    TIMEWALKING = "TIMEWALKING",
+}
+
+LoadoutReminder.CONST.DIFFICULTY_DISPLAY_NAMES = {
+    DEFAULT = "Default",
+    LFR = "LFR",
+    NORMAL = "Normal",
+    HEROIC = "Heroic",
+    MYTHIC = "Mythic",
+    TIMEWALKING = "Timewalking",
+}
+
+LoadoutReminder.CONST.DIFFICULTY_SORT_ORDER = {
+    DEFAULT = 0,
+    LFR = 1,
+    NORMAL = 2,
+    HEROIC = 3,
+    MYTHIC = 4,
+    TIMEWALKING = 5,
+}
+
+--- https://warcraft.wiki.gg/wiki/DifficultyID
+---@type LoadoutReminder.DIFFICULTY | string[]
+LoadoutReminder.CONST.DIFFICULTY_ID_MAP = {
+    [9999] = "DEFAULT", -- wildcard
+    [1] = "NORMAL", -- party
+    [2] = "HEROIC", -- party
+    [3] = "NORMAL", -- raid 10
+    [4] = "NORMAL", -- raid 25
+    [5] = "HEROIC", -- raid 10
+    [6] = "HEROIC", -- raid 25
+    [7] = "LFR", -- legacy
+    [8] = "MYTHIC", -- party
+    [9] = "NORMAL", -- raid
+    [14] = "NORMAL", -- raid
+    [15] = "HEROIC", -- raid
+    [16] = "MYTHIC", -- raid
+    [17] = "LFR", -- raid
+    [23] = "MYTHIC", -- party
+    [24] = "TIMEWALKING", -- party
+    [33] = "TIMEWALKING", -- raid
+    [39] = "HEROIC", -- scenario
+    [150] = "NORMAL", -- party
+    [151] = "LFR", -- lfr timewalking
+}
+
 -- TODO: Gather data
 LoadoutReminder.CONST.BOSS_ID_MAP = {
+    [9999] = "DEFAULT",
     -- Amirdrassil
     [209333] = 'AMIRDRASSIL_GNARLROOT',
     --[205647] = 'AMIRDRASSIL_GNARLROOT', --debug Kalecgos
@@ -125,11 +204,13 @@ LoadoutReminder.CONST.REMINDER_TYPES = {
 
 ---@enum LoadoutReminder.Raids
 LoadoutReminder.CONST.RAIDS = {
+    DEFAULT="DEFAULT",
     AMIRDRASSIL = 'AMIRDRASSIL',
     ABERRUS = 'ABERRUS',
 }
 
 LoadoutReminder.CONST.RAID_DISPLAY_NAMES = {
+    DEFAULT = "Raid Default",
     AMIRDRASSIL = 'Amirdrassil',
     ABERRUS = 'Aberrus',
 }

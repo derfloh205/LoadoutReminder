@@ -19,8 +19,7 @@ LoadoutReminderGGUIConfig = LoadoutReminderGGUIConfig or {}
 
 LoadoutReminderDBV3 = LoadoutReminderDBV3 or {}
 
-LoadoutReminderOptionsV2 = LoadoutReminderOptionsV2 or {
-}
+LoadoutReminderOptionsV2 = LoadoutReminderOptionsV2 or {}
 
 function LoadoutReminder.MAIN:Init()
 	if not LoadoutReminder.UTIL:IsNecessaryInfoLoaded() then
@@ -85,6 +84,9 @@ function LoadoutReminder.MAIN:CheckInstanceTypes()
 		return nil
 	end
 
+	if LoadoutReminder.OPTIONS:HasRaidLoadoutsPerBoss() then
+		return nil
+	end
 	--print("Check Instance Reminders")
 	local instanceType = LoadoutReminder.UTIL:GetCurrentInstanceType()
 	local talentReminderInfo = LoadoutReminder.TALENTS:CheckInstanceTalentSet()
@@ -122,6 +124,11 @@ end
 function LoadoutReminder.MAIN:CheckBoss()
 	local activeReminders = LoadoutReminder.ActiveReminders(false, false, false, false)
 	if not LoadoutReminder.UTIL:IsNecessaryInfoLoaded() then
+		return activeReminders
+	end
+
+	-- no raid loadouts per boss -> do not remind
+	if not LoadoutReminder.OPTIONS:HasRaidLoadoutsPerBoss() then
 		return activeReminders
 	end
 
@@ -189,7 +196,7 @@ function LoadoutReminder.MAIN:InitializeSlashCommands()
 		end
 
 		if command == "check" then 
-			LoadoutReminder.MAIN:CheckInstanceTypes()
+			LoadoutReminder.MAIN:CheckSituations()
 		end
 
 		if command == "" then
