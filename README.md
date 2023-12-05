@@ -20,6 +20,11 @@ Commands:
 Shows a command help text
 
 
+/loadoutreminder news
+/lor news
+Shows the last update news
+
+
 /loadoutreminder check
 /lor check
 Makes an immediate check for the corresponding loadouts based on your current situation

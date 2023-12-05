@@ -27,21 +27,26 @@ function LoadoutReminder.MAIN:Init()
 		C_Timer.After(LoadoutReminder.CONST.INIT_POLL_INTERVAL, LoadoutReminder.MAIN.Init)
 		return	
 	end
-
+	LoadoutReminder.NEWS:Init()
 	LoadoutReminder.ADDONS:Init()
 	LoadoutReminder.MAIN:InitializeSlashCommands()
 	LoadoutReminder.OPTIONS:Init()
 	LoadoutReminder.REMINDER_FRAME.FRAMES:Init()	
 
-	-- restore frame position
+	-- restore frame positions
 	local reminderFrame = LoadoutReminder.GGUI:GetFrame(LoadoutReminder.MAIN.FRAMES, LoadoutReminder.CONST.FRAMES.REMINDER_FRAME)
 	reminderFrame:RestoreSavedConfig(UIParent)
+	local newsFrame = LoadoutReminder.GGUI:GetFrame(LoadoutReminder.MAIN.FRAMES, LoadoutReminder.CONST.FRAMES.NEWS)
+	newsFrame:RestoreSavedConfig(UIParent)
 
 	-- everything initalized
 	LoadoutReminder.MAIN.READY = true
 
 	-- Make first check after everything is loaded
 	LoadoutReminder.MAIN.CheckSituations()
+
+	-- show news
+	LoadoutReminder.NEWS:ShowNews()
 end
 
 function LoadoutReminder.MAIN:ADDON_LOADED(addon_name)
@@ -212,10 +217,15 @@ function LoadoutReminder.MAIN:InitializeSlashCommands()
 			LoadoutReminder.MAIN:CheckSituations()
 		end
 
+		if command == "news" then
+			LoadoutReminder.NEWS:ShowNews(true)
+		end
+
 		if command == "" then
 			print("LoadoutReminder Help")
 			print("/lor or /loadoutreminder can be used for following commands")
 			print("/lor -> show help text")
+			print("/lor news -> show last update news")
 			print("/lor config -> show options panel")
 			print("/lor check -> if configured check current player situation")
 		end

@@ -6,6 +6,7 @@ LoadoutReminder.CONST.INIT_POLL_INTERVAL = 0.5
 
 LoadoutReminder.CONST.FRAMES = {
     REMINDER_FRAME = "TALENT_REMINDER_FRAME",
+    NEWS = "NEWS"
 }
 
 LoadoutReminder.CONST.STARTER_BUILD = "Starter Build"

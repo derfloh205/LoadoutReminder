@@ -22,6 +22,7 @@ Classes/ActiveReminders.lua
 
 Main/LoadoutReminder.lua
 
+Modules/News/News.lua
 Modules/Options/Options.lua
 Modules/ReminderFrame/ReminderFrame.lua
 Modules/ReminderFrame/Frames.lua
