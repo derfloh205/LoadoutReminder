@@ -5,7 +5,7 @@ LoadoutReminder.NEWS = {}
 function LoadoutReminder.NEWS:Init()
     -- create news frame
     local sizeX = 400
-    local sizeY = 150
+    local sizeY = 100
 
     local newsFrame = LoadoutReminder.GGUI.Frame({
         parent=UIParent, anchorParent=UIParent,
@@ -33,13 +33,7 @@ function LoadoutReminder.NEWS:GET_NEWS()
     local d = LoadoutReminder.GUTIL:ColorizeText("-", LoadoutReminder.GUTIL.COLORS.GREEN)
     return string.format(
     [[
-        %1$s Completely reworked the Options
-           and how loadouts are saved.
-           This means that your current loadouts were reset
-           (sorry)
-        %1$s Added Difficulties
-        %1$s Added News Frame (Hello o/)
-        %1$s Added Default Loadouts to fall back to
+        %1$s Fixed an error when difficulty is not yet loaded
     ]], d)
 end
 
