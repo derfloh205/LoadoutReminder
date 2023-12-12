@@ -26,13 +26,13 @@ function LoadoutReminder.REMINDER_FRAME:UpdateDisplay(reminderType, reminderInfo
     end
 
     if situationText then
-        local difficulty = LoadoutReminder.UTIL:GetInstanceDifficulty()
+        local difficulty = LoadoutReminder.UTIL:GetInstanceDifficulty() or "" -- to prevent preload errors
         local instanceType = LoadoutReminder.UTIL:GetCurrentInstanceType()
         local difficultyText
         if not LoadoutReminder.UTIL:InstanceTypeSupportsDifficulty(instanceType) then
             difficultyText = ""
         else
-            difficultyText = " (" .. LoadoutReminder.CONST.DIFFICULTY_DISPLAY_NAMES[difficulty] .. ")"
+            difficultyText = " (" .. tostring(LoadoutReminder.CONST.DIFFICULTY_DISPLAY_NAMES[difficulty]) .. ")"
         end
         reminderFrame.content.situationInfo:SetText(tostring(reminderInfo.situationInfo) .. situationText .. difficultyText)
     end

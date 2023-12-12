@@ -29,7 +29,7 @@ end
 function LoadoutReminder.UTIL:GetCurrentRaid()
 	-- DEBUG
 	if debug then
-		return LoadoutReminder.CONST.INSTANCE_IDS[2549] -- Amirdrassil
+		return LoadoutReminder.CONST.INSTANCE_IDS[2522] -- GetInstanceInfo() -> 8
 	end
 	return LoadoutReminder.CONST.INSTANCE_IDS[select(8, GetInstanceInfo())]
 end

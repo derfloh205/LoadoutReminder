@@ -582,6 +582,10 @@ function LoadoutReminder.OPTIONS:HasRaidLoadoutsPerBoss()
 		return false
 	end
 	local difficulty = LoadoutReminder.UTIL:GetInstanceDifficulty()
+    if not difficulty then
+        -- happens on first execution after going into a raid.. next exec should include difficulty
+        return false
+    end
 	local optionKey = LoadoutReminder.OPTIONS:GetPerBossOptionKey(difficulty, raid)
 
 	return LoadoutReminderOptionsV2[optionKey]
