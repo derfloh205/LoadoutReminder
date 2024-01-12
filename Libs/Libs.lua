@@ -1,7 +1,7 @@
 _, LoadoutReminder = ...
 
----@type GGUI
-LoadoutReminder.GGUI = LibStub:GetLibrary("GGUI")
+---@type GGUI-2.0
+LoadoutReminder.GGUI = LibStub:GetLibrary("GGUI-2.0")
 
----@type GUTIL
-LoadoutReminder.GUTIL = LibStub:GetLibrary("GUTIL")
+---@type GUTIL-2.0
+LoadoutReminder.GUTIL = LibStub:GetLibrary("GUTIL-2.0")
