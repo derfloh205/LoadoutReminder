@@ -1,5 +1,10 @@
 ---@class LoadoutReminder
 local LoadoutReminder = select(2, ...)
+
+---@class LoadoutReminder.REMINDER_FRAME
+LoadoutReminder.REMINDER_FRAME = LoadoutReminder.REMINDER_FRAME
+
+---@class LoadoutReminder.REMINDER_FRAME.FRAMES
 LoadoutReminder.REMINDER_FRAME.FRAMES = {}
 
 function LoadoutReminder.REMINDER_FRAME.FRAMES:Init()
@@ -11,7 +16,7 @@ function LoadoutReminder.REMINDER_FRAME.FRAMES:Init()
     local offsetX = -10
     local offsetY = 30
 
-    --- @type GGUI.Frame | GGUI.Widget
+    ---@class LoadoutReminder.REMINDER_FRAME.FRAME : GGUI.Frame
     local reminderFrame = LoadoutReminder.GGUI.Frame({
         parent = UIParent,
         anchorParent = UIParent,
@@ -120,4 +125,6 @@ function LoadoutReminder.REMINDER_FRAME.FRAMES:Init()
     end
 
     createContent(reminderFrame)
+
+    LoadoutReminder.REMINDER_FRAME.frame = reminderFrame
 end

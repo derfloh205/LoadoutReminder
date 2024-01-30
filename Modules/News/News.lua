@@ -2,6 +2,7 @@
 local LoadoutReminder = select(2, ...)
 local LoadoutReminderAddonName = select(1, ...)
 
+---@class LoadoutReminder.NEWS
 LoadoutReminder.NEWS = {}
 
 function LoadoutReminder.NEWS:Init()

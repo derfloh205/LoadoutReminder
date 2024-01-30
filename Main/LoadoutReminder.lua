@@ -2,17 +2,10 @@
 local LoadoutReminder = select(2, ...)
 local LoadoutReminderAddonName = select(1, ...)
 
+local GUTIL = LoadoutReminder.GUTIL
+
 ---@class LoadoutReminder.MAIN : Frame
-LoadoutReminder.MAIN = CreateFrame("Frame")
-LoadoutReminder.MAIN:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end)
-LoadoutReminder.MAIN:RegisterEvent("ADDON_LOADED")
-LoadoutReminder.MAIN:RegisterEvent("PLAYER_TARGET_CHANGED")
-LoadoutReminder.MAIN:RegisterEvent("PLAYER_ENTERING_WORLD")
-LoadoutReminder.MAIN:RegisterEvent("PLAYER_LEAVE_COMBAT")
-LoadoutReminder.MAIN:RegisterEvent("TRAIT_CONFIG_LIST_UPDATED")
-LoadoutReminder.MAIN:RegisterEvent("TRAIT_CONFIG_CREATED")
-LoadoutReminder.MAIN:RegisterEvent("TRAIT_CONFIG_DELETED")
-LoadoutReminder.MAIN:RegisterEvent("TRAIT_CONFIG_UPDATED")
+LoadoutReminder.MAIN = GUTIL:CreateRegistreeForEvents({ "ADDON_LOADED" })
 
 LoadoutReminder.MAIN.FRAMES = {}
 LoadoutReminder.MAIN.READY = false
@@ -36,8 +29,7 @@ function LoadoutReminder.MAIN:Init()
 	LoadoutReminder.REMINDER_FRAME.FRAMES:Init()
 
 	-- restore frame positions
-	local reminderFrame = LoadoutReminder.GGUI:GetFrame(LoadoutReminder.MAIN.FRAMES,
-		LoadoutReminder.CONST.FRAMES.REMINDER_FRAME)
+	local reminderFrame = LoadoutReminder.REMINDER_FRAME.frame
 	reminderFrame:RestoreSavedConfig(UIParent)
 	local newsFrame = LoadoutReminder.GGUI:GetFrame(LoadoutReminder.MAIN.FRAMES, LoadoutReminder.CONST.FRAMES.NEWS)
 	newsFrame:RestoreSavedConfig(UIParent)
@@ -93,49 +85,4 @@ function LoadoutReminder.MAIN:InitializeSlashCommands()
 			print("/lor check -> if configured check current player situation")
 		end
 	end
-end
-
--- EVENTS
-function LoadoutReminder.MAIN:PLAYER_TARGET_CHANGED()
-	LoadoutReminder.CHECK:CheckSituations()
-end
-
-function LoadoutReminder.MAIN:PLAYER_ENTERING_WORLD(isInitialLogin, isReloadingUi)
-	-- only when entering/exiting an instance, not on login or reload (thats where ADDON_LOADED fires)
-	if isInitialLogin or isReloadingUi then
-		return
-	end
-	LoadoutReminder.CHECK:CheckSituations()
-end
-
-function LoadoutReminder.MAIN:PLAYER_LEAVE_COMBAT()
-	LoadoutReminder.CHECK:CheckSituations()
-end
-
-function LoadoutReminder.MAIN:TRAIT_CONFIG_LIST_UPDATED()
-	RunNextFrame(function()
-		LoadoutReminder.CHECK:CheckSituations()
-		LoadoutReminder.OPTIONS:ReloadDropdowns()
-	end)
-end
-
-function LoadoutReminder.MAIN:TRAIT_CONFIG_CREATED()
-	RunNextFrame(function()
-		LoadoutReminder.CHECK:CheckSituations()
-		LoadoutReminder.OPTIONS:ReloadDropdowns()
-	end)
-end
-
-function LoadoutReminder.MAIN:TRAIT_CONFIG_DELETED()
-	RunNextFrame(function()
-		LoadoutReminder.CHECK:CheckSituations()
-		LoadoutReminder.OPTIONS:ReloadDropdowns()
-	end)
-end
-
-function LoadoutReminder.MAIN:TRAIT_CONFIG_UPDATED()
-	RunNextFrame(function()
-		LoadoutReminder.CHECK:CheckSituations()
-		LoadoutReminder.OPTIONS:ReloadDropdowns()
-	end)
 end

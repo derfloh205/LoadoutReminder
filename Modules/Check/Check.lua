@@ -1,8 +1,19 @@
 ---@class LoadoutReminder
 local LoadoutReminder = select(2, ...)
 
----@class LoadoutReminder.CHECK
-LoadoutReminder.CHECK = {}
+local GUTIL = LoadoutReminder.GUTIL
+
+---@class LoadoutReminder.CHECK : Frame
+LoadoutReminder.CHECK = GUTIL:CreateRegistreeForEvents(
+    {
+        "PLAYER_TARGET_CHANGED",
+        "PLAYER_ENTERING_WORLD",
+        "PLAYER_LEAVE_COMBAT",
+        "TRAIT_CONFIG_LIST_UPDATED",
+        "TRAIT_CONFIG_CREATED",
+        "TRAIT_CONFIG_DELETED",
+        "TRAIT_CONFIG_UPDATED",
+    })
 
 function LoadoutReminder.CHECK:CheckSituations()
     -- check only when player is not in combat and only if everything was initialized
@@ -10,8 +21,8 @@ function LoadoutReminder.CHECK:CheckSituations()
         return
     end
 
-    local activeInstanceReminders = LoadoutReminder.MAIN:CheckInstanceTypes()
-    local activeBossReminders = LoadoutReminder.MAIN:CheckBoss()
+    local activeInstanceReminders = LoadoutReminder.CHECK:CheckInstanceTypes()
+    local activeBossReminders = LoadoutReminder.CHECK:CheckBoss()
 
     local combinedActiveCount = LoadoutReminder.ActiveReminders:GetCombinedActiveRemindersCount({ activeInstanceReminders,
         activeBossReminders })
@@ -31,7 +42,7 @@ function LoadoutReminder.CHECK:CheckSituations()
 end
 
 ---@return LoadoutReminder.ActiveReminders | nil
-function LoadoutReminder.MAIN:CheckInstanceTypes()
+function LoadoutReminder.CHECK:CheckInstanceTypes()
     local activeReminders = LoadoutReminder.ActiveReminders(false, false, false, false)
 
     if not LoadoutReminder.UTIL:IsNecessaryInfoLoaded() then
@@ -91,7 +102,7 @@ function LoadoutReminder.MAIN:CheckInstanceTypes()
 end
 
 ---@return LoadoutReminder.ActiveReminders | nil
-function LoadoutReminder.MAIN:CheckBoss()
+function LoadoutReminder.CHECK:CheckBoss()
     local activeReminders = LoadoutReminder.ActiveReminders(false, false, false, false)
     if not LoadoutReminder.UTIL:IsNecessaryInfoLoaded() then
         return activeReminders
@@ -158,4 +169,49 @@ function LoadoutReminder.MAIN:CheckBoss()
         equipReminderInfo and not equipReminderInfo:IsAssignedSet(),
         specReminderInfo and not specReminderInfo:IsAssignedSet()
     )
+end
+
+-- EVENTS
+function LoadoutReminder.CHECK:PLAYER_TARGET_CHANGED()
+    LoadoutReminder.CHECK:CheckSituations()
+end
+
+function LoadoutReminder.CHECK:PLAYER_ENTERING_WORLD(isInitialLogin, isReloadingUi)
+    -- only when entering/exiting an instance, not on login or reload (thats where ADDON_LOADED fires)
+    if isInitialLogin or isReloadingUi then
+        return
+    end
+    LoadoutReminder.CHECK:CheckSituations()
+end
+
+function LoadoutReminder.CHECK:PLAYER_LEAVE_COMBAT()
+    LoadoutReminder.CHECK:CheckSituations()
+end
+
+function LoadoutReminder.CHECK:TRAIT_CONFIG_LIST_UPDATED()
+    RunNextFrame(function()
+        LoadoutReminder.CHECK:CheckSituations()
+        LoadoutReminder.OPTIONS:ReloadDropdowns()
+    end)
+end
+
+function LoadoutReminder.CHECK:TRAIT_CONFIG_CREATED()
+    RunNextFrame(function()
+        LoadoutReminder.CHECK:CheckSituations()
+        LoadoutReminder.OPTIONS:ReloadDropdowns()
+    end)
+end
+
+function LoadoutReminder.CHECK:TRAIT_CONFIG_DELETED()
+    RunNextFrame(function()
+        LoadoutReminder.CHECK:CheckSituations()
+        LoadoutReminder.OPTIONS:ReloadDropdowns()
+    end)
+end
+
+function LoadoutReminder.CHECK:TRAIT_CONFIG_UPDATED()
+    RunNextFrame(function()
+        LoadoutReminder.CHECK:CheckSituations()
+        LoadoutReminder.OPTIONS:ReloadDropdowns()
+    end)
 end

@@ -72,8 +72,7 @@ end
 function LoadoutReminder.UTIL:UpdateReminderFrame(visibility, activeRemindersCount)
 	-- TODO: introduce option to hide in combat
 	---@type GGUI.Frame | GGUI.Widget
-	local reminderFrame = LoadoutReminder.GGUI:GetFrame(LoadoutReminder.MAIN.FRAMES,
-		LoadoutReminder.CONST.FRAMES.REMINDER_FRAME)
+	local reminderFrame = LoadoutReminder.REMINDER_FRAME.frame
 
 	if activeRemindersCount == 1 then
 		reminderFrame:SetStatus('ONE')

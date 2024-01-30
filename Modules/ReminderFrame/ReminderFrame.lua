@@ -1,13 +1,15 @@
 ---@class LoadoutReminder
 local LoadoutReminder = select(2, ...)
 
+---@class LoadoutReminder.REMINDER_FRAME
 LoadoutReminder.REMINDER_FRAME = {}
+
+LoadoutReminder.REMINDER_FRAME.frame = nil
 
 ---@param reminderInfo LoadoutReminder.ReminderInfo | nil
 ---@param situationText string
 function LoadoutReminder.REMINDER_FRAME:UpdateDisplay(reminderType, reminderInfo, situationText, isBossCheck)
-    local reminderFrame = LoadoutReminder.GGUI:GetFrame(LoadoutReminder.MAIN.FRAMES,
-        LoadoutReminder.CONST.FRAMES.REMINDER_FRAME)
+    local reminderFrame = LoadoutReminder.REMINDER_FRAME.frame
     local displayFrame = reminderFrame.content.displayFrames[reminderType]
 
     if not reminderInfo or reminderInfo:IsAssignedSet() then
@@ -23,7 +25,7 @@ function LoadoutReminder.REMINDER_FRAME:UpdateDisplay(reminderType, reminderInfo
 
     if reminderInfo.currentSet ~= nil then
         displayFrame.info:SetText("Current " ..
-        tostring(reminderInfo.infoText) .. ": \"" .. tostring(reminderInfo.currentSet) .. "\"")
+            tostring(reminderInfo.infoText) .. ": \"" .. tostring(reminderInfo.currentSet) .. "\"")
     else
         displayFrame.info:SetText("Current Set not recognized")
     end
@@ -38,7 +40,7 @@ function LoadoutReminder.REMINDER_FRAME:UpdateDisplay(reminderType, reminderInfo
             difficultyText = " (" .. tostring(LoadoutReminder.CONST.DIFFICULTY_DISPLAY_NAMES[difficulty]) .. ")"
         end
         reminderFrame.content.situationInfo:SetText(tostring(reminderInfo.situationInfo) ..
-        situationText .. difficultyText)
+            situationText .. difficultyText)
     end
 
     -- update button
