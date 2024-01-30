@@ -1,4 +1,5 @@
-_, LoadoutReminder = ...
+---@class LoadoutReminder
+local LoadoutReminder = select(2, ...)
 
 ---@class LoadoutReminder.EQUIP : Frame
 LoadoutReminder.EQUIP = CreateFrame("Frame")
@@ -24,36 +25,40 @@ end
 
 ---@return LoadoutReminder.ReminderInfo | nil
 function LoadoutReminder.EQUIP:CheckInstanceEquipSet()
-	local currentSetID = LoadoutReminder.EQUIP:GetCurrentSet()
-	local assignedSetID = LoadoutReminder.DB.EQUIP:GetInstanceSet()
+    local currentSetID = LoadoutReminder.EQUIP:GetCurrentSet()
+    local assignedSetID = LoadoutReminder.DB.EQUIP:GetInstanceSet()
 
     -- print("equip: ")
     -- print("currentSet: " .. tostring(currentSet))
     -- print("assignedSet: " .. tostring(assignedSet))
-    local currentSetName = (currentSetID and LoadoutReminder.EQUIP:GetEquipSetNameByID(currentSetID)) or LoadoutReminder.CONST.NO_SET_NAME
+    local currentSetName = (currentSetID and LoadoutReminder.EQUIP:GetEquipSetNameByID(currentSetID)) or
+        LoadoutReminder.CONST.NO_SET_NAME
     local assignedSetName = (assignedSetID and LoadoutReminder.EQUIP:GetEquipSetNameByID(assignedSetID)) or nil
 
-	if currentSetName and assignedSetName then
-		local macroText = LoadoutReminder.EQUIP:GetMacroTextBySet(assignedSetID)
-		local buttonText = 'Switch Equip to: '
-		return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.EQUIP, 'Detected Situation: ', macroText, buttonText, "Equip Set", currentSetName, assignedSetName)
-	end
+    if currentSetName and assignedSetName then
+        local macroText = LoadoutReminder.EQUIP:GetMacroTextBySet(assignedSetID)
+        local buttonText = 'Switch Equip to: '
+        return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.EQUIP, 'Detected Situation: ', macroText,
+            buttonText, "Equip Set", currentSetName, assignedSetName)
+    end
 end
 
 ---@return LoadoutReminder.ReminderInfo | nil
 function LoadoutReminder.EQUIP:CheckBossEquipSet(raid, boss)
-	local bossSet = LoadoutReminder.DB.EQUIP:GetRaidSet(raid, boss)
+    local bossSet = LoadoutReminder.DB.EQUIP:GetRaidSet(raid, boss)
 
-	if bossSet == nil then
-		return nil
-	end
+    if bossSet == nil then
+        return nil
+    end
 
-	local currentSet = LoadoutReminder.EQUIP:GetCurrentSet()
-    local currentSetName = (currentSet and LoadoutReminder.EQUIP:GetEquipSetNameByID(currentSet)) or LoadoutReminder.CONST.NO_SET_NAME
+    local currentSet = LoadoutReminder.EQUIP:GetCurrentSet()
+    local currentSetName = (currentSet and LoadoutReminder.EQUIP:GetEquipSetNameByID(currentSet)) or
+        LoadoutReminder.CONST.NO_SET_NAME
     local bossSetName = LoadoutReminder.EQUIP:GetEquipSetNameByID(bossSet)
-    if  bossSetName then
+    if bossSetName then
         local macroText = LoadoutReminder.EQUIP:GetMacroTextBySet(bossSet)
-        return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.EQUIP, 'Detected Boss: ', macroText, 'Switch Equip to: ', 'Equip Set', currentSetName, bossSetName)
+        return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.EQUIP, 'Detected Boss: ', macroText,
+            'Switch Equip to: ', 'Equip Set', currentSetName, bossSetName)
     end
 end
 
@@ -83,13 +88,13 @@ end
 
 function LoadoutReminder.EQUIP:HasRaidEquipPerBoss()
     local _, _, _, _, _, _, _, instanceID = GetInstanceInfo()
-	local raid = LoadoutReminder.CONST.INSTANCE_IDS[instanceID]
+    local raid = LoadoutReminder.CONST.INSTANCE_IDS[instanceID]
 
-	if not raid then
-		return false
-	end
+    if not raid then
+        return false
+    end
 
-	return LoadoutReminderOptionsV2.EQUIP.RAIDS_PER_BOSS[raid]
+    return LoadoutReminderOptionsV2.EQUIP.RAIDS_PER_BOSS[raid]
 end
 
 function LoadoutReminder.EQUIP:GetMacroTextBySet(assignedSetID)
@@ -98,9 +103,10 @@ function LoadoutReminder.EQUIP:GetMacroTextBySet(assignedSetID)
 end
 
 function LoadoutReminder.EQUIP:PLAYER_EQUIPMENT_CHANGED()
-    LoadoutReminder.MAIN:CheckSituations()
+    LoadoutReminder.CHECK:CheckSituations()
 end
+
 function LoadoutReminder.EQUIP:EQUIPMENT_SETS_CHANGED()
     LoadoutReminder.OPTIONS:ReloadDropdowns()
-    LoadoutReminder.MAIN:CheckSituations()
+    LoadoutReminder.CHECK:CheckSituations()
 end

@@ -1,4 +1,5 @@
-_, LoadoutReminder = ...
+---@class LoadoutReminder
+local LoadoutReminder = select(2, ...)
 
 
 ---@class LoadoutReminder.ActiveReminders
@@ -35,16 +36,16 @@ end
 --- STATIC
 function LoadoutReminder.ActiveReminders:GetCombinedActiveRemindersCount(activeRemindersList)
     local combinedCount = 0
-    local talentsActive = LoadoutReminder.GUTIL:Count(activeRemindersList, function (ar)
+    local talentsActive = LoadoutReminder.GUTIL:Count(activeRemindersList, function(ar)
         return ar and ar.talents
     end)
-    local addonsActive = LoadoutReminder.GUTIL:Count(activeRemindersList, function (ar)
+    local addonsActive = LoadoutReminder.GUTIL:Count(activeRemindersList, function(ar)
         return ar and ar.addons
     end)
-    local equipActive = LoadoutReminder.GUTIL:Count(activeRemindersList, function (ar)
+    local equipActive = LoadoutReminder.GUTIL:Count(activeRemindersList, function(ar)
         return ar and ar.equip
     end)
-    local specActive = LoadoutReminder.GUTIL:Count(activeRemindersList, function (ar)
+    local specActive = LoadoutReminder.GUTIL:Count(activeRemindersList, function(ar)
         return ar and ar.spec
     end)
 

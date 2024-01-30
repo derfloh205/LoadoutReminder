@@ -1,11 +1,13 @@
-_, LoadoutReminder = ...
+---@class LoadoutReminder
+local LoadoutReminder = select(2, ...)
 
 LoadoutReminder.REMINDER_FRAME = {}
 
 ---@param reminderInfo LoadoutReminder.ReminderInfo | nil
 ---@param situationText string
 function LoadoutReminder.REMINDER_FRAME:UpdateDisplay(reminderType, reminderInfo, situationText, isBossCheck)
-    local reminderFrame = LoadoutReminder.GGUI:GetFrame(LoadoutReminder.MAIN.FRAMES, LoadoutReminder.CONST.FRAMES.REMINDER_FRAME)
+    local reminderFrame = LoadoutReminder.GGUI:GetFrame(LoadoutReminder.MAIN.FRAMES,
+        LoadoutReminder.CONST.FRAMES.REMINDER_FRAME)
     local displayFrame = reminderFrame.content.displayFrames[reminderType]
 
     if not reminderInfo or reminderInfo:IsAssignedSet() then
@@ -20,7 +22,8 @@ function LoadoutReminder.REMINDER_FRAME:UpdateDisplay(reminderType, reminderInfo
     end
 
     if reminderInfo.currentSet ~= nil then
-        displayFrame.info:SetText("Current ".. tostring(reminderInfo.infoText) ..": \"" .. tostring(reminderInfo.currentSet) .. "\"")
+        displayFrame.info:SetText("Current " ..
+        tostring(reminderInfo.infoText) .. ": \"" .. tostring(reminderInfo.currentSet) .. "\"")
     else
         displayFrame.info:SetText("Current Set not recognized")
     end
@@ -34,13 +37,14 @@ function LoadoutReminder.REMINDER_FRAME:UpdateDisplay(reminderType, reminderInfo
         else
             difficultyText = " (" .. tostring(LoadoutReminder.CONST.DIFFICULTY_DISPLAY_NAMES[difficulty]) .. ")"
         end
-        reminderFrame.content.situationInfo:SetText(tostring(reminderInfo.situationInfo) .. situationText .. difficultyText)
+        reminderFrame.content.situationInfo:SetText(tostring(reminderInfo.situationInfo) ..
+        situationText .. difficultyText)
     end
 
     -- update button
 
     ---@type GGUI.Button
-	local loadSetButton = displayFrame.loadButton
-	loadSetButton:SetMacroText(reminderInfo.macroText)
-	loadSetButton:SetText(reminderInfo.buttonText .. "'" .. tostring(reminderInfo.assignedSet) .. "'", nil, true)
+    local loadSetButton = displayFrame.loadButton
+    loadSetButton:SetMacroText(reminderInfo.macroText)
+    loadSetButton:SetText(reminderInfo.buttonText .. "'" .. tostring(reminderInfo.assignedSet) .. "'", nil, true)
 end

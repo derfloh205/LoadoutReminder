@@ -1,4 +1,5 @@
-_, LoadoutReminder = ...
+---@class LoadoutReminder
+local LoadoutReminder = select(2, ...)
 
 LoadoutReminder.CONST = {}
 
@@ -101,26 +102,26 @@ LoadoutReminder.CONST.DIFFICULTY_SORT_ORDER = {
 --- https://warcraft.wiki.gg/wiki/DifficultyID
 ---@type LoadoutReminder.DIFFICULTY | string[]
 LoadoutReminder.CONST.DIFFICULTY_ID_MAP = {
-    [9999] = "DEFAULT", -- wildcard
-    [1] = "NORMAL", -- party
-    [2] = "HEROIC", -- party
-    [3] = "NORMAL", -- raid 10
-    [4] = "NORMAL", -- raid 25
-    [5] = "HEROIC", -- raid 10
-    [6] = "HEROIC", -- raid 25
-    [7] = "LFR", -- legacy
-    [8] = "MYTHIC", -- party
-    [9] = "NORMAL", -- raid
-    [14] = "NORMAL", -- raid
-    [15] = "HEROIC", -- raid
-    [16] = "MYTHIC", -- raid
-    [17] = "LFR", -- raid
-    [23] = "MYTHIC", -- party
+    [9999] = "DEFAULT",   -- wildcard
+    [1] = "NORMAL",       -- party
+    [2] = "HEROIC",       -- party
+    [3] = "NORMAL",       -- raid 10
+    [4] = "NORMAL",       -- raid 25
+    [5] = "HEROIC",       -- raid 10
+    [6] = "HEROIC",       -- raid 25
+    [7] = "LFR",          -- legacy
+    [8] = "MYTHIC",       -- party
+    [9] = "NORMAL",       -- raid
+    [14] = "NORMAL",      -- raid
+    [15] = "HEROIC",      -- raid
+    [16] = "MYTHIC",      -- raid
+    [17] = "LFR",         -- raid
+    [23] = "MYTHIC",      -- party
     [24] = "TIMEWALKING", -- party
     [33] = "TIMEWALKING", -- raid
-    [39] = "HEROIC", -- scenario
-    [150] = "NORMAL", -- party
-    [151] = "LFR", -- lfr timewalking
+    [39] = "HEROIC",      -- scenario
+    [150] = "NORMAL",     -- party
+    [151] = "LFR",        -- lfr timewalking
 }
 
 -- TODO: Gather data
@@ -132,7 +133,7 @@ LoadoutReminder.CONST.BOSS_ID_MAP = {
     --[213930] = 'AMIRDRASSIL_GNARLROOT', --debug Koszaru
     [200926] = 'AMIRDRASSIL_IGIRA',
     [208478] = 'AMIRDRASSIL_VOLCOROSS',
-        -- Council of Dreams: Urctos, Aerwynn, Pip
+    -- Council of Dreams: Urctos, Aerwynn, Pip
     [208363] = 'AMIRDRASSIL_COUNCIL_OF_DREAMS',
     [208365] = 'AMIRDRASSIL_COUNCIL_OF_DREAMS',
     [208367] = 'AMIRDRASSIL_COUNCIL_OF_DREAMS',
@@ -142,15 +143,15 @@ LoadoutReminder.CONST.BOSS_ID_MAP = {
     [209090] = 'AMIRDRASSIL_TINDRAL_SAGESWIFT',
     [204931] = 'AMIRDRASSIL_FYRAKK',
     [201261] = 'ABERRUS_KAZZARA',
-        -- Amalgamation Chamber
+    -- Amalgamation Chamber
     [201774] = 'ABERRUS_AMALGAMATION_CHAMBER',
     [201773] = 'ABERRUS_AMALGAMATION_CHAMBER',
     [201934] = 'ABERRUS_AMALGAMATION_CHAMBER',
-        -- Forgotten Experiments
+    -- Forgotten Experiments
     [200912] = 'ABERRUS_FORGOTTEN_EXPERIMENTS',
     [200913] = 'ABERRUS_FORGOTTEN_EXPERIMENTS',
     [200918] = 'ABERRUS_FORGOTTEN_EXPERIMENTS',
-        -- Assault
+    -- Assault
     [199659] = 'ABERRUS_ASSAULT',
     [202791] = 'ABERRUS_ASSAULT',
     [205921] = 'ABERRUS_ASSAULT',
@@ -161,7 +162,7 @@ LoadoutReminder.CONST.BOSS_ID_MAP = {
     [201320] = 'ABERRUS_RASHOK',
     [202637] = 'ABERRUS_ZSKARN',
     [201579] = 'ABERRUS_MAGMORAX',
-        -- Echo of Neltharion
+    -- Echo of Neltharion
     [201668] = 'ABERRUS_ECHO',
     [203812] = 'ABERRUS_ECHO',
     [202814] = 'ABERRUS_ECHO',
@@ -205,7 +206,7 @@ LoadoutReminder.CONST.REMINDER_TYPES = {
 
 ---@enum LoadoutReminder.Raids
 LoadoutReminder.CONST.RAIDS = {
-    DEFAULT="DEFAULT",
+    DEFAULT = "DEFAULT",
     AMIRDRASSIL = 'AMIRDRASSIL',
     ABERRUS = 'ABERRUS',
 }

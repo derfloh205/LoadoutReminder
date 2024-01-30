@@ -1,10 +1,10 @@
-_, LoadoutReminder = ...
+---@class LoadoutReminder
+local LoadoutReminder = select(2, ...)
 
 LoadoutReminder.UTIL = {}
 local debug = false
 
 function LoadoutReminder.UTIL:GetCurrentInstanceType()
-
 	-- -- DEBUG
 	if debug then
 		return LoadoutReminder.CONST.INSTANCE_TYPES.RAID
@@ -33,10 +33,12 @@ function LoadoutReminder.UTIL:GetCurrentRaid()
 	end
 	return LoadoutReminder.CONST.INSTANCE_IDS[select(8, GetInstanceInfo())]
 end
+
 ---@return LoadoutReminder.DIFFICULTY difficulty
 function LoadoutReminder.UTIL:GetInstanceDifficulty()
 	return LoadoutReminder.CONST.DIFFICULTY_ID_MAP[select(3, GetInstanceInfo())]
 end
+
 function LoadoutReminder.UTIL:InstanceTypeSupportsDifficulty(instanceType)
 	if instanceType == LoadoutReminder.CONST.INSTANCE_TYPES.DUNGEON then
 		return true
@@ -44,7 +46,7 @@ function LoadoutReminder.UTIL:InstanceTypeSupportsDifficulty(instanceType)
 	if instanceType == LoadoutReminder.CONST.INSTANCE_TYPES.RAID then
 		return true
 	end
-	
+
 	return false
 end
 
@@ -70,7 +72,8 @@ end
 function LoadoutReminder.UTIL:UpdateReminderFrame(visibility, activeRemindersCount)
 	-- TODO: introduce option to hide in combat
 	---@type GGUI.Frame | GGUI.Widget
-	local reminderFrame = LoadoutReminder.GGUI:GetFrame(LoadoutReminder.MAIN.FRAMES, LoadoutReminder.CONST.FRAMES.REMINDER_FRAME)
+	local reminderFrame = LoadoutReminder.GGUI:GetFrame(LoadoutReminder.MAIN.FRAMES,
+		LoadoutReminder.CONST.FRAMES.REMINDER_FRAME)
 
 	if activeRemindersCount == 1 then
 		reminderFrame:SetStatus('ONE')
@@ -86,7 +89,7 @@ function LoadoutReminder.UTIL:UpdateReminderFrame(visibility, activeRemindersCou
 end
 
 function LoadoutReminder.UTIL:FindAndReplaceSetInDB(oldSet, newSet, saveTable, perSpecID)
-	-- update saved loadouts for GENERAL 
+	-- update saved loadouts for GENERAL
 	for specID, instanceTalents in pairs(saveTable.GENERAL) do
 		for instanceType, assignedTalentSet in pairs(instanceTalents) do
 			if assignedTalentSet == oldSet then
@@ -99,7 +102,7 @@ function LoadoutReminder.UTIL:FindAndReplaceSetInDB(oldSet, newSet, saveTable, p
 			end
 		end
 	end
-	-- update saved loadouts for BOSSES 
+	-- update saved loadouts for BOSSES
 	for specID, instanceTalents in pairs(saveTable.BOSS) do
 		for instanceType, assignedTalentSet in pairs(instanceTalents) do
 			if assignedTalentSet == oldSet then

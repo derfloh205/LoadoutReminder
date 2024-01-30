@@ -7,7 +7,8 @@
 -- the terms of the MIT license. See LICENSE for details.
 --
 
-_, LoadoutReminder = ...
+---@class LoadoutReminder
+local LoadoutReminder = select(2, ...)
 
 local Object = {}
 Object.__index = Object
@@ -17,7 +18,6 @@ LoadoutReminder.Object = Object
 
 function Object:new()
 end
-
 
 function Object:extend()
   local cls = {}
@@ -32,9 +32,8 @@ function Object:extend()
   return cls
 end
 
-
 function Object:implement(...)
-  for _, cls in pairs({...}) do
+  for _, cls in pairs({ ... }) do
     for k, v in pairs(cls) do
       if self[k] == nil and type(v) == "function" then
         self[k] = v
@@ -42,7 +41,6 @@ function Object:implement(...)
     end
   end
 end
-
 
 function Object:is(T)
   local mt = getmetatable(self)
@@ -55,17 +53,14 @@ function Object:is(T)
   return false
 end
 
-
 function Object:__tostring()
   return "Object"
 end
-
 
 function Object:__call(...)
   local obj = setmetatable({}, self)
   obj:new(...)
   return obj
 end
-
 
 return Object

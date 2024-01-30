@@ -1,4 +1,5 @@
-_, LoadoutReminder = ...
+---@class LoadoutReminder
+local LoadoutReminder = select(2, ...)
 
 LoadoutReminder.OPTIONS = {}
 LoadoutReminder.OPTIONS.DROPDOWNS = {}
@@ -14,19 +15,19 @@ function LoadoutReminder.OPTIONS:GetTalentsData()
     -- convert to dropdown data, always include starter build label
     local talentsDropdownData = {
         {
-            label=LoadoutReminder.CONST.LABEL_NO_SET,
-            value=nil
+            label = LoadoutReminder.CONST.LABEL_NO_SET,
+            value = nil
         },
         {
-            label=LoadoutReminder.CONST.STARTER_BUILD,
-            value=Constants.TraitConsts.STARTER_BUILD_TRAIT_CONFIG_ID
+            label = LoadoutReminder.CONST.STARTER_BUILD,
+            value = Constants.TraitConsts.STARTER_BUILD_TRAIT_CONFIG_ID
         }
     }
     table.foreach(talentSetIDs, function(_, configID)
         local setName = LoadoutReminder.TALENTS:GetTalentSetNameByID(configID)
         table.insert(talentsDropdownData, {
-            label=setName,
-            value=configID,
+            label = setName,
+            value = configID,
         })
     end)
     return talentsDropdownData
@@ -41,89 +42,97 @@ function LoadoutReminder.OPTIONS:GetAddonsData()
     -- convert to dropdown data, always include starter build label
     local addonsDropdownData = {
         {
-            label=LoadoutReminder.CONST.LABEL_NO_SET,
-            value=nil
+            label = LoadoutReminder.CONST.LABEL_NO_SET,
+            value = nil
         }
     }
 
     table.foreach(addonSets, function(setName, _)
         table.insert(addonsDropdownData, {
-            label=setName,
-            value=setName,
+            label = setName,
+            value = setName,
         })
     end)
     return addonsDropdownData
 end
+
 function LoadoutReminder.OPTIONS:GetEquipData()
     local equipSets = LoadoutReminder.EQUIP:GetEquipSets()
 
     -- convert to dropdown data, always include starter build label
     local equipDropdownData = {
         {
-            label=LoadoutReminder.CONST.LABEL_NO_SET,
-            value=nil
+            label = LoadoutReminder.CONST.LABEL_NO_SET,
+            value = nil
         }
     }
 
     table.foreach(equipSets, function(_, setID)
         local setName = LoadoutReminder.EQUIP:GetEquipSetNameByID(setID)
         table.insert(equipDropdownData, {
-            label=setName,
-            value=setID,
+            label = setName,
+            value = setID,
         })
     end)
     return equipDropdownData
 end
+
 function LoadoutReminder.OPTIONS:GetSpecData()
     local specs = LoadoutReminder.SPEC:GetSpecSets()
 
     -- convert to dropdown data, always include starter build label
     local specDropdownData = {
         {
-            label=LoadoutReminder.CONST.LABEL_NO_SET,
-            value=nil
+            label = LoadoutReminder.CONST.LABEL_NO_SET,
+            value = nil
         }
     }
 
     table.foreach(specs, function(_, setName)
         table.insert(specDropdownData, {
-            label=setName,
-            value=setName,
+            label = setName,
+            value = setName,
         })
     end)
     return specDropdownData
 end
-function LoadoutReminder.OPTIONS:Init()
 
+function LoadoutReminder.OPTIONS:Init()
     LoadoutReminder.OPTIONS.optionsPanel = CreateFrame("Frame", "LoadoutReminderOptionsPanel")
 
-	LoadoutReminder.OPTIONS.optionsPanel:HookScript("OnShow", function(self)
-		end)
+    LoadoutReminder.OPTIONS.optionsPanel:HookScript("OnShow", function(self)
+    end)
 
     LoadoutReminder.OPTIONS.optionsPanel.name = "Loadout Reminder"
-	local title = LoadoutReminder.OPTIONS.optionsPanel:CreateFontString('optionsTitle', 'OVERLAY', 'GameFontNormal')
+    local title = LoadoutReminder.OPTIONS.optionsPanel:CreateFontString('optionsTitle', 'OVERLAY', 'GameFontNormal')
     title:SetPoint("TOP", 0, 0)
-	title:SetText("Loadout Reminder Options")
+    title:SetText("Loadout Reminder Options")
 
     ---@type GGUI.DropdownData
-    local difficultyDropdownData = LoadoutReminder.GUTIL:Map(LoadoutReminder.CONST.DIFFICULTY, function (diff)
+    local difficultyDropdownData = LoadoutReminder.GUTIL:Map(LoadoutReminder.CONST.DIFFICULTY, function(diff)
         return {
-            label=LoadoutReminder.CONST.DIFFICULTY_DISPLAY_NAMES[diff],
-            value=diff,
+            label = LoadoutReminder.CONST.DIFFICULTY_DISPLAY_NAMES[diff],
+            value = diff,
         }
     end)
 
-    local difficultyDropdownData = LoadoutReminder.GUTIL:Sort(difficultyDropdownData, function (a, b)
-        return LoadoutReminder.CONST.DIFFICULTY_SORT_ORDER[a.value] < LoadoutReminder.CONST.DIFFICULTY_SORT_ORDER[b.value]
+    local difficultyDropdownData = LoadoutReminder.GUTIL:Sort(difficultyDropdownData, function(a, b)
+        return LoadoutReminder.CONST.DIFFICULTY_SORT_ORDER[a.value] <
+            LoadoutReminder.CONST.DIFFICULTY_SORT_ORDER[b.value]
     end)
 
     ---@type GGUI.Dropdown
     LoadoutReminder.OPTIONS.difficultyDropdown = LoadoutReminder.GGUI.Dropdown({
-        parent=LoadoutReminder.OPTIONS.optionsPanel, 
-        anchorParent=LoadoutReminder.OPTIONS.optionsPanel, offsetY=-30,
-        anchorA="TOP", anchorB="TOP", label="Difficulty", initialData=difficultyDropdownData,
-        initialLabel=LoadoutReminder.CONST.DIFFICULTY_DISPLAY_NAMES.DEFAULT, initialValue=LoadoutReminder.CONST.DIFFICULTY.DEFAULT,
-        clickCallback=function ()
+        parent = LoadoutReminder.OPTIONS.optionsPanel,
+        anchorParent = LoadoutReminder.OPTIONS.optionsPanel,
+        offsetY = -30,
+        anchorA = "TOP",
+        anchorB = "TOP",
+        label = "Difficulty",
+        initialData = difficultyDropdownData,
+        initialLabel = LoadoutReminder.CONST.DIFFICULTY_DISPLAY_NAMES.DEFAULT,
+        initialValue = LoadoutReminder.CONST.DIFFICULTY.DEFAULT,
+        clickCallback = function()
             LoadoutReminder.OPTIONS:ReloadDropdowns()
         end
     })
@@ -135,171 +144,222 @@ function LoadoutReminder.OPTIONS:Init()
         ADDONS = LoadoutReminder.OPTIONS:GetAddonsData()
     }
 
-    local tabContentX=623
-    local tabContentY=500
+    local tabContentX = 623
+    local tabContentY = 500
     local tabOffsetY = -60
 
     --- GENERAL
     ---@type GGUI.Tab
     local generalTab = LoadoutReminder.GGUI.Tab({
-        buttonOptions=
+        buttonOptions =
         {
-            label="General", parent=LoadoutReminder.OPTIONS.optionsPanel, anchorParent=LoadoutReminder.OPTIONS.optionsPanel, adjustWidth=true,
-            anchorA="TOPLEFT", anchorB="TOPLEFT", offsetX=20,offsetY=-20
+            label = "General",
+            parent = LoadoutReminder.OPTIONS.optionsPanel,
+            anchorParent = LoadoutReminder.OPTIONS.optionsPanel,
+            adjustWidth = true,
+            anchorA = "TOPLEFT",
+            anchorB = "TOPLEFT",
+            offsetX = 20,
+            offsetY = -20
         },
-        canBeEnabled=true,
-        parent=LoadoutReminder.OPTIONS.optionsPanel,
-        anchorParent=LoadoutReminder.OPTIONS.optionsPanel,
-        anchorA="CENTER", anchorB="CENTER", offsetX=0,offsetY=tabOffsetY,
-        sizeX=tabContentX, sizeY=tabContentY,
+        canBeEnabled = true,
+        parent = LoadoutReminder.OPTIONS.optionsPanel,
+        anchorParent = LoadoutReminder.OPTIONS.optionsPanel,
+        anchorA = "CENTER",
+        anchorB = "CENTER",
+        offsetX = 0,
+        offsetY = tabOffsetY,
+        sizeX = tabContentX,
+        sizeY = tabContentY,
     })
 
     local dbFunctions = {
-        TALENTS= {
-            Save = function (_, tabID, data)
+        TALENTS = {
+            Save = function(_, tabID, data)
                 LoadoutReminder.DB.TALENTS:SaveInstanceSet(tabID, data)
             end,
-            Get = function (_, tabID)
-                return LoadoutReminder.DB.TALENTS:GetInstanceSet(tabID, LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(tabID))
+            Get = function(_, tabID)
+                return LoadoutReminder.DB.TALENTS:GetInstanceSet(tabID,
+                    LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(tabID))
             end,
-            GetInitialData = function (_, tabID)
-                local talentSetID = LoadoutReminder.DB.TALENTS:GetInstanceSet(tabID, LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(tabID))
+            GetInitialData = function(_, tabID)
+                local talentSetID = LoadoutReminder.DB.TALENTS:GetInstanceSet(tabID,
+                    LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(tabID))
                 local label = (talentSetID and LoadoutReminder.TALENTS:GetTalentSetNameByID(talentSetID)) or nil
                 return {
-                    label=label,
-                    value=talentSetID
+                    label = label,
+                    value = talentSetID
                 }
             end
         },
-        EQUIP= {
-            Save = function (_, tabID, data)
+        EQUIP = {
+            Save = function(_, tabID, data)
                 LoadoutReminder.DB.EQUIP:SaveInstanceSet(tabID, data)
             end,
-            Get = function (_, tabID)
-                return LoadoutReminder.DB.EQUIP:GetInstanceSet(tabID, LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(tabID))
+            Get = function(_, tabID)
+                return LoadoutReminder.DB.EQUIP:GetInstanceSet(tabID,
+                    LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(tabID))
             end,
-            GetInitialData = function (_, tabID)
-                local equipSetID = LoadoutReminder.DB.EQUIP:GetInstanceSet(tabID, LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(tabID))
+            GetInitialData = function(_, tabID)
+                local equipSetID = LoadoutReminder.DB.EQUIP:GetInstanceSet(tabID,
+                    LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(tabID))
                 local label = (equipSetID and LoadoutReminder.EQUIP:GetEquipSetNameByID(equipSetID)) or nil
                 return {
-                    label=label,
-                    value=equipSetID
+                    label = label,
+                    value = equipSetID
                 }
             end
         },
-        SPEC= {
-            Save = function (_, tabID, data)
+        SPEC = {
+            Save = function(_, tabID, data)
                 LoadoutReminder.DB.SPEC:SaveInstanceSet(tabID, data)
             end,
-            Get = function (_, tabID)
-                return LoadoutReminder.DB.SPEC:GetInstanceSet(tabID, LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(tabID))
+            Get = function(_, tabID)
+                return LoadoutReminder.DB.SPEC:GetInstanceSet(tabID,
+                    LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(tabID))
             end,
-            GetInitialData = function (_, tabID)
-                local setName = LoadoutReminder.DB.SPEC:GetInstanceSet(tabID, LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(tabID))
+            GetInitialData = function(_, tabID)
+                local setName = LoadoutReminder.DB.SPEC:GetInstanceSet(tabID,
+                    LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(tabID))
                 return {
-                    label=setName,
-                    value=setName
+                    label = setName,
+                    value = setName
                 }
             end
         },
-        ADDONS= {
-            Save = function (_, tabID, data)
+        ADDONS = {
+            Save = function(_, tabID, data)
                 LoadoutReminder.DB.ADDONS:SaveInstanceSet(tabID, data)
             end,
-            Get = function (_, tabID)
-                return LoadoutReminder.DB.ADDONS:GetInstanceSet(tabID, LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(tabID))
+            Get = function(_, tabID)
+                return LoadoutReminder.DB.ADDONS:GetInstanceSet(tabID,
+                    LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(tabID))
             end,
-            GetInitialData = function (_, tabID)
-                local setName = LoadoutReminder.DB.ADDONS:GetInstanceSet(tabID, LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(tabID))
+            GetInitialData = function(_, tabID)
+                local setName = LoadoutReminder.DB.ADDONS:GetInstanceSet(tabID,
+                    LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(tabID))
                 return {
-                    label=setName,
-                    value=setName
+                    label = setName,
+                    value = setName
                 }
             end
         },
     }
 
-    LoadoutReminder.OPTIONS:CreateTabListWithDropdowns(generalTab.content, 
-        LoadoutReminder.GUTIL:Filter(LoadoutReminder.CONST.INSTANCE_TYPES, function(it) return it ~= LoadoutReminder.CONST.INSTANCE_TYPES.RAID end), 
+    LoadoutReminder.OPTIONS:CreateTabListWithDropdowns(generalTab.content,
+        LoadoutReminder.GUTIL:Filter(LoadoutReminder.CONST.INSTANCE_TYPES,
+            function(it) return it ~= LoadoutReminder.CONST.INSTANCE_TYPES.RAID end),
         LoadoutReminder.CONST.INSTANCE_TYPES_DISPLAY_NAMES, dropdownData, dbFunctions, 100, 0, 35)
 
     -- ### RAIDS
 
     ---@type GGUI.Tab
     local raidsTab = LoadoutReminder.GGUI.Tab({
-        buttonOptions=
+        buttonOptions =
         {
-            label="Raids", parent=LoadoutReminder.OPTIONS.optionsPanel, anchorParent=generalTab.button.frame, adjustWidth=true,
-            anchorA="LEFT", anchorB="RIGHT", offsetX=10,
+            label = "Raids",
+            parent = LoadoutReminder.OPTIONS.optionsPanel,
+            anchorParent = generalTab.button.frame,
+            adjustWidth = true,
+            anchorA = "LEFT",
+            anchorB = "RIGHT",
+            offsetX = 10,
         },
-        canBeEnabled=true,
-        parent=LoadoutReminder.OPTIONS.optionsPanel,
-        anchorParent=LoadoutReminder.OPTIONS.optionsPanel,
-        anchorA="CENTER", anchorB="CENTER", offsetX=0,offsetY=tabOffsetY,
-        sizeX=tabContentX, sizeY=tabContentY,
+        canBeEnabled = true,
+        parent = LoadoutReminder.OPTIONS.optionsPanel,
+        anchorParent = LoadoutReminder.OPTIONS.optionsPanel,
+        anchorA = "CENTER",
+        anchorB = "CENTER",
+        offsetX = 0,
+        offsetY = tabOffsetY,
+        sizeX = tabContentX,
+        sizeY = tabContentY,
     })
 
     LoadoutReminder.OPTIONS:CreateRaidTabList(raidsTab.content, dropdownData)
 
-    LoadoutReminder.GGUI.TabSystem({generalTab, raidsTab})
+    LoadoutReminder.GGUI.TabSystem({ generalTab, raidsTab })
 
     InterfaceOptions_AddCategory(self.optionsPanel)
 end
 
 function LoadoutReminder.OPTIONS:CreateRaidTabList(parent, dropdownData)
-    local subTabSizeX= 100
+    local subTabSizeX = 100
     local tabContentX = 500
     local tabContentY = 500
 
     local tabs = {}
 
     local raids = LoadoutReminder.CONST.RAIDS
-    
+
     local lastAnchor = parent
     local anchorB = "TOPLEFT"
     local offsetY = -20
     for _, raid in pairs(raids) do
         local label = LoadoutReminder.CONST.RAID_DISPLAY_NAMES[raid]
         local tab = LoadoutReminder.GGUI.Tab({
-            buttonOptions=
+            buttonOptions =
             {
-                label=label, parent=parent, anchorParent=lastAnchor,
-                anchorA="TOPLEFT", anchorB=anchorB, offsetX=0,offsetY=offsetY, sizeY=20, sizeX=subTabSizeX
+                label = label,
+                parent = parent,
+                anchorParent = lastAnchor,
+                anchorA = "TOPLEFT",
+                anchorB = anchorB,
+                offsetX = 0,
+                offsetY = offsetY,
+                sizeY = 20,
+                sizeX = subTabSizeX
             },
-            canBeEnabled=true,
-            parent=parent,
-            anchorParent=parent,
-            anchorA="CENTER", anchorB="CENTER", offsetX=0,offsetY=0,
-            sizeX=tabContentX, sizeY=tabContentY,
+            canBeEnabled = true,
+            parent = parent,
+            anchorParent = parent,
+            anchorA = "CENTER",
+            anchorB = "CENTER",
+            offsetX = 0,
+            offsetY = 0,
+            sizeX = tabContentX,
+            sizeY = tabContentY,
         })
 
         tab.content.title = LoadoutReminder.GGUI.Text({
-            parent=tab.content,anchorParent=tab.content,anchorA="TOP", anchorB="TOP", offsetY=40, 
-            text=label, offsetX=160,
+            parent = tab.content,
+            anchorParent = tab.content,
+            anchorA = "TOP",
+            anchorB = "TOP",
+            offsetY = 40,
+            text = label,
+            offsetX = 160,
         })
 
-        local selectedDifficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST.INSTANCE_TYPES.RAID)
+        local selectedDifficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder
+            .CONST.INSTANCE_TYPES.RAID)
 
         local perBossOptionKey = LoadoutReminder.OPTIONS:GetPerBossOptionKey(selectedDifficulty, raid)
 
         if raid ~= LoadoutReminder.CONST.RAIDS.DEFAULT then
             ---@class LoadoutReminder.PerBossCheckbox : GGUI.Checkbox
             tab.content.perBossCheckbox = LoadoutReminder.GGUI.Checkbox({
-                parent=tab.content, 
-                anchorParent=tab.content, 
-                anchorA="TOP", anchorB="TOP", offsetX=-135, offsetY=10,
-                initialValue=LoadoutReminderOptionsV2[perBossOptionKey],
-                label="Boss Loadouts",
-                tooltip="When this is checked, you will be reminded for individual bosses for the selected raid of the selected difficulty.",
-                clickCallback=function (_, checked)
-                    local difficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST.INSTANCE_TYPES.RAID)
+                parent = tab.content,
+                anchorParent = tab.content,
+                anchorA = "TOP",
+                anchorB = "TOP",
+                offsetX = -135,
+                offsetY = 10,
+                initialValue = LoadoutReminderOptionsV2[perBossOptionKey],
+                label = "Boss Loadouts",
+                tooltip =
+                "When this is checked, you will be reminded for individual bosses for the selected raid of the selected difficulty.",
+                clickCallback = function(_, checked)
+                    local difficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(
+                        LoadoutReminder.CONST.INSTANCE_TYPES.RAID)
                     local key = LoadoutReminder.OPTIONS:GetPerBossOptionKey(difficulty, raid)
                     LoadoutReminderOptionsV2[key] = checked
-                    LoadoutReminder.MAIN:CheckSituations()
+                    LoadoutReminder.CHECK:CheckSituations()
                 end
             })
-            tab.content.perBossCheckbox.Reload = function ()
-                local difficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST.INSTANCE_TYPES.RAID)
+            tab.content.perBossCheckbox.Reload = function()
+                local difficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder
+                    .CONST.INSTANCE_TYPES.RAID)
                 local key = LoadoutReminder.OPTIONS:GetPerBossOptionKey(difficulty, raid)
                 tab.content.perBossCheckbox:SetChecked(LoadoutReminderOptionsV2[key])
             end
@@ -308,94 +368,125 @@ function LoadoutReminder.OPTIONS:CreateRaidTabList(parent, dropdownData)
             tab.content.perBossCheckbox:Hide() -- cause initial difficulty is default and thats where we do not want the checkbox to show
 
             ---@class GGUI.HelpIcon
-            table.insert(LoadoutReminder.OPTIONS.HELPICONS_DEFAULT_DIFF, LoadoutReminder.GGUI.HelpIcon({parent=tab.content, anchorParent=tab.content,
-                anchorA="TOP", anchorB="TOP", offsetX=-90, offsetY=0,
-                text="You will be reminded of this loadouts when loading into the selected raid of any difficulty\nwhere individual boss loadouts are toggled" .. 
-                LoadoutReminder.GUTIL:ColorizeText(" ON", LoadoutReminder.GUTIL.COLORS.GREEN),
-            }))
+            table.insert(LoadoutReminder.OPTIONS.HELPICONS_DEFAULT_DIFF,
+                LoadoutReminder.GGUI.HelpIcon({
+                    parent = tab.content,
+                    anchorParent = tab.content,
+                    anchorA = "TOP",
+                    anchorB = "TOP",
+                    offsetX = -90,
+                    offsetY = 0,
+                    text =
+                        "You will be reminded of this loadouts when loading into the selected raid of any difficulty\nwhere individual boss loadouts are toggled" ..
+                        LoadoutReminder.GUTIL:ColorizeText(" ON", LoadoutReminder.GUTIL.COLORS.GREEN),
+                }))
         else
-            table.insert(LoadoutReminder.OPTIONS.HELPICONS_DEFAULT_RAID, LoadoutReminder.GGUI.HelpIcon({parent=tab.content, anchorParent=tab.content,
-                anchorA="TOP", anchorB="TOP", offsetX=-90, offsetY=0,
-                text="You will be reminded of this loadout when loading into any raid (of the selected difficulty)\nwhere individual boss loadouts are toggled" .. 
-                LoadoutReminder.GUTIL:ColorizeText(" OFF", LoadoutReminder.GUTIL.COLORS.RED),
-            }))
+            table.insert(LoadoutReminder.OPTIONS.HELPICONS_DEFAULT_RAID,
+                LoadoutReminder.GGUI.HelpIcon({
+                    parent = tab.content,
+                    anchorParent = tab.content,
+                    anchorA = "TOP",
+                    anchorB = "TOP",
+                    offsetX = -90,
+                    offsetY = 0,
+                    text =
+                        "You will be reminded of this loadout when loading into any raid (of the selected difficulty)\nwhere individual boss loadouts are toggled" ..
+                        LoadoutReminder.GUTIL:ColorizeText(" OFF", LoadoutReminder.GUTIL.COLORS.RED),
+                }))
         end
 
-        local bosses = LoadoutReminder.GUTIL:Filter(LoadoutReminder.CONST.BOSS_ID_MAP, function (boss)
+        local bosses = LoadoutReminder.GUTIL:Filter(LoadoutReminder.CONST.BOSS_ID_MAP, function(boss)
             return string.sub(boss, 1, string.len(raid)) == raid
         end)
 
         bosses = LoadoutReminder.GUTIL:ToSet(bosses)
-        bosses = LoadoutReminder.GUTIL:Sort(bosses, function (a, b)
-            return LoadoutReminder.CONST.BOSS_SORT_ORDER[a] <  LoadoutReminder.CONST.BOSS_SORT_ORDER[b]
+        bosses = LoadoutReminder.GUTIL:Sort(bosses, function(a, b)
+            return LoadoutReminder.CONST.BOSS_SORT_ORDER[a] < LoadoutReminder.CONST.BOSS_SORT_ORDER[b]
         end)
 
         local dbFunctions = {
-            TALENTS= {
-                Save = function (_, tabID, data)
+            TALENTS = {
+                Save = function(_, tabID, data)
                     LoadoutReminder.DB.TALENTS:SaveRaidSet(raid, tabID, data)
                 end,
-                Get = function (_, tabID)
-                    return LoadoutReminder.DB.TALENTS:GetRaidSet(raid, tabID, LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST.INSTANCE_TYPES.RAID))
+                Get = function(_, tabID)
+                    return LoadoutReminder.DB.TALENTS:GetRaidSet(raid, tabID,
+                        LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST
+                            .INSTANCE_TYPES.RAID))
                 end,
-                GetInitialData = function (_, tabID)
-                    local setID = LoadoutReminder.DB.TALENTS:GetRaidSet(raid, tabID, LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST.INSTANCE_TYPES.RAID))
+                GetInitialData = function(_, tabID)
+                    local setID = LoadoutReminder.DB.TALENTS:GetRaidSet(raid, tabID,
+                        LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST
+                            .INSTANCE_TYPES.RAID))
                     local label = (setID and LoadoutReminder.TALENTS:GetTalentSetNameByID(setID)) or nil
                     return {
-                        label=label,
-                        value=setID
+                        label = label,
+                        value = setID
                     }
                 end
             },
-            EQUIP= {
-                Save = function (_, tabID, data)
+            EQUIP = {
+                Save = function(_, tabID, data)
                     LoadoutReminder.DB.EQUIP:SaveRaidSet(raid, tabID, data)
                 end,
-                Get = function (_, tabID)
-                    return LoadoutReminder.DB.EQUIP:GetRaidSet(raid, tabID, LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST.INSTANCE_TYPES.RAID))
+                Get = function(_, tabID)
+                    return LoadoutReminder.DB.EQUIP:GetRaidSet(raid, tabID,
+                        LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST
+                            .INSTANCE_TYPES.RAID))
                 end,
-                GetInitialData = function (_, tabID)
-                    local setID = LoadoutReminder.DB.EQUIP:GetRaidSet(raid, tabID, LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST.INSTANCE_TYPES.RAID))
+                GetInitialData = function(_, tabID)
+                    local setID = LoadoutReminder.DB.EQUIP:GetRaidSet(raid, tabID,
+                        LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST
+                            .INSTANCE_TYPES.RAID))
                     local label = (setID and LoadoutReminder.EQUIP:GetEquipSetNameByID(setID)) or nil
                     return {
-                        label=label,
-                        value=setID
+                        label = label,
+                        value = setID
                     }
                 end
             },
-            SPEC= {
-                Save = function (_, tabID, data)
+            SPEC = {
+                Save = function(_, tabID, data)
                     LoadoutReminder.DB.SPEC:SaveRaidSet(raid, tabID, data)
                 end,
-                Get = function (_, tabID)
-                    return LoadoutReminder.DB.SPEC:GetRaidSet(raid, tabID, LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST.INSTANCE_TYPES.RAID))
+                Get = function(_, tabID)
+                    return LoadoutReminder.DB.SPEC:GetRaidSet(raid, tabID,
+                        LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST
+                            .INSTANCE_TYPES.RAID))
                 end,
-                GetInitialData = function (_, tabID)
-                    local setName = LoadoutReminder.DB.SPEC:GetRaidSet(raid, tabID, LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST.INSTANCE_TYPES.RAID))
+                GetInitialData = function(_, tabID)
+                    local setName = LoadoutReminder.DB.SPEC:GetRaidSet(raid, tabID,
+                        LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST
+                            .INSTANCE_TYPES.RAID))
                     return {
-                        label=setName,
-                        value=setName
+                        label = setName,
+                        value = setName
                     }
                 end
             },
-            ADDONS= {
-                Save = function (_, tabID, data)
+            ADDONS = {
+                Save = function(_, tabID, data)
                     LoadoutReminder.DB.ADDONS:SaveRaidSet(raid, tabID, data)
                 end,
-                Get = function (_, tabID)
-                    return LoadoutReminder.DB.ADDONS:GetRaidSet(raid, tabID, LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST.INSTANCE_TYPES.RAID))
+                Get = function(_, tabID)
+                    return LoadoutReminder.DB.ADDONS:GetRaidSet(raid, tabID,
+                        LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST
+                            .INSTANCE_TYPES.RAID))
                 end,
-                GetInitialData = function (_, tabID)
-                    local setName = LoadoutReminder.DB.ADDONS:GetRaidSet(raid, tabID, LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST.INSTANCE_TYPES.RAID))
+                GetInitialData = function(_, tabID)
+                    local setName = LoadoutReminder.DB.ADDONS:GetRaidSet(raid, tabID,
+                        LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST
+                            .INSTANCE_TYPES.RAID))
                     return {
-                        label=setName,
-                        value=setName
+                        label = setName,
+                        value = setName
                     }
                 end
             },
         }
 
-        LoadoutReminder.OPTIONS:CreateTabListWithDropdowns(tab.content, bosses, LoadoutReminder.CONST.BOSS_NAMES, dropdownData, dbFunctions, 200, 60, 0, 100, 15)
+        LoadoutReminder.OPTIONS:CreateTabListWithDropdowns(tab.content, bosses, LoadoutReminder.CONST.BOSS_NAMES,
+            dropdownData, dbFunctions, 200, 60, 0, 100, 15)
         table.insert(tabs, tab)
         --
         lastAnchor = tab.button.frame
@@ -408,14 +499,16 @@ function LoadoutReminder.OPTIONS:CreateRaidTabList(parent, dropdownData)
     return tabs
 end
 
-function LoadoutReminder.OPTIONS:CreateTabListWithDropdowns(parent, idTable, nameTable, dropdownData, dbFunctions, buttonWidth, baseOffsetX, baseOffsetY, titleOffsetX, titleOffsetY)
+function LoadoutReminder.OPTIONS:CreateTabListWithDropdowns(parent, idTable, nameTable, dropdownData, dbFunctions,
+                                                            buttonWidth, baseOffsetX, baseOffsetY, titleOffsetX,
+                                                            titleOffsetY)
     local tabContentX = 500
     local tabContentY = 500
 
     baseOffsetX = baseOffsetX or 0
     baseOffsetY = baseOffsetY or 0
     titleOffsetX = titleOffsetX or 0
-    titleOffsetY = titleOffsetY or (baseOffsetY-20)
+    titleOffsetY = titleOffsetY or (baseOffsetY - 20)
 
     local tabs = {}
 
@@ -426,24 +519,41 @@ function LoadoutReminder.OPTIONS:CreateTabListWithDropdowns(parent, idTable, nam
     for _, tabID in pairs(idTable) do
         local label = nameTable[tabID]
         local tab = LoadoutReminder.GGUI.Tab({
-            buttonOptions=
+            buttonOptions =
             {
-                label=label, parent=parent, anchorParent=lastAnchor,
-                anchorA="TOPLEFT", anchorB=anchorB, offsetX=offsetX,offsetY=offsetY, sizeY=20, sizeX=buttonWidth
+                label = label,
+                parent = parent,
+                anchorParent = lastAnchor,
+                anchorA = "TOPLEFT",
+                anchorB = anchorB,
+                offsetX = offsetX,
+                offsetY = offsetY,
+                sizeY = 20,
+                sizeX = buttonWidth
             },
-            canBeEnabled=true,
-            parent=parent,
-            anchorParent=parent,
-            anchorA="CENTER", anchorB="CENTER", offsetX=0,offsetY=0,
-            sizeX=tabContentX, sizeY=tabContentY,
+            canBeEnabled = true,
+            parent = parent,
+            anchorParent = parent,
+            anchorA = "CENTER",
+            anchorB = "CENTER",
+            offsetX = 0,
+            offsetY = 0,
+            sizeX = tabContentX,
+            sizeY = tabContentY,
         })
 
         tab.content.title = LoadoutReminder.GGUI.Text({
-            parent=tab.content,anchorParent=tab.content,anchorA="TOP", anchorB="TOP", offsetY=titleOffsetY, 
-            text=label, offsetX=titleOffsetX+baseOffsetX,
+            parent = tab.content,
+            anchorParent = tab.content,
+            anchorA = "TOP",
+            anchorB = "TOP",
+            offsetY = titleOffsetY,
+            text = label,
+            offsetX = titleOffsetX + baseOffsetX,
         })
 
-        LoadoutReminder.OPTIONS:CreateReminderTypeDropdowns(tab.content, tab.content.title.frame, "TOP", "BOTTOM", 0, -20, dropdownData, dbFunctions, tabID)
+        LoadoutReminder.OPTIONS:CreateReminderTypeDropdowns(tab.content, tab.content.title.frame, "TOP", "BOTTOM", 0, -20,
+            dropdownData, dbFunctions, tabID)
         table.insert(tabs, tab)
         --
         lastAnchor = tab.button.frame
@@ -457,53 +567,90 @@ function LoadoutReminder.OPTIONS:CreateTabListWithDropdowns(parent, idTable, nam
     return tabs
 end
 
-function LoadoutReminder.OPTIONS:CreateReminderTypeDropdowns(parent, anchorParent, anchorA, anchorB, offsetX, offsetY, dropdownData, dbFunctions, tabID)
+function LoadoutReminder.OPTIONS:CreateReminderTypeDropdowns(parent, anchorParent, anchorA, anchorB, offsetX, offsetY,
+                                                             dropdownData, dbFunctions, tabID)
     local dropdownSpacingY = -21
     local talentData = dropdownData.TALENTS
     local initialTalent = dbFunctions.TALENTS:GetInitialData(tabID)
     ---@type GGUI.Dropdown
     local talentsDropdown = LoadoutReminder.GGUI.Dropdown({
-        parent=parent, anchorParent=anchorParent,
-        anchorA=anchorA,anchorB=anchorB, offsetX=offsetX,offsetY=offsetY,label="Talent Set",
-        initialData=talentData, initialValue=initialTalent.value, initialLabel=initialTalent.label or LoadoutReminder.CONST.LABEL_NO_SET,
-        clickCallback=function (self, _, data)
+        parent = parent,
+        anchorParent = anchorParent,
+        anchorA = anchorA,
+        anchorB = anchorB,
+        offsetX = offsetX,
+        offsetY = offsetY,
+        label = "Talent Set",
+        initialData = talentData,
+        initialValue = initialTalent.value,
+        initialLabel = initialTalent.label or LoadoutReminder.CONST.LABEL_NO_SET,
+        clickCallback = function(self, _, data)
             dbFunctions.TALENTS:Save(tabID, data)
-            LoadoutReminder.MAIN:CheckSituations()
+            LoadoutReminder.CHECK:CheckSituations()
         end,
     })
-    talentsDropdown.Reload = function (_, dropdownData)
+    talentsDropdown.Reload = function(_, dropdownData)
         local initialData = dbFunctions.TALENTS:GetInitialData(tabID)
-        talentsDropdown:SetData({data=dropdownData.TALENTS, initialValue=initialData.value, initialLabel=initialData.label or LoadoutReminder.CONST.LABEL_NO_SET})
+        talentsDropdown:SetData({
+            data = dropdownData.TALENTS,
+            initialValue = initialData.value,
+            initialLabel =
+                initialData.label or LoadoutReminder.CONST.LABEL_NO_SET
+        })
     end
     local equipData = dropdownData.EQUIP
     local initialEquip = dbFunctions.EQUIP:GetInitialData(tabID)
     local equipDropdown = LoadoutReminder.GGUI.Dropdown({
-        parent=parent, anchorParent=talentsDropdown.frame,
-        anchorA="TOP",anchorB="BOTTOM", offsetX=0,offsetY=dropdownSpacingY,label="Equip Set",
-        initialData=equipData, initialValue=initialEquip.value, initialLabel=initialEquip.label or LoadoutReminder.CONST.LABEL_NO_SET,
-        clickCallback=function (self, _, data)
+        parent = parent,
+        anchorParent = talentsDropdown.frame,
+        anchorA = "TOP",
+        anchorB = "BOTTOM",
+        offsetX = 0,
+        offsetY = dropdownSpacingY,
+        label = "Equip Set",
+        initialData = equipData,
+        initialValue = initialEquip.value,
+        initialLabel = initialEquip.label or LoadoutReminder.CONST.LABEL_NO_SET,
+        clickCallback = function(self, _, data)
             dbFunctions.EQUIP:Save(tabID, data)
-            LoadoutReminder.MAIN:CheckSituations()
+            LoadoutReminder.CHECK:CheckSituations()
         end,
     })
-    equipDropdown.Reload = function (_, dropdownData)
+    equipDropdown.Reload = function(_, dropdownData)
         local initialData = dbFunctions.EQUIP:GetInitialData(tabID)
-        equipDropdown:SetData({data=dropdownData.EQUIP, initialValue=initialData.value, initialLabel=initialData.label or LoadoutReminder.CONST.LABEL_NO_SET})
+        equipDropdown:SetData({
+            data = dropdownData.EQUIP,
+            initialValue = initialData.value,
+            initialLabel = initialData
+                .label or LoadoutReminder.CONST.LABEL_NO_SET
+        })
     end
     local specData = dropdownData.SPEC
     local initialSpec = dbFunctions.SPEC:GetInitialData(tabID)
     local specDropdown = LoadoutReminder.GGUI.Dropdown({
-        parent=parent, anchorParent=equipDropdown.frame,
-        anchorA="TOP",anchorB="BOTTOM", offsetX=0,offsetY=dropdownSpacingY,label="Specialization",
-        initialData=specData, initialValue=initialSpec.value, initialLabel=initialSpec.label or LoadoutReminder.CONST.LABEL_NO_SET,
-        clickCallback=function (self, _, data)
+        parent = parent,
+        anchorParent = equipDropdown.frame,
+        anchorA = "TOP",
+        anchorB = "BOTTOM",
+        offsetX = 0,
+        offsetY = dropdownSpacingY,
+        label = "Specialization",
+        initialData = specData,
+        initialValue = initialSpec.value,
+        initialLabel = initialSpec.label or LoadoutReminder.CONST.LABEL_NO_SET,
+        clickCallback = function(self, _, data)
             dbFunctions.SPEC:Save(tabID, data)
-            LoadoutReminder.MAIN:CheckSituations()
+            LoadoutReminder.CHECK:CheckSituations()
         end,
     })
-    specDropdown.Reload = function (_, dropdownData)
+    specDropdown.Reload = function(_, dropdownData)
         local initialData = dbFunctions.SPEC:GetInitialData(tabID)
-        specDropdown:SetData({data=dropdownData.SPEC, initialValue=initialData.value, initialLabel=initialData.label or LoadoutReminder.CONST.LABEL_NO_SET})
+        specDropdown:SetData({
+            data = dropdownData.SPEC,
+            initialValue = initialData.value,
+            initialLabel = initialData
+                .label or LoadoutReminder.CONST.LABEL_NO_SET
+        })
     end
 
     table.insert(LoadoutReminder.OPTIONS.DROPDOWNS, talentsDropdown)
@@ -518,25 +665,36 @@ function LoadoutReminder.OPTIONS:CreateReminderTypeDropdowns(parent, anchorParen
 
     local initialAddons = dbFunctions.ADDONS:GetInitialData(tabID)
     local addonDropdown = LoadoutReminder.GGUI.Dropdown({
-        parent=parent, anchorParent=specDropdown.frame,
-        anchorA="TOP",anchorB="BOTTOM", offsetX=0,offsetY=dropdownSpacingY,label="Addon Set",
-        initialData=addonData, initialValue=initialAddons.value, initialLabel=initialAddons.label or LoadoutReminder.CONST.LABEL_NO_SET,
-        clickCallback=function (self, _, data)
+        parent = parent,
+        anchorParent = specDropdown.frame,
+        anchorA = "TOP",
+        anchorB = "BOTTOM",
+        offsetX = 0,
+        offsetY = dropdownSpacingY,
+        label = "Addon Set",
+        initialData = addonData,
+        initialValue = initialAddons.value,
+        initialLabel = initialAddons.label or LoadoutReminder.CONST.LABEL_NO_SET,
+        clickCallback = function(self, _, data)
             dbFunctions.ADDONS:Save(tabID, data)
-            LoadoutReminder.MAIN:CheckSituations()
+            LoadoutReminder.CHECK:CheckSituations()
         end,
     })
-    addonDropdown.Reload = function (_, dropdownData)
+    addonDropdown.Reload = function(_, dropdownData)
         local initialData = dbFunctions.ADDONS:GetInitialData(tabID)
-        addonDropdown:SetData({data=dropdownData.ADDONS, initialValue=initialData.value, initialLabel=initialData.label or LoadoutReminder.CONST.LABEL_NO_SET})
+        addonDropdown:SetData({
+            data = dropdownData.ADDONS,
+            initialValue = initialData.value,
+            initialLabel = initialData
+                .label or LoadoutReminder.CONST.LABEL_NO_SET
+        })
     end
 
-    
+
     table.insert(LoadoutReminder.OPTIONS.DROPDOWNS, addonDropdown)
 end
 
 function LoadoutReminder.OPTIONS:ReloadDropdowns()
-
     if not LoadoutReminder.MAIN.READY then
         return
     end
@@ -548,7 +706,8 @@ function LoadoutReminder.OPTIONS:ReloadDropdowns()
         ADDONS = LoadoutReminder.OPTIONS:GetAddonsData()
     }
 
-    local selectedDifficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST.INSTANCE_TYPES.RAID)
+    local selectedDifficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder
+        .CONST.INSTANCE_TYPES.RAID)
 
     for _, dropdown in pairs(LoadoutReminder.OPTIONS.DROPDOWNS) do
         dropdown:Reload(dropdownData)
@@ -566,10 +725,10 @@ end
 
 function LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(instanceType)
     local difficulty = "DEFAULT"
-	if LoadoutReminder.UTIL:InstanceTypeSupportsDifficulty(instanceType) then
-		difficulty = LoadoutReminder.OPTIONS.difficultyDropdown.selectedValue
-	end
-	return difficulty
+    if LoadoutReminder.UTIL:InstanceTypeSupportsDifficulty(instanceType) then
+        difficulty = LoadoutReminder.OPTIONS.difficultyDropdown.selectedValue
+    end
+    return difficulty
 end
 
 function LoadoutReminder.OPTIONS:GetPerBossOptionKey(difficulty, raid)
@@ -577,16 +736,16 @@ function LoadoutReminder.OPTIONS:GetPerBossOptionKey(difficulty, raid)
 end
 
 function LoadoutReminder.OPTIONS:HasRaidLoadoutsPerBoss()
-	local raid = LoadoutReminder.UTIL:GetCurrentRaid()
-	if not raid then
-		return false
-	end
-	local difficulty = LoadoutReminder.UTIL:GetInstanceDifficulty()
+    local raid = LoadoutReminder.UTIL:GetCurrentRaid()
+    if not raid then
+        return false
+    end
+    local difficulty = LoadoutReminder.UTIL:GetInstanceDifficulty()
     if not difficulty then
         -- happens on first execution after going into a raid.. next exec should include difficulty
         return false
     end
-	local optionKey = LoadoutReminder.OPTIONS:GetPerBossOptionKey(difficulty, raid)
+    local optionKey = LoadoutReminder.OPTIONS:GetPerBossOptionKey(difficulty, raid)
 
-	return LoadoutReminderOptionsV2[optionKey]
+    return LoadoutReminderOptionsV2[optionKey]
 end

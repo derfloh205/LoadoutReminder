@@ -1,4 +1,6 @@
-LoadoutReminderAddonName, LoadoutReminder = ...
+---@class LoadoutReminder
+local LoadoutReminder = select(2, ...)
+local LoadoutReminderAddonName = select(1, ...)
 
 LoadoutReminder.NEWS = {}
 
@@ -8,31 +10,39 @@ function LoadoutReminder.NEWS:Init()
     local sizeY = 100
 
     local newsFrame = LoadoutReminder.GGUI.Frame({
-        parent=UIParent, anchorParent=UIParent,
-        anchorA="TOP", anchorB="TOP", sizeX=sizeX, sizeY=sizeY,
-        backdropOptions=LoadoutReminder.CONST.DEFAULT_BACKDROP_OPTIONS,
-        frameConfigTable=LoadoutReminderGGUIConfig,
-        frameTable=LoadoutReminder.MAIN.FRAMES, 
-        frameID=LoadoutReminder.CONST.FRAMES.NEWS,
-        title=LoadoutReminder.GUTIL:ColorizeText("LoadoutReminder " .. C_AddOns.GetAddOnMetadata(LoadoutReminderAddonName, "Version"), 
+        parent = UIParent,
+        anchorParent = UIParent,
+        anchorA = "TOP",
+        anchorB = "TOP",
+        sizeX = sizeX,
+        sizeY = sizeY,
+        backdropOptions = LoadoutReminder.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameConfigTable = LoadoutReminderGGUIConfig,
+        frameTable = LoadoutReminder.MAIN.FRAMES,
+        frameID = LoadoutReminder.CONST.FRAMES.NEWS,
+        title = LoadoutReminder.GUTIL:ColorizeText(
+            "LoadoutReminder " .. C_AddOns.GetAddOnMetadata(LoadoutReminderAddonName, "Version"),
             LoadoutReminder.GUTIL.COLORS.BRIGHT_BLUE),
-        collapseable=true,
-        closeable=true,
-        moveable=true,
+        collapseable = true,
+        closeable = true,
+        moveable = true,
     })
 
     newsFrame:Hide()
 
     newsFrame.content.info = LoadoutReminder.GGUI.Text({
-        parent=newsFrame.content, anchorParent=newsFrame.content, offsetY=-10,
-        text="", justifyOptions={type="H", align="LEFT"}
+        parent = newsFrame.content,
+        anchorParent = newsFrame.content,
+        offsetY = -10,
+        text = "",
+        justifyOptions = { type = "H", align = "LEFT" }
     })
 end
 
 function LoadoutReminder.NEWS:GET_NEWS()
     local d = LoadoutReminder.GUTIL:ColorizeText("-", LoadoutReminder.GUTIL.COLORS.GREEN)
     return string.format(
-    [[
+        [[
         %1$s Fixed an error when difficulty is not yet loaded
     ]], d)
 end
@@ -64,7 +74,7 @@ function LoadoutReminder.NEWS:ShowNews(force)
     local infoText = LoadoutReminder.NEWS:GET_NEWS()
     local newChecksum = LoadoutReminder.NEWS:IsNewsUpdate()
     if newChecksum == nil and (not force) then
-       return 
+        return
     end
 
     LoadoutReminderOptionsV2.newsChecksum = newChecksum

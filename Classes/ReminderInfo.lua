@@ -1,4 +1,5 @@
-_, LoadoutReminder = ...
+---@class LoadoutReminder
+local LoadoutReminder = select(2, ...)
 
 
 ---@class LoadoutReminder.ReminderInfo
@@ -9,7 +10,8 @@ LoadoutReminder.ReminderInfo = LoadoutReminder.Object:extend()
 ---@param macroText string
 ---@param currentSet string
 ---@param assignedSet string
-function LoadoutReminder.ReminderInfo:new(reminderType, situationInfo, macroText, buttonText, infoText, currentSet, assignedSet)
+function LoadoutReminder.ReminderInfo:new(reminderType, situationInfo, macroText, buttonText, infoText, currentSet,
+                                          assignedSet)
     self.reminderType = reminderType
     self.situationInfo = situationInfo
     self.macroText = macroText
