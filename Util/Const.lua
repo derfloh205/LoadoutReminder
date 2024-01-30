@@ -14,12 +14,20 @@ LoadoutReminder.CONST.STARTER_BUILD = "Starter Build"
 LoadoutReminder.CONST.LABEL_NO_SET = '-'
 LoadoutReminder.CONST.NO_SET_NAME = '<No Set>'
 
+---@type GGUI.BackdropOptions
 LoadoutReminder.CONST.DEFAULT_BACKDROP_OPTIONS = {
     bgFile = "Interface\\CharacterFrame\\UI-Party-Background",
     borderOptions = {
         edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
         edgeSize = 16,
         insets = { left = 8, right = 6, top = 8, bottom = 8 },
+    }
+}
+---@type GGUI.BackdropOptions
+LoadoutReminder.CONST.OPTIONS_TAB_CONTENT_BACKDROP = {
+    borderOptions = {
+        edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+        edgeSize = 16,
     }
 }
 
@@ -36,15 +44,15 @@ LoadoutReminder.CONST.BOSS_NAMES = {
     AMIRDRASSIL_TINDRAL_SAGESWIFT = "Tindral Sageswift",
     AMIRDRASSIL_FYRAKK = "Fyrakk",
     -- Aberrus
-    ABERRUS_KAZZARA = 'Kazzara, the Hellforged',
-    ABERRUS_AMALGAMATION_CHAMBER = 'The Amalgamation Chamber',
-    ABERRUS_FORGOTTEN_EXPERIMENTS = 'The Forgotten Experiments',
-    ABERRUS_ASSAULT = 'Assault of the Zaqali',
-    ABERRUS_RASHOK = 'Rashok, the Elder',
-    ABERRUS_ZSKARN = 'The Vigilant Steward, Zskarn',
+    ABERRUS_KAZZARA = 'Kazzara',
+    ABERRUS_AMALGAMATION_CHAMBER = 'Chamber',
+    ABERRUS_FORGOTTEN_EXPERIMENTS = 'Experiments',
+    ABERRUS_ASSAULT = 'Assault',
+    ABERRUS_RASHOK = 'Rashok',
+    ABERRUS_ZSKARN = 'Zskarn',
     ABERRUS_MAGMORAX = 'Magmorax',
     ABERRUS_ECHO = 'Echo of Neltharion',
-    ABERRUS_SARKARETH = 'Scalecommander Sarkareth',
+    ABERRUS_SARKARETH = 'Sarkareth',
 }
 
 LoadoutReminder.CONST.BOSS_SORT_ORDER = {

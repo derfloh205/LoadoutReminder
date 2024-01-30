@@ -145,22 +145,19 @@ function LoadoutReminder.OPTIONS:Init()
     }
 
     local tabContentX = 623
-    local tabContentY = 500
-    local tabOffsetY = -60
+    local tabContentY = 520
+    local tabOffsetY = -25
 
-    --- GENERAL
-    ---@type GGUI.Tab
-    local generalTab = LoadoutReminder.GGUI.Tab({
+    local generalTab = LoadoutReminder.GGUI.BlizzardTab({
         buttonOptions =
         {
             label = "General",
             parent = LoadoutReminder.OPTIONS.optionsPanel,
             anchorParent = LoadoutReminder.OPTIONS.optionsPanel,
-            adjustWidth = true,
             anchorA = "TOPLEFT",
             anchorB = "TOPLEFT",
-            offsetX = 20,
-            offsetY = -20
+            offsetX = 25,
+            offsetY = -35
         },
         canBeEnabled = true,
         parent = LoadoutReminder.OPTIONS.optionsPanel,
@@ -171,7 +168,14 @@ function LoadoutReminder.OPTIONS:Init()
         offsetY = tabOffsetY,
         sizeX = tabContentX,
         sizeY = tabContentY,
+        initialTab = true,
+        top = true,
     })
+
+    generalTab.content.background = LoadoutReminder.GGUI.Frame {
+        parent = generalTab.content, anchorParent = generalTab.content, sizeX = tabContentX, sizeY = tabContentY,
+        backdropOptions = LoadoutReminder.CONST.OPTIONS_TAB_CONTENT_BACKDROP,
+    }
 
     local dbFunctions = {
         TALENTS = {
@@ -249,21 +253,19 @@ function LoadoutReminder.OPTIONS:Init()
     LoadoutReminder.OPTIONS:CreateTabListWithDropdowns(generalTab.content,
         LoadoutReminder.GUTIL:Filter(LoadoutReminder.CONST.INSTANCE_TYPES,
             function(it) return it ~= LoadoutReminder.CONST.INSTANCE_TYPES.RAID end),
-        LoadoutReminder.CONST.INSTANCE_TYPES_DISPLAY_NAMES, dropdownData, dbFunctions, 100, 0, 35)
+        LoadoutReminder.CONST.INSTANCE_TYPES_DISPLAY_NAMES, dropdownData, dbFunctions, 0, -20, nil, -30, 600, 460, 15,
+        -20)
 
     -- ### RAIDS
 
-    ---@type GGUI.Tab
-    local raidsTab = LoadoutReminder.GGUI.Tab({
+    local raidsTab = LoadoutReminder.GGUI.BlizzardTab({
         buttonOptions =
         {
             label = "Raids",
             parent = LoadoutReminder.OPTIONS.optionsPanel,
-            anchorParent = generalTab.button.frame,
-            adjustWidth = true,
+            anchorParent = generalTab.button,
             anchorA = "LEFT",
             anchorB = "RIGHT",
-            offsetX = 10,
         },
         canBeEnabled = true,
         parent = LoadoutReminder.OPTIONS.optionsPanel,
@@ -274,19 +276,24 @@ function LoadoutReminder.OPTIONS:Init()
         offsetY = tabOffsetY,
         sizeX = tabContentX,
         sizeY = tabContentY,
+        top = true,
     })
+
+    raidsTab.content.background = LoadoutReminder.GGUI.Frame {
+        parent = raidsTab.content, anchorParent = raidsTab.content, sizeX = tabContentX, sizeY = tabContentY,
+        backdropOptions = LoadoutReminder.CONST.OPTIONS_TAB_CONTENT_BACKDROP,
+    }
 
     LoadoutReminder.OPTIONS:CreateRaidTabList(raidsTab.content, dropdownData)
 
-    LoadoutReminder.GGUI.TabSystem({ generalTab, raidsTab })
+    LoadoutReminder.GGUI.BlizzardTabSystem({ generalTab, raidsTab })
 
     InterfaceOptions_AddCategory(self.optionsPanel)
 end
 
 function LoadoutReminder.OPTIONS:CreateRaidTabList(parent, dropdownData)
-    local subTabSizeX = 100
-    local tabContentX = 500
-    local tabContentY = 500
+    local tabContentX = 600
+    local tabContentY = 460
 
     local tabs = {}
 
@@ -294,10 +301,13 @@ function LoadoutReminder.OPTIONS:CreateRaidTabList(parent, dropdownData)
 
     local lastAnchor = parent
     local anchorB = "TOPLEFT"
+    local setInitial = true
     local offsetY = -20
+    local offsetX = 15
     for _, raid in pairs(raids) do
         local label = LoadoutReminder.CONST.RAID_DISPLAY_NAMES[raid]
-        local tab = LoadoutReminder.GGUI.Tab({
+        local initialTab = setInitial
+        local tab = LoadoutReminder.GGUI.BlizzardTab({
             buttonOptions =
             {
                 label = label,
@@ -305,10 +315,8 @@ function LoadoutReminder.OPTIONS:CreateRaidTabList(parent, dropdownData)
                 anchorParent = lastAnchor,
                 anchorA = "TOPLEFT",
                 anchorB = anchorB,
-                offsetX = 0,
+                offsetX = offsetX,
                 offsetY = offsetY,
-                sizeY = 20,
-                sizeX = subTabSizeX
             },
             canBeEnabled = true,
             parent = parent,
@@ -316,20 +324,29 @@ function LoadoutReminder.OPTIONS:CreateRaidTabList(parent, dropdownData)
             anchorA = "CENTER",
             anchorB = "CENTER",
             offsetX = 0,
-            offsetY = 0,
+            offsetY = -20,
             sizeX = tabContentX,
             sizeY = tabContentY,
+            initialTab = initialTab,
+            top = true,
         })
+
+        setInitial = false
 
         tab.content.title = LoadoutReminder.GGUI.Text({
             parent = tab.content,
             anchorParent = tab.content,
             anchorA = "TOP",
             anchorB = "TOP",
-            offsetY = 40,
+            offsetY = -20,
             text = label,
-            offsetX = 160,
+            offsetX = 0,
         })
+
+        tab.content.background = LoadoutReminder.GGUI.Frame {
+            parent = tab.content, anchorParent = tab.content, sizeX = tabContentX, sizeY = tabContentY,
+            backdropOptions = LoadoutReminder.CONST.OPTIONS_TAB_CONTENT_BACKDROP,
+        }
 
         local selectedDifficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder
             .CONST.INSTANCE_TYPES.RAID)
@@ -343,8 +360,8 @@ function LoadoutReminder.OPTIONS:CreateRaidTabList(parent, dropdownData)
                 anchorParent = tab.content,
                 anchorA = "TOP",
                 anchorB = "TOP",
-                offsetX = -135,
-                offsetY = 10,
+                offsetX = 55,
+                offsetY = -16,
                 initialValue = LoadoutReminderOptionsV2[perBossOptionKey],
                 label = "Boss Loadouts",
                 tooltip =
@@ -374,8 +391,8 @@ function LoadoutReminder.OPTIONS:CreateRaidTabList(parent, dropdownData)
                     anchorParent = tab.content,
                     anchorA = "TOP",
                     anchorB = "TOP",
-                    offsetX = -90,
-                    offsetY = 0,
+                    offsetX = 50,
+                    offsetY = -13,
                     text =
                         "You will be reminded of this loadouts when loading into the selected raid of any difficulty\nwhere individual boss loadouts are toggled" ..
                         LoadoutReminder.GUTIL:ColorizeText(" ON", LoadoutReminder.GUTIL.COLORS.GREEN),
@@ -387,8 +404,8 @@ function LoadoutReminder.OPTIONS:CreateRaidTabList(parent, dropdownData)
                     anchorParent = tab.content,
                     anchorA = "TOP",
                     anchorB = "TOP",
-                    offsetX = -90,
-                    offsetY = 0,
+                    offsetX = 50,
+                    offsetY = -13,
                     text =
                         "You will be reminded of this loadout when loading into any raid (of the selected difficulty)\nwhere individual boss loadouts are toggled" ..
                         LoadoutReminder.GUTIL:ColorizeText(" OFF", LoadoutReminder.GUTIL.COLORS.RED),
@@ -486,24 +503,25 @@ function LoadoutReminder.OPTIONS:CreateRaidTabList(parent, dropdownData)
         }
 
         LoadoutReminder.OPTIONS:CreateTabListWithDropdowns(tab.content, bosses, LoadoutReminder.CONST.BOSS_NAMES,
-            dropdownData, dbFunctions, 200, 60, 0, 100, 15)
+            dropdownData, dbFunctions, 0, -30, 0, -60, 540, 380, 35, -40)
         table.insert(tabs, tab)
         --
-        lastAnchor = tab.button.frame
-        anchorB = "BOTTOMLEFT"
+        lastAnchor = tab.button
+        anchorB = "TOPRIGHT"
         offsetY = 0
+        offsetX = 0
     end
 
-    LoadoutReminder.GGUI.TabSystem(tabs)
+    LoadoutReminder.GGUI.BlizzardTabSystem(tabs)
 
     return tabs
 end
 
 function LoadoutReminder.OPTIONS:CreateTabListWithDropdowns(parent, idTable, nameTable, dropdownData, dbFunctions,
-                                                            buttonWidth, baseOffsetX, baseOffsetY, titleOffsetX,
-                                                            titleOffsetY)
-    local tabContentX = 500
-    local tabContentY = 500
+                                                            baseOffsetX, baseOffsetY, titleOffsetX,
+                                                            titleOffsetY, tabContentX, tabContentY,
+                                                            tabButtonOffsetX, tabButtonOffsetY, tabsPerRow)
+    tabsPerRow = tabsPerRow or 7
 
     baseOffsetX = baseOffsetX or 0
     baseOffsetY = baseOffsetY or 0
@@ -514,11 +532,15 @@ function LoadoutReminder.OPTIONS:CreateTabListWithDropdowns(parent, idTable, nam
 
     local lastAnchor = parent
     local anchorB = "TOPLEFT"
-    local offsetY = -20
-    local offsetX = baseOffsetX
+    local offsetY = tabButtonOffsetY
+    local offsetX = tabButtonOffsetX
+    local initialTab = true
+    local currentTab = 1
+    local currentRow = 1
+    local lastButton = nil
     for _, tabID in pairs(idTable) do
         local label = nameTable[tabID]
-        local tab = LoadoutReminder.GGUI.Tab({
+        local tab = LoadoutReminder.GGUI.BlizzardTab({
             buttonOptions =
             {
                 label = label,
@@ -528,8 +550,6 @@ function LoadoutReminder.OPTIONS:CreateTabListWithDropdowns(parent, idTable, nam
                 anchorB = anchorB,
                 offsetX = offsetX,
                 offsetY = offsetY,
-                sizeY = 20,
-                sizeX = buttonWidth
             },
             canBeEnabled = true,
             parent = parent,
@@ -537,10 +557,20 @@ function LoadoutReminder.OPTIONS:CreateTabListWithDropdowns(parent, idTable, nam
             anchorA = "CENTER",
             anchorB = "CENTER",
             offsetX = 0,
-            offsetY = 0,
+            offsetY = baseOffsetY,
             sizeX = tabContentX,
             sizeY = tabContentY,
+            initialTab = initialTab,
+            top = true,
         })
+
+
+        tab.content.background = LoadoutReminder.GGUI.Frame {
+            parent = tab.content, anchorParent = tab.content, sizeX = tabContentX, sizeY = tabContentY,
+            backdropOptions = LoadoutReminder.CONST.OPTIONS_TAB_CONTENT_BACKDROP,
+        }
+
+        initialTab = false
 
         tab.content.title = LoadoutReminder.GGUI.Text({
             parent = tab.content,
@@ -549,20 +579,34 @@ function LoadoutReminder.OPTIONS:CreateTabListWithDropdowns(parent, idTable, nam
             anchorB = "TOP",
             offsetY = titleOffsetY,
             text = label,
-            offsetX = titleOffsetX + baseOffsetX,
+            offsetX = 0,
         })
 
         LoadoutReminder.OPTIONS:CreateReminderTypeDropdowns(tab.content, tab.content.title.frame, "TOP", "BOTTOM", 0, -20,
             dropdownData, dbFunctions, tabID)
         table.insert(tabs, tab)
         --
-        lastAnchor = tab.button.frame
-        anchorB = "BOTTOMLEFT"
+        if lastButton then
+            tab.button:SetFrameLevel(math.max(lastButton:GetFrameLevel() - 1, 1))
+        end
+        lastAnchor = tab.button
+        lastButton = tab.button
+        anchorB = "TOPRIGHT"
         offsetY = 0
         offsetX = 0
+
+        if currentTab % tabsPerRow == 0 then
+            currentRow = currentRow + 1
+            lastAnchor = parent
+            anchorB = "TOPLEFT"
+            offsetY = tabButtonOffsetY + (10 * currentRow)
+            offsetX = tabButtonOffsetX
+        end
+
+        currentTab = currentTab + 1
     end
 
-    LoadoutReminder.GGUI.TabSystem(tabs)
+    LoadoutReminder.GGUI.BlizzardTabSystem(tabs)
 
     return tabs
 end

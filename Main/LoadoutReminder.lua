@@ -27,12 +27,15 @@ function LoadoutReminder.MAIN:Init()
 	LoadoutReminder.MAIN:InitializeSlashCommands()
 	LoadoutReminder.OPTIONS:Init()
 	LoadoutReminder.REMINDER_FRAME.FRAMES:Init()
+	LoadoutReminder.MAIN:InitializeMinimapButton()
 
 	-- restore frame positions
 	local reminderFrame = LoadoutReminder.REMINDER_FRAME.frame
 	reminderFrame:RestoreSavedConfig(UIParent)
 	local newsFrame = LoadoutReminder.GGUI:GetFrame(LoadoutReminder.MAIN.FRAMES, LoadoutReminder.CONST.FRAMES.NEWS)
-	newsFrame:RestoreSavedConfig(UIParent)
+	if newsFrame then
+		newsFrame:RestoreSavedConfig(UIParent)
+	end
 
 	-- everything initalized
 	LoadoutReminder.MAIN.READY = true
@@ -42,15 +45,6 @@ function LoadoutReminder.MAIN:Init()
 
 	-- show news
 	LoadoutReminder.NEWS:ShowNews()
-end
-
-function LoadoutReminder.MAIN:ADDON_LOADED(addon_name)
-	if addon_name ~= LoadoutReminderAddonName then
-		return
-	end
-	LoadoutReminder.TALENTS:InitTalentManagement()
-	-- init as soon as player specialization is available -- polling
-	LoadoutReminder.MAIN:Init()
 end
 
 function LoadoutReminder.MAIN:InitializeSlashCommands()
@@ -85,4 +79,30 @@ function LoadoutReminder.MAIN:InitializeSlashCommands()
 			print("/lor check -> if configured check current player situation")
 		end
 	end
+end
+
+function LoadoutReminder.MAIN:InitializeMinimapButton()
+	local LibIcon = LibStub("LibDBIcon-1.0")
+	local ldb = LibStub("LibDataBroker-1.1"):NewDataObject("LoadoutReminder", {
+		type = "data source",
+		label = "LoadoutReminder",
+		tocname = "LoadoutReminder",
+		icon = "Interface\\Icons\\INV_Misc_Bell_01",
+		OnClick = function()
+			InterfaceOptionsFrame_OpenToCategory(LoadoutReminder.OPTIONS.optionsPanel)
+		end,
+	})
+
+	LoadoutReminderLibIconDB = LoadoutReminderLibIconDB or {}
+
+	LibIcon:Register("LoadoutReminder", ldb, LoadoutReminderLibIconDB)
+end
+
+function LoadoutReminder.MAIN:ADDON_LOADED(addon_name)
+	if addon_name ~= LoadoutReminderAddonName then
+		return
+	end
+	LoadoutReminder.TALENTS:InitTalentManagement()
+	-- init as soon as player specialization is available -- polling
+	LoadoutReminder.MAIN:Init()
 end
