@@ -1,6 +1,9 @@
 ---@class LoadoutReminder
 local LoadoutReminder = select(2, ...)
 
+local GGUI = LoadoutReminder.GGUI
+local GUTIL = LoadoutReminder.GUTIL
+
 ---@class LoadoutReminder.REMINDER_FRAME
 LoadoutReminder.REMINDER_FRAME = LoadoutReminder.REMINDER_FRAME
 
@@ -17,7 +20,7 @@ function LoadoutReminder.REMINDER_FRAME.FRAMES:Init()
     local offsetY = 30
 
     ---@class LoadoutReminder.REMINDER_FRAME.FRAME : GGUI.Frame
-    local reminderFrame = LoadoutReminder.GGUI.Frame({
+    local reminderFrame = GGUI.Frame({
         parent = UIParent,
         anchorParent = UIParent,
         anchorA = "CENTER",
@@ -28,7 +31,6 @@ function LoadoutReminder.REMINDER_FRAME.FRAMES:Init()
         offsetY = offsetY,
         frameID = LoadoutReminder.CONST.FRAMES.REMINDER_FRAME,
         title = "Loadout Reminder",
-        collapseable = true,
         closeable = true,
         moveable = true,
         backdropOptions = LoadoutReminder.CONST.DEFAULT_BACKDROP_OPTIONS,
@@ -58,7 +60,7 @@ function LoadoutReminder.REMINDER_FRAME.FRAMES:Init()
 
     local function createContent(reminderFrame)
         local innerFramesBaseOffsetY = -80
-        reminderFrame.content.situationInfo = LoadoutReminder.GGUI.Text({
+        reminderFrame.content.situationInfo = GGUI.Text({
             parent = reminderFrame.content,
             anchorParent = reminderFrame.content,
             offsetX = 0,
@@ -68,6 +70,26 @@ function LoadoutReminder.REMINDER_FRAME.FRAMES:Init()
             text = "Situation Text",
         })
 
+        reminderFrame.content.pauseRemindersButton = GGUI.Button {
+            parent = reminderFrame.content, anchorParent = reminderFrame.content, anchorA = "TOPLEFT", anchorB = "TOPLEFT",
+            offsetX = 10, offsetY = -10,
+            label = GUTIL:IconToText(LoadoutReminder.CONST.TEXTURES.PAUSE_BUTTON, 14, 14),
+            sizeX = 27, sizeY = 25,
+            clickCallback = function()
+                GGUI:ShowPopup {
+                    parent = reminderFrame.content, anchorParent = reminderFrame.content.pauseRemindersButton.frame,
+                    text = "Pause all reminders\nfor this session?",
+                    acceptButtonLabel = "Yes",
+                    declineButtonLabel = "No",
+                    sizeX = 200, sizeY = 115,
+                    onAccept = function()
+                        LoadoutReminder.CHECK.sessionPause = true
+                        reminderFrame:Hide()
+                    end
+                }
+            end
+        }
+
         local function createDisplayFrame(parent, anchorParent, anchorA, anchorB, offsetX, offsetY)
             local displayFrameHeight = 60
             local frame = CreateFrame('Frame', nil, parent)
@@ -75,7 +97,7 @@ function LoadoutReminder.REMINDER_FRAME.FRAMES:Init()
             frame:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
 
             --- @type GGUI.Text
-            frame.info = LoadoutReminder.GGUI.Text({
+            frame.info = GGUI.Text({
                 parent = frame,
                 anchorParent = frame,
                 offsetX = 0,
@@ -86,7 +108,7 @@ function LoadoutReminder.REMINDER_FRAME.FRAMES:Init()
             })
 
             --- @type GGUI.Button
-            frame.loadButton = LoadoutReminder.GGUI.Button({
+            frame.loadButton = GGUI.Button({
                 parent = frame,
                 anchorParent = frame,
                 anchorA = "BOTTOM",

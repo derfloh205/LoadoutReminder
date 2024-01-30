@@ -22,6 +22,13 @@ function LoadoutReminder.MAIN:Init()
 		C_Timer.After(LoadoutReminder.CONST.INIT_POLL_INTERVAL, LoadoutReminder.MAIN.Init)
 		return
 	end
+	LoadoutReminder.GGUI:InitializePopup({
+		title = "LoadoutReminder",
+		backdropOptions = LoadoutReminder.CONST.DEFAULT_BACKDROP_OPTIONS,
+		frameID = LoadoutReminder.CONST.FRAMES.POPUP,
+		sizeX = 150,
+		sizeY = 100,
+	})
 	LoadoutReminder.NEWS:Init()
 	LoadoutReminder.ADDONS:Init()
 	LoadoutReminder.MAIN:InitializeSlashCommands()
@@ -63,6 +70,7 @@ function LoadoutReminder.MAIN:InitializeSlashCommands()
 		end
 
 		if command == "check" then
+			LoadoutReminder.CHECK.sessionPause = false
 			LoadoutReminder.CHECK:CheckSituations()
 		end
 
@@ -76,7 +84,7 @@ function LoadoutReminder.MAIN:InitializeSlashCommands()
 			print("/lor -> show help text")
 			print("/lor news -> show last update news")
 			print("/lor config -> show options panel")
-			print("/lor check -> if configured check current player situation")
+			print("/lor check -> if configured check current player situation and reset session pause")
 		end
 	end
 end

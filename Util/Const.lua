@@ -7,7 +7,8 @@ LoadoutReminder.CONST.INIT_POLL_INTERVAL = 0.5
 
 LoadoutReminder.CONST.FRAMES = {
     REMINDER_FRAME = "TALENT_REMINDER_FRAME",
-    NEWS = "NEWS"
+    NEWS = "NEWS",
+    POPUP = "POPUP",
 }
 
 LoadoutReminder.CONST.STARTER_BUILD = "Starter Build"
@@ -229,4 +230,8 @@ LoadoutReminder.CONST.RAID_DISPLAY_NAMES = {
 LoadoutReminder.CONST.INSTANCE_IDS = {
     [2569] = 'ABERRUS',
     [2549] = 'AMIRDRASSIL'
+}
+
+LoadoutReminder.CONST.TEXTURES = {
+    PAUSE_BUTTON = "Interface\\Addons\\LoadoutReminder\\Media\\PauseIcon",
 }

@@ -15,7 +15,11 @@ LoadoutReminder.CHECK = GUTIL:CreateRegistreeForEvents(
         "TRAIT_CONFIG_UPDATED",
     })
 
+LoadoutReminder.CHECK.sessionPause = false
+
 function LoadoutReminder.CHECK:CheckSituations()
+    if LoadoutReminder.CHECK.sessionPause then return end
+
     -- check only when player is not in combat and only if everything was initialized
     if not LoadoutReminder.MAIN.READY or UnitAffectingCombat('player') then
         return
@@ -43,6 +47,8 @@ end
 
 ---@return LoadoutReminder.ActiveReminders | nil
 function LoadoutReminder.CHECK:CheckInstanceTypes()
+    if LoadoutReminder.CHECK.sessionPause then return end
+
     local activeReminders = LoadoutReminder.ActiveReminders(false, false, false, false)
 
     if not LoadoutReminder.UTIL:IsNecessaryInfoLoaded() then
@@ -103,6 +109,8 @@ end
 
 ---@return LoadoutReminder.ActiveReminders | nil
 function LoadoutReminder.CHECK:CheckBoss()
+    if LoadoutReminder.CHECK.sessionPause then return end
+
     local activeReminders = LoadoutReminder.ActiveReminders(false, false, false, false)
     if not LoadoutReminder.UTIL:IsNecessaryInfoLoaded() then
         return activeReminders
