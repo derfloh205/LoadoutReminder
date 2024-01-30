@@ -78,6 +78,28 @@ function LoadoutReminder.MAIN:InitializeSlashCommands()
 			LoadoutReminder.NEWS:ShowNews(true)
 		end
 
+		if command == "npc" then
+			local npcID = LoadoutReminder.UTIL:GetTargetNPCID()
+			if npcID then
+				print(GUTIL:ColorizeText("/lor npc", GUTIL.COLORS.BRIGHT_BLUE))
+				print("NPC: " .. select(1, UnitName("target")))
+				print("- id: " .. npcID)
+			end
+		end
+
+		if command == "instance" then
+			local raid = LoadoutReminder.UTIL:GetCurrentRaid()
+			local instance = LoadoutReminder.UTIL:GetCurrentInstanceType()
+			local difficulty = LoadoutReminder.UTIL:GetInstanceDifficulty()
+			print(GUTIL:ColorizeText("/lor instance", GUTIL.COLORS.BRIGHT_BLUE))
+			print("InstanceType: " .. tostring(instance))
+			print("IsInInstance: " .. tostring(IsInInstance()))
+			print("- id: " .. tostring(select(8, GetInstanceInfo())))
+			print("- Raid: " .. tostring(raid))
+			print("Difficulty: " .. tostring(difficulty))
+			print("- id: " .. tostring(select(3, GetInstanceInfo())))
+		end
+
 		if command == "" then
 			print("LoadoutReminder Help")
 			print("/lor or /loadoutreminder can be used for following commands")
@@ -85,13 +107,16 @@ function LoadoutReminder.MAIN:InitializeSlashCommands()
 			print("/lor news -> show last update news")
 			print("/lor config -> show options panel")
 			print("/lor check -> if configured check current player situation and reset session pause")
+			print("/lor npc -> show npc id for target (useful for developer)")
+			print("/lor instance -> show instance info (useful for developer)")
 		end
 	end
 end
 
 function LoadoutReminder.MAIN:InitializeMinimapButton()
 	local LibIcon = LibStub("LibDBIcon-1.0")
-	local ldb = LibStub("LibDataBroker-1.1"):NewDataObject("LoadoutReminder", {
+	local libDB = LibStub("LibDataBroker-1.1")
+	local ldb = libDB:NewDataObject("LoadoutReminder", {
 		type = "data source",
 		label = "LoadoutReminder",
 		tocname = "LoadoutReminder",
@@ -100,6 +125,11 @@ function LoadoutReminder.MAIN:InitializeMinimapButton()
 			InterfaceOptionsFrame_OpenToCategory(LoadoutReminder.OPTIONS.optionsPanel)
 		end,
 	})
+
+	function ldb.OnTooltipShow(tt)
+		tt:AddLine("LoadoutReminder\n")
+		tt:AddLine(GUTIL:ColorizeText("Click to Configure!", GUTIL.COLORS.WHITE))
+	end
 
 	LoadoutReminderLibIconDB = LoadoutReminderLibIconDB or {}
 

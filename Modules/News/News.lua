@@ -7,8 +7,8 @@ LoadoutReminder.NEWS = {}
 
 function LoadoutReminder.NEWS:Init()
     -- create news frame
-    local sizeX = 400
-    local sizeY = 100
+    local sizeX = 420
+    local sizeY = 120
 
     local newsFrame = LoadoutReminder.GGUI.Frame({
         parent = UIParent,
@@ -24,7 +24,6 @@ function LoadoutReminder.NEWS:Init()
         title = LoadoutReminder.GUTIL:ColorizeText(
             "LoadoutReminder " .. C_AddOns.GetAddOnMetadata(LoadoutReminderAddonName, "Version"),
             LoadoutReminder.GUTIL.COLORS.BRIGHT_BLUE),
-        collapseable = true,
         closeable = true,
         moveable = true,
     })
@@ -44,7 +43,10 @@ function LoadoutReminder.NEWS:GET_NEWS()
     local d = LoadoutReminder.GUTIL:ColorizeText("-", LoadoutReminder.GUTIL.COLORS.GREEN)
     return string.format(
         [[
-        %1$s Fixed an error when difficulty is not yet loaded
+    %1$s Refactored options by using tabs instead of buttons
+    %1$s Added a little pause button to pause reminders for the
+         current session
+    %1$s Added debug commands /lor npc and /lor instance
     ]], d)
 end
 
