@@ -1,4 +1,4 @@
-package-as: PvPAssistant
+package-as: LoadoutReminder
 
 enable-nolib-creation: no
 
