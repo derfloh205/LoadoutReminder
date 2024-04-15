@@ -6,6 +6,7 @@ externals:
   Libs/LibStub: https://repos.curseforge.com/wow/libstub/trunk
   Libs/LibDBIcon-1.0: https://repos.curseforge.com/wow/libdbicon-1-0/trunk
   Libs/GUTIL: https://github.com/derfloh205/GUTIL-2.0.git
+  Libs/GGUI: https://github.com/derfloh205/GUTIL-2.1.git
 
 ignore:
   - Libs/LibStub.lua
