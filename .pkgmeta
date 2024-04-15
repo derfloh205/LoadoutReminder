@@ -1,0 +1,15 @@
+package-as: PvPAssistant
+
+enable-nolib-creation: no
+
+externals:
+  Libs/LibStub: https://repos.curseforge.com/wow/libstub/trunk
+  Libs/LibDBIcon-1.0: https://repos.curseforge.com/wow/libdbicon-1-0/trunk
+  Libs/GUTIL: https://github.com/derfloh205/GUTIL-2.0.git
+
+ignore:
+  - Libs/LibStub.lua
+  - Libs/LibStub/tests/*
+  - Libs/**/LibStub/tests/*
+  - Libs/**/*.textile
+  - README.md

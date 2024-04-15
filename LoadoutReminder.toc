@@ -8,11 +8,13 @@
 ## X-Wago-ID: n6VPOLGd
 ## X-WoWI-ID: 26653
 ## SavedVariablesPerCharacter: LoadoutReminderDBV3, LoadoutReminderGGUIConfig, LoadoutReminderOptionsV2, LoadoutReminderLibIconDB
-## Version: 6.0.0
+## Version: 6.0.1
 ## OptionalDeps: BetterAddonList, AddonControlPanel, TalentLoadoutManager
 
 embeds.xml
-Libs/Libs.lua
+
+Init/GLibs.lua
+
 Util/Const.lua
 Util/Util.lua
 Util/DB.lua
@@ -20,7 +22,7 @@ Util/DB.lua
 Classes/ReminderInfo.lua
 Classes/ActiveReminders.lua
 
-Main/LoadoutReminder.lua
+Init/Init.lua
 
 Modules/News/News.lua
 Modules/Options/Options.lua
