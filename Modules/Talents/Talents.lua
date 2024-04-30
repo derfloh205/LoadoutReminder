@@ -64,7 +64,6 @@ function LoadoutReminder.TALENTS.TALENT_LOADOUT_MANAGER:InitHooks()
 	if TalentLoadoutManagerAPI.GlobalAPI.DeleteLoadout then
 		hooksecurefunc(TalentLoadoutManagerAPI.GlobalAPI, 'DeleteLoadout', function()
 			-- get new sets and compare to old sets and if any name from the old set is not in the new set then it was renamed
-			print("delete hook")
 			-- TODO: check saved sets for this spec id and then set to nil if not able to find it in current talent list
 			-- local talentSets =
 			-- some loop

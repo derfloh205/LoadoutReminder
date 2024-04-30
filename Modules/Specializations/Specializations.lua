@@ -10,14 +10,20 @@ LoadoutReminder.SPEC:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 
 ---@return LoadoutReminder.ReminderInfo | nil
 function LoadoutReminder.SPEC:CheckInstanceSpecSet()
-	local currentSet = LoadoutReminder.SPEC:GetCurrentSet()
-	local assignedSet = LoadoutReminder.DB_old.SPEC:GetInstanceSet()
+	local currentSpecID = LoadoutReminder.SPEC:GetCurrentSet()
+	local instanceType = LoadoutReminder.UTIL:GetCurrentInstanceType()
+	local difficulty = LoadoutReminder.UTIL:GetInstanceDifficulty() or LoadoutReminder.CONST.DIFFICULTY.DEFAULT
+	local assignedSpecID = LoadoutReminder.DB.SPEC:GetInstanceSet(instanceType, difficulty)
 
-	if currentSet and assignedSet then
-		local macroText = LoadoutReminder.SPEC:GetMacroTextBySet(assignedSet)
+	if currentSpecID and assignedSpecID then
+		local macroText = LoadoutReminder.SPEC:GetMacroTextBySet(assignedSpecID)
 		local buttonText = 'Switch Spec to: '
+		local specInfoInstantCurrent = LoadoutReminder.UTIL:GetSpecInfoInstant(select(3, UnitClass("player")),
+			currentSpecID)
+		local specInfoInstantAssigned = LoadoutReminder.UTIL:GetSpecInfoInstant(select(3, UnitClass("player")),
+			assignedSpecID)
 		return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.SPEC, 'Detected Situation: ', macroText,
-			buttonText, "Spec", currentSet, assignedSet)
+			buttonText, "Spec", specInfoInstantCurrent.name, specInfoInstantAssigned.name)
 	end
 end
 
@@ -29,26 +35,27 @@ function LoadoutReminder.SPEC:CheckBossSpecSet(raid, boss)
 		return nil
 	end
 
-	local currentSet = LoadoutReminder.SPEC:GetCurrentSet()
+	local specID = LoadoutReminder.SPEC:GetCurrentSet()
 	local macroText = LoadoutReminder.SPEC:GetMacroTextBySet(bossSet)
+	local specInfoInstant = LoadoutReminder.UTIL:GetSpecInfoInstant(select(3, UnitClass("player")), specID)
 	return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.SPEC, 'Detected Boss: ', macroText,
-		'Switch Spec to: ', 'Spec', currentSet, bossSet)
+		'Switch Spec to: ', 'Spec', specInfoInstant.name, bossSet)
 end
 
 function LoadoutReminder.SPEC:GetCurrentSet()
-	local specID = GetSpecialization()
-	return select(2, GetSpecializationInfo(specID))
+	local specID = GetSpecializationInfoForClassID(select(3, UnitClass("player")), GetSpecialization())
+	return specID
 end
 
 function LoadoutReminder.SPEC:GetSpecSets()
-	local specNames = {}
+	local specIDs = {}
 
 	for specIndex = 1, GetNumSpecializations() do
-		local _, specName = GetSpecializationInfo(specIndex)
-		table.insert(specNames, specName)
+		local specID, _ = GetSpecializationInfo(specIndex)
+		table.insert(specIDs, specID)
 	end
 
-	return specNames
+	return specIDs
 end
 
 function LoadoutReminder.SPEC:HasRaidSpecPerBoss()

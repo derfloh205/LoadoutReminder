@@ -79,7 +79,6 @@ end
 
 function LoadoutReminder.OPTIONS:GetSpecData()
     local specs = LoadoutReminder.SPEC:GetSpecSets()
-
     -- convert to dropdown data, always include starter build label
     local specDropdownData = {
         {
@@ -88,10 +87,11 @@ function LoadoutReminder.OPTIONS:GetSpecData()
         }
     }
 
-    table.foreach(specs, function(_, setName)
+    table.foreach(specs, function(_, specID)
+        local specInfo = LoadoutReminder.UTIL:GetSpecInfoInstant(select(3, UnitClass("player")), specID)
         table.insert(specDropdownData, {
-            label = setName,
-            value = setName,
+            label = specInfo.name,
+            value = specID,
         })
     end)
     return specDropdownData
@@ -226,19 +226,24 @@ function LoadoutReminder.OPTIONS:Init()
             end
         },
         SPEC = {
-            Save = function(_, instanceType, data)
-                LoadoutReminder.DB_old.SPEC:SaveInstanceSet(instanceType, data)
+            Save = function(_, instanceType, specID)
+                local selectedDifficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(
+                    instanceType)
+                LoadoutReminder.DB.SPEC:SaveInstanceSet(instanceType, selectedDifficulty, specID)
             end,
             Get = function(_, instanceType)
-                return LoadoutReminder.DB_old.SPEC:GetInstanceSet(instanceType,
-                    LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(instanceType))
+                local selectedDifficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(
+                    instanceType)
+                return LoadoutReminder.DB.SPEC:GetInstanceSet(instanceType, selectedDifficulty)
             end,
             GetInitialData = function(_, instanceType)
-                local setName = LoadoutReminder.DB_old.SPEC:GetInstanceSet(instanceType,
-                    LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(instanceType))
+                local selectedDifficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(
+                    instanceType)
+                local specID = LoadoutReminder.DB.SPEC:GetInstanceSet(instanceType, selectedDifficulty)
+                local specInfo = LoadoutReminder.UTIL:GetSpecInfoInstant(select(3, UnitClass("player")), specID)
                 return {
-                    label = setName,
-                    value = setName
+                    label = specInfo.name,
+                    value = specID
                 }
             end
         },
@@ -481,21 +486,24 @@ function LoadoutReminder.OPTIONS:CreateRaidTabList(parent, dropdownData)
                 end
             },
             SPEC = {
-                Save = function(_, bossID, data)
-                    LoadoutReminder.DB_old.SPEC:SaveRaidSet(raid, bossID, data)
+                Save = function(_, bossID, specID)
+                    local selectedDifficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(
+                        LoadoutReminder.CONST.INSTANCE_TYPES.RAID)
+                    LoadoutReminder.DB.SPEC:SaveRaidBossSet(raid, bossID, selectedDifficulty, specID)
                 end,
                 Get = function(_, bossID)
-                    return LoadoutReminder.DB_old.SPEC:GetRaidSet(raid, bossID,
-                        LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST
-                            .INSTANCE_TYPES.RAID))
+                    local selectedDifficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(
+                        LoadoutReminder.CONST.INSTANCE_TYPES.RAID)
+                    return LoadoutReminder.DB.SPEC:GetRaidBossSet(raid, bossID, selectedDifficulty)
                 end,
                 GetInitialData = function(_, bossID)
-                    local setName = LoadoutReminder.DB_old.SPEC:GetRaidSet(raid, bossID,
-                        LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST
-                            .INSTANCE_TYPES.RAID))
+                    local selectedDifficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(
+                        LoadoutReminder.CONST.INSTANCE_TYPES.RAID)
+                    local specID = LoadoutReminder.DB.SPEC:GetRaidBossSet(raid, bossID, selectedDifficulty)
+                    local specInfo = LoadoutReminder.UTIL:GetSpecInfoInstant(select(3, UnitClass("player")), specID)
                     return {
-                        label = setName,
-                        value = setName
+                        label = specInfo.name,
+                        value = specID
                     }
                 end
             },
@@ -700,8 +708,8 @@ function LoadoutReminder.OPTIONS:CreateReminderTypeDropdowns(parent, anchorParen
         initialData = specData,
         initialValue = initialSpec.value,
         initialLabel = initialSpec.label or LoadoutReminder.CONST.LABEL_NO_SET,
-        clickCallback = function(self, _, data)
-            dbFunctions.SPEC:Save(tabID, data)
+        clickCallback = function(self, _, value)
+            dbFunctions.SPEC:Save(tabID, value)
             LoadoutReminder.CHECK:CheckSituations()
         end,
     })
