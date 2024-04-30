@@ -4,7 +4,7 @@ local LoadoutReminder = select(2, ...)
 ---@class LoadoutReminder.DB
 LoadoutReminder.DB = LoadoutReminder.DB
 
----@class LoadoutReminder.DB.CRAFTER : LoadoutReminder.DB.Repository
+---@class LoadoutReminder.DB.TALENTS : LoadoutReminder.DB.Repository
 LoadoutReminder.DB.TALENTS = LoadoutReminder.DB:RegisterRepository()
 
 ---@alias SpecID number

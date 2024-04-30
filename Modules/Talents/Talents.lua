@@ -216,7 +216,10 @@ end
 ---@return LoadoutReminder.ReminderInfo | nil
 function LoadoutReminder.TALENTS:CheckInstanceTalentSet()
 	local currentSetID = LoadoutReminder.TALENTS:GetCurrentSet()
-	local assignedSetID = LoadoutReminder.DB_old.TALENTS:GetInstanceSet()
+	local instanceType = LoadoutReminder.UTIL:GetCurrentInstanceType()
+	local difficulty = LoadoutReminder.UTIL:GetInstanceDifficulty() or LoadoutReminder.CONST.DIFFICULTY.DEFAULT
+	local specID = GetSpecialization()
+	local assignedSetID = LoadoutReminder.DB.TALENTS:GetInstanceSet(instanceType, difficulty, specID)
 
 	if currentSetID and assignedSetID then
 		local macroText = LoadoutReminder.TALENTS:GetMacroTextBySet(assignedSetID)
@@ -232,7 +235,9 @@ end
 
 ---@return LoadoutReminder.ReminderInfo | nil
 function LoadoutReminder.TALENTS:CheckBossTalentSet(raid, boss)
-	local bossSet = LoadoutReminder.DB_old.TALENTS:GetRaidSet(raid, boss)
+	local difficulty = LoadoutReminder.UTIL:GetInstanceDifficulty() or LoadoutReminder.CONST.DIFFICULTY.DEFAULT
+	local specID = GetSpecialization()
+	local bossSet = LoadoutReminder.DB.TALENTS:GetRaidBossSet(raid, boss, difficulty, specID)
 
 	if bossSet == nil then
 		return nil

@@ -179,16 +179,23 @@ function LoadoutReminder.OPTIONS:Init()
 
     local dbFunctions = {
         TALENTS = {
-            Save = function(_, tabID, data)
-                LoadoutReminder.DB_old.TALENTS:SaveInstanceSet(tabID, data)
+            Save = function(_, instanceType, talentSetID)
+                local specID = GetSpecialization()
+                local selectedDifficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(
+                    instanceType)
+                LoadoutReminder.DB.TALENTS:SaveInstanceSet(instanceType, selectedDifficulty, specID, talentSetID)
             end,
-            Get = function(_, tabID)
-                return LoadoutReminder.DB_old.TALENTS:GetInstanceSet(tabID,
-                    LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(tabID))
+            Get = function(_, instanceType)
+                local specID = GetSpecialization()
+                local selectedDifficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(
+                    instanceType)
+                return LoadoutReminder.DB.TALENTS:GetInstanceSet(instanceType, selectedDifficulty, specID)
             end,
-            GetInitialData = function(_, tabID)
-                local talentSetID = LoadoutReminder.DB_old.TALENTS:GetInstanceSet(tabID,
-                    LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(tabID))
+            GetInitialData = function(_, instanceType)
+                local specID = GetSpecialization()
+                local selectedDifficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(
+                    instanceType)
+                local talentSetID = LoadoutReminder.DB.TALENTS:GetInstanceSet(instanceType, selectedDifficulty, specID)
                 local label = (talentSetID and LoadoutReminder.TALENTS:GetTalentSetNameByID(talentSetID)) or nil
                 return {
                     label = label,
@@ -197,16 +204,16 @@ function LoadoutReminder.OPTIONS:Init()
             end
         },
         EQUIP = {
-            Save = function(_, tabID, data)
-                LoadoutReminder.DB_old.EQUIP:SaveInstanceSet(tabID, data)
+            Save = function(_, instanceType, data)
+                LoadoutReminder.DB_old.EQUIP:SaveInstanceSet(instanceType, data)
             end,
-            Get = function(_, tabID)
-                return LoadoutReminder.DB_old.EQUIP:GetInstanceSet(tabID,
-                    LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(tabID))
+            Get = function(_, instanceType)
+                return LoadoutReminder.DB_old.EQUIP:GetInstanceSet(instanceType,
+                    LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(instanceType))
             end,
-            GetInitialData = function(_, tabID)
-                local equipSetID = LoadoutReminder.DB_old.EQUIP:GetInstanceSet(tabID,
-                    LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(tabID))
+            GetInitialData = function(_, instanceType)
+                local equipSetID = LoadoutReminder.DB_old.EQUIP:GetInstanceSet(instanceType,
+                    LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(instanceType))
                 local label = (equipSetID and LoadoutReminder.EQUIP:GetEquipSetNameByID(equipSetID)) or nil
                 return {
                     label = label,
@@ -215,16 +222,16 @@ function LoadoutReminder.OPTIONS:Init()
             end
         },
         SPEC = {
-            Save = function(_, tabID, data)
-                LoadoutReminder.DB_old.SPEC:SaveInstanceSet(tabID, data)
+            Save = function(_, instanceType, data)
+                LoadoutReminder.DB_old.SPEC:SaveInstanceSet(instanceType, data)
             end,
-            Get = function(_, tabID)
-                return LoadoutReminder.DB_old.SPEC:GetInstanceSet(tabID,
-                    LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(tabID))
+            Get = function(_, instanceType)
+                return LoadoutReminder.DB_old.SPEC:GetInstanceSet(instanceType,
+                    LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(instanceType))
             end,
-            GetInitialData = function(_, tabID)
-                local setName = LoadoutReminder.DB_old.SPEC:GetInstanceSet(tabID,
-                    LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(tabID))
+            GetInitialData = function(_, instanceType)
+                local setName = LoadoutReminder.DB_old.SPEC:GetInstanceSet(instanceType,
+                    LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(instanceType))
                 return {
                     label = setName,
                     value = setName
@@ -232,16 +239,16 @@ function LoadoutReminder.OPTIONS:Init()
             end
         },
         ADDONS = {
-            Save = function(_, tabID, data)
-                LoadoutReminder.DB_old.ADDONS:SaveInstanceSet(tabID, data)
+            Save = function(_, instanceType, data)
+                LoadoutReminder.DB_old.ADDONS:SaveInstanceSet(instanceType, data)
             end,
-            Get = function(_, tabID)
-                return LoadoutReminder.DB_old.ADDONS:GetInstanceSet(tabID,
-                    LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(tabID))
+            Get = function(_, instanceType)
+                return LoadoutReminder.DB_old.ADDONS:GetInstanceSet(instanceType,
+                    LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(instanceType))
             end,
-            GetInitialData = function(_, tabID)
-                local setName = LoadoutReminder.DB_old.ADDONS:GetInstanceSet(tabID,
-                    LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(tabID))
+            GetInitialData = function(_, instanceType)
+                local setName = LoadoutReminder.DB_old.ADDONS:GetInstanceSet(instanceType,
+                    LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(instanceType))
                 return {
                     label = setName,
                     value = setName
@@ -423,18 +430,23 @@ function LoadoutReminder.OPTIONS:CreateRaidTabList(parent, dropdownData)
 
         local dbFunctions = {
             TALENTS = {
-                Save = function(_, tabID, data)
-                    LoadoutReminder.DB_old.TALENTS:SaveRaidSet(raid, tabID, data)
+                Save = function(_, bossID, talentSetID)
+                    local specID = GetSpecialization()
+                    local selectedDifficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(
+                        LoadoutReminder.CONST.INSTANCE_TYPES.RAID)
+                    LoadoutReminder.DB.TALENTS:SaveRaidBossSet(raid, bossID, selectedDifficulty, specID, talentSetID)
                 end,
-                Get = function(_, tabID)
-                    return LoadoutReminder.DB_old.TALENTS:GetRaidSet(raid, tabID,
-                        LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST
-                            .INSTANCE_TYPES.RAID))
+                Get = function(_, bossID)
+                    local specID = GetSpecialization()
+                    local selectedDifficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(
+                        LoadoutReminder.CONST.INSTANCE_TYPES.RAID)
+                    return LoadoutReminder.DB.TALENTS:GetRaidBossSet(raid, bossID, selectedDifficulty, specID)
                 end,
-                GetInitialData = function(_, tabID)
-                    local setID = LoadoutReminder.DB_old.TALENTS:GetRaidSet(raid, tabID,
-                        LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST
-                            .INSTANCE_TYPES.RAID))
+                GetInitialData = function(_, bossID)
+                    local specID = GetSpecialization()
+                    local selectedDifficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(
+                        LoadoutReminder.CONST.INSTANCE_TYPES.RAID)
+                    local setID = LoadoutReminder.DB_old.TALENTS:GetRaidBossSet(raid, bossID, selectedDifficulty, specID)
                     local label = (setID and LoadoutReminder.TALENTS:GetTalentSetNameByID(setID)) or nil
                     return {
                         label = label,
@@ -443,16 +455,16 @@ function LoadoutReminder.OPTIONS:CreateRaidTabList(parent, dropdownData)
                 end
             },
             EQUIP = {
-                Save = function(_, tabID, data)
-                    LoadoutReminder.DB_old.EQUIP:SaveRaidSet(raid, tabID, data)
+                Save = function(_, bossID, data)
+                    LoadoutReminder.DB_old.EQUIP:SaveRaidSet(raid, bossID, data)
                 end,
-                Get = function(_, tabID)
-                    return LoadoutReminder.DB_old.EQUIP:GetRaidSet(raid, tabID,
+                Get = function(_, bossID)
+                    return LoadoutReminder.DB_old.EQUIP:GetRaidSet(raid, bossID,
                         LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST
                             .INSTANCE_TYPES.RAID))
                 end,
-                GetInitialData = function(_, tabID)
-                    local setID = LoadoutReminder.DB_old.EQUIP:GetRaidSet(raid, tabID,
+                GetInitialData = function(_, bossID)
+                    local setID = LoadoutReminder.DB_old.EQUIP:GetRaidSet(raid, bossID,
                         LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST
                             .INSTANCE_TYPES.RAID))
                     local label = (setID and LoadoutReminder.EQUIP:GetEquipSetNameByID(setID)) or nil
@@ -463,16 +475,16 @@ function LoadoutReminder.OPTIONS:CreateRaidTabList(parent, dropdownData)
                 end
             },
             SPEC = {
-                Save = function(_, tabID, data)
-                    LoadoutReminder.DB_old.SPEC:SaveRaidSet(raid, tabID, data)
+                Save = function(_, bossID, data)
+                    LoadoutReminder.DB_old.SPEC:SaveRaidSet(raid, bossID, data)
                 end,
-                Get = function(_, tabID)
-                    return LoadoutReminder.DB_old.SPEC:GetRaidSet(raid, tabID,
+                Get = function(_, bossID)
+                    return LoadoutReminder.DB_old.SPEC:GetRaidSet(raid, bossID,
                         LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST
                             .INSTANCE_TYPES.RAID))
                 end,
-                GetInitialData = function(_, tabID)
-                    local setName = LoadoutReminder.DB_old.SPEC:GetRaidSet(raid, tabID,
+                GetInitialData = function(_, bossID)
+                    local setName = LoadoutReminder.DB_old.SPEC:GetRaidSet(raid, bossID,
                         LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST
                             .INSTANCE_TYPES.RAID))
                     return {
@@ -482,16 +494,16 @@ function LoadoutReminder.OPTIONS:CreateRaidTabList(parent, dropdownData)
                 end
             },
             ADDONS = {
-                Save = function(_, tabID, data)
-                    LoadoutReminder.DB_old.ADDONS:SaveRaidSet(raid, tabID, data)
+                Save = function(_, bossID, data)
+                    LoadoutReminder.DB_old.ADDONS:SaveRaidSet(raid, bossID, data)
                 end,
-                Get = function(_, tabID)
-                    return LoadoutReminder.DB_old.ADDONS:GetRaidSet(raid, tabID,
+                Get = function(_, bossID)
+                    return LoadoutReminder.DB_old.ADDONS:GetRaidSet(raid, bossID,
                         LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST
                             .INSTANCE_TYPES.RAID))
                 end,
-                GetInitialData = function(_, tabID)
-                    local setName = LoadoutReminder.DB_old.ADDONS:GetRaidSet(raid, tabID,
+                GetInitialData = function(_, bossID)
+                    local setName = LoadoutReminder.DB_old.ADDONS:GetRaidSet(raid, bossID,
                         LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder.CONST
                             .INSTANCE_TYPES.RAID))
                     return {
