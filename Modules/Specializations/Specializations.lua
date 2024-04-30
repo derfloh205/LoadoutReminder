@@ -11,7 +11,7 @@ LoadoutReminder.SPEC:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 ---@return LoadoutReminder.ReminderInfo | nil
 function LoadoutReminder.SPEC:CheckInstanceSpecSet()
 	local currentSet = LoadoutReminder.SPEC:GetCurrentSet()
-	local assignedSet = LoadoutReminder.DB.SPEC:GetInstanceSet()
+	local assignedSet = LoadoutReminder.DB_old.SPEC:GetInstanceSet()
 
 	if currentSet and assignedSet then
 		local macroText = LoadoutReminder.SPEC:GetMacroTextBySet(assignedSet)
@@ -23,7 +23,7 @@ end
 
 ---@return LoadoutReminder.ReminderInfo | nil
 function LoadoutReminder.SPEC:CheckBossSpecSet(raid, boss)
-	local bossSet = LoadoutReminder.DB.SPEC:GetRaidSet(raid, boss)
+	local bossSet = LoadoutReminder.DB_old.SPEC:GetRaidSet(raid, boss)
 
 	if bossSet == nil then
 		return nil

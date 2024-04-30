@@ -26,7 +26,7 @@ end
 ---@return LoadoutReminder.ReminderInfo | nil
 function LoadoutReminder.EQUIP:CheckInstanceEquipSet()
     local currentSetID = LoadoutReminder.EQUIP:GetCurrentSet()
-    local assignedSetID = LoadoutReminder.DB.EQUIP:GetInstanceSet()
+    local assignedSetID = LoadoutReminder.DB_old.EQUIP:GetInstanceSet()
 
     -- print("equip: ")
     -- print("currentSet: " .. tostring(currentSet))
@@ -45,7 +45,7 @@ end
 
 ---@return LoadoutReminder.ReminderInfo | nil
 function LoadoutReminder.EQUIP:CheckBossEquipSet(raid, boss)
-    local bossSet = LoadoutReminder.DB.EQUIP:GetRaidSet(raid, boss)
+    local bossSet = LoadoutReminder.DB_old.EQUIP:GetRaidSet(raid, boss)
 
     if bossSet == nil then
         return nil

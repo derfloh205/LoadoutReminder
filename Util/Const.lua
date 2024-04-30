@@ -32,6 +32,32 @@ LoadoutReminder.CONST.OPTIONS_TAB_CONTENT_BACKDROP = {
     }
 }
 
+---@enum LoadoutReminder.Raidboss
+LoadoutReminder.CONST.BOSS_IDS = {
+    DEFAULT = "DEFAULT",
+    -- Amirdrassil
+    AMIRDRASSIL_GNARLROOT = "AMIRDRASSIL_GNARLROOT",
+    AMIRDRASSIL_IGIRA = "AMIRDRASSIL_IGIRA",
+    AMIRDRASSIL_VOLCOROSS = "AMIRDRASSIL_VOLCOROSS",
+    AMIRDRASSIL_COUNCIL_OF_DREAMS = "AMIRDRASSIL_COUNCIL_OF_DREAMS",
+    AMIRDRASSIL_LARODAR = "AMIRDRASSIL_LARODAR",
+    AMIRDRASSIL_NYMUE = "AMIRDRASSIL_NYMUE",
+    AMIRDRASSIL_SMOLDERON = "AMIRDRASSIL_SMOLDERON",
+    AMIRDRASSIL_TINDRAL_SAGESWIFT = "AMIRDRASSIL_TINDRAL_SAGESWIFT",
+    AMIRDRASSIL_FYRAKK = "AMIRDRASSIL_FYRAKK",
+    -- Aberrus
+    ABERRUS_KAZZARA = "ABERRUS_KAZZARA",
+    ABERRUS_AMALGAMATION_CHAMBER = "ABERRUS_AMALGAMATION_CHAMBER",
+    ABERRUS_FORGOTTEN_EXPERIMENTS = "ABERRUS_FORGOTTEN_EXPERIMENTS",
+    ABERRUS_ASSAULT = "ABERRUS_ASSAULT",
+    ABERRUS_RASHOK = "ABERRUS_RASHOK",
+    ABERRUS_ZSKARN = "ABERRUS_ZSKARN",
+    ABERRUS_MAGMORAX = "ABERRUS_MAGMORAX",
+    ABERRUS_ECHO = "ABERRUS_ECHO",
+    ABERRUS_SARKARETH = "ABERRUS_SARKARETH",
+}
+
+---@type table<LoadoutReminder.Raidboss, string>
 LoadoutReminder.CONST.BOSS_NAMES = {
     DEFAULT = "All Bosses",
     -- Amirdrassil
@@ -56,6 +82,7 @@ LoadoutReminder.CONST.BOSS_NAMES = {
     ABERRUS_SARKARETH = 'Sarkareth',
 }
 
+---@type table<LoadoutReminder.Raidboss, number>
 LoadoutReminder.CONST.BOSS_SORT_ORDER = {
     DEFAULT = 0,
     -- Amirdrassil
@@ -80,7 +107,7 @@ LoadoutReminder.CONST.BOSS_SORT_ORDER = {
     ABERRUS_SARKARETH = 9,
 }
 
----@enum LoadoutReminder.DIFFICULTY
+---@enum LoadoutReminder.Difficulty
 LoadoutReminder.CONST.DIFFICULTY = {
     DEFAULT = "DEFAULT",
     LFR = "LFR",
@@ -109,7 +136,7 @@ LoadoutReminder.CONST.DIFFICULTY_SORT_ORDER = {
 }
 
 --- https://warcraft.wiki.gg/wiki/DifficultyID
----@type LoadoutReminder.DIFFICULTY | string[]
+---@type LoadoutReminder.Difficulty | string[]
 LoadoutReminder.CONST.DIFFICULTY_ID_MAP = {
     [9999] = "DEFAULT",   -- wildcard
     [1] = "NORMAL",       -- party
@@ -133,7 +160,7 @@ LoadoutReminder.CONST.DIFFICULTY_ID_MAP = {
     [151] = "LFR",        -- lfr timewalking
 }
 
--- TODO: Gather data
+---@type table<number, LoadoutReminder.Raidboss>
 LoadoutReminder.CONST.BOSS_ID_MAP = {
     [9999] = "DEFAULT",
     -- Amirdrassil

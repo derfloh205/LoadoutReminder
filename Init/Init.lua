@@ -22,6 +22,7 @@ function LoadoutReminder.MAIN:Init()
 		C_Timer.After(LoadoutReminder.CONST.INIT_POLL_INTERVAL, LoadoutReminder.MAIN.Init)
 		return
 	end
+	LoadoutReminder.DB:Init()
 	LoadoutReminder.GGUI:InitializePopup({
 		title = "LoadoutReminder",
 		backdropOptions = LoadoutReminder.CONST.DEFAULT_BACKDROP_OPTIONS,
@@ -64,6 +65,11 @@ function LoadoutReminder.MAIN:InitializeSlashCommands()
 		local command, rest = input:match("^(%S*)%s*(.-)$")
 		command = command and command:lower()
 		rest = (rest and rest ~= "") and rest:trim() or nil
+
+		if command == "resetdb" then
+			LoadoutReminderDB = nil
+			C_UI.Reload()
+		end
 
 		if command == "config" then
 			InterfaceOptionsFrame_OpenToCategory(LoadoutReminder.OPTIONS.optionsPanel)

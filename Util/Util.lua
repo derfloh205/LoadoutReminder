@@ -34,7 +34,7 @@ function LoadoutReminder.UTIL:GetCurrentRaid()
 	return LoadoutReminder.CONST.INSTANCE_IDS[select(8, GetInstanceInfo())]
 end
 
----@return LoadoutReminder.DIFFICULTY difficulty
+---@return LoadoutReminder.Difficulty difficulty
 function LoadoutReminder.UTIL:GetInstanceDifficulty()
 	return LoadoutReminder.CONST.DIFFICULTY_ID_MAP[select(3, GetInstanceInfo())]
 end
