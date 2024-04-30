@@ -46,7 +46,9 @@ function LoadoutReminder.DB:Init()
 end
 
 function LoadoutReminder.DB:PostInitCleanUp()
-
+    if _G["LoadoutReminderDBV3"] then
+        _G["LoadoutReminderDBV3"] = nil
+    end
 end
 
 function LoadoutReminder.DB:ClearAll()

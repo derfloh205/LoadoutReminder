@@ -92,7 +92,7 @@ function LoadoutReminder.DB.ADDONS:Migrate()
             end
         end
 
-        --LoadoutReminderDB.addonDB.version = 1
+        LoadoutReminderDB.addonDB.version = 1
     end
 end
 
