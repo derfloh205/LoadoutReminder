@@ -95,8 +95,8 @@ function LoadoutReminder.DB.TALENTS:Migrate()
             end
 
             if _G["LoadoutReminderDBV3"].RAIDS then
-                for raid, difficultyData in pairs(_G["LoadoutReminderDBV3"].RAIDS) do
-                    for difficulty, bossData in pairs(difficultyData) do
+                for difficulty, raidData in pairs(_G["LoadoutReminderDBV3"].RAIDS) do
+                    for raid, bossData in pairs(raidData) do
                         for boss, data in pairs(bossData) do
                             if data.TALENTS then
                                 for specID, talentSetID in pairs(data.TALENTS) do
@@ -109,7 +109,7 @@ function LoadoutReminder.DB.TALENTS:Migrate()
             end
         end
 
-        -- LoadoutReminderDB.talentDB.version = 1
+        LoadoutReminderDB.talentDB.version = 1
     end
 end
 

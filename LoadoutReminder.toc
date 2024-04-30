@@ -22,6 +22,7 @@ Util/DB.lua
 
 DB/DB.lua
 DB/talentDB.lua
+DB/equipDB.lua
 
 Classes/ReminderInfo.lua
 Classes/ActiveReminders.lua
