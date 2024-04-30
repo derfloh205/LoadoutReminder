@@ -446,7 +446,7 @@ function LoadoutReminder.OPTIONS:CreateRaidTabList(parent, dropdownData)
                     local specID = GetSpecialization()
                     local selectedDifficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(
                         LoadoutReminder.CONST.INSTANCE_TYPES.RAID)
-                    local setID = LoadoutReminder.DB_old.TALENTS:GetRaidBossSet(raid, bossID, selectedDifficulty, specID)
+                    local setID = LoadoutReminder.DB.TALENTS:GetRaidBossSet(raid, bossID, selectedDifficulty, specID)
                     local label = (setID and LoadoutReminder.TALENTS:GetTalentSetNameByID(setID)) or nil
                     return {
                         label = label,
