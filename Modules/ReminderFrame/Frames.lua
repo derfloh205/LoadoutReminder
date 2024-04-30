@@ -34,7 +34,7 @@ function LoadoutReminder.REMINDER_FRAME.FRAMES:Init()
         closeable = true,
         moveable = true,
         backdropOptions = LoadoutReminder.CONST.DEFAULT_BACKDROP_OPTIONS,
-        frameConfigTable = LoadoutReminderGGUIConfig,
+        frameConfigTable = LoadoutReminder.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameTable = LoadoutReminder.MAIN.FRAMES,
         initialStatusID = 'ONE',
     })

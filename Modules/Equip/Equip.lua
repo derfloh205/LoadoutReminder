@@ -96,8 +96,7 @@ function LoadoutReminder.EQUIP:HasRaidEquipPerBoss()
     if not raid then
         return false
     end
-
-    return LoadoutReminderOptionsV2.EQUIP.RAIDS_PER_BOSS[raid]
+    return LoadoutReminder.DB.OPTIONS:Get("EQUIP_RAIDS_PER_BOSS")[raid]
 end
 
 function LoadoutReminder.EQUIP:GetMacroTextBySet(assignedSetID)

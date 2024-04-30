@@ -10,12 +10,6 @@ LoadoutReminder.MAIN = GUTIL:CreateRegistreeForEvents({ "ADDON_LOADED" })
 LoadoutReminder.MAIN.FRAMES = {}
 LoadoutReminder.MAIN.READY = false
 
-LoadoutReminderGGUIConfig = LoadoutReminderGGUIConfig or {}
-
-LoadoutReminderDBV3 = LoadoutReminderDBV3 or {}
-
-LoadoutReminderOptionsV2 = LoadoutReminderOptionsV2 or {}
-
 function LoadoutReminder.MAIN:Init()
 	if not LoadoutReminder.UTIL:IsNecessaryInfoLoaded() then
 		-- poll until info is available
@@ -137,9 +131,7 @@ function LoadoutReminder.MAIN:InitializeMinimapButton()
 		tt:AddLine(GUTIL:ColorizeText("Click to Configure!", GUTIL.COLORS.WHITE))
 	end
 
-	LoadoutReminderLibIconDB = LoadoutReminderLibIconDB or {}
-
-	LibIcon:Register("LoadoutReminder", ldb, LoadoutReminderLibIconDB)
+	LibIcon:Register("LoadoutReminder", ldb, LoadoutReminder.DB.OPTIONS:Get("LIBDB_CONFIG"))
 end
 
 function LoadoutReminder.MAIN:ADDON_LOADED(addon_name)

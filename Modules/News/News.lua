@@ -18,7 +18,7 @@ function LoadoutReminder.NEWS:Init()
         sizeX = sizeX,
         sizeY = sizeY,
         backdropOptions = LoadoutReminder.CONST.DEFAULT_BACKDROP_OPTIONS,
-        frameConfigTable = LoadoutReminderGGUIConfig,
+        frameConfigTable = LoadoutReminder.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameTable = LoadoutReminder.MAIN.FRAMES,
         frameID = LoadoutReminder.CONST.FRAMES.NEWS,
         title = LoadoutReminder.GUTIL:ColorizeText(
@@ -66,7 +66,7 @@ end
 ---@return string | nil newChecksum newChecksum when news should be shown, otherwise nil
 function LoadoutReminder.NEWS:IsNewsUpdate()
     local newChecksum = LoadoutReminder.NEWS:GetChecksum()
-    local oldChecksum = LoadoutReminderOptionsV2.newsChecksum
+    local oldChecksum = LoadoutReminder.DB.OPTIONS:Get("NEWS_CHECKSUM")
     if newChecksum ~= oldChecksum then
         return newChecksum
     end
@@ -80,7 +80,7 @@ function LoadoutReminder.NEWS:ShowNews(force)
         return
     end
 
-    LoadoutReminderOptionsV2.newsChecksum = newChecksum
+    LoadoutReminder.DB.OPTIONS:Save("NEWS_CHECKSUM", newChecksum)
 
     local newsFrame = LoadoutReminder.GGUI:GetFrame(LoadoutReminder.MAIN.FRAMES, LoadoutReminder.CONST.FRAMES.NEWS)
     -- resize

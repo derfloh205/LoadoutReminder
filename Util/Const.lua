@@ -262,3 +262,25 @@ LoadoutReminder.CONST.INSTANCE_IDS = {
 LoadoutReminder.CONST.TEXTURES = {
     PAUSE_BUTTON = "Interface\\Addons\\LoadoutReminder\\Media\\PauseIcon",
 }
+
+---@enum LoadoutReminder.Const.Options
+LoadoutReminder.CONST.OPTIONS = {
+    NEWS_CHECKSUM = "NEWS_CHECKSUM",
+    GGUI_CONFIG = "GGUI_CONFIG",
+    LIBDB_CONFIG = "LIBDB_CONFIG",
+    EQUIP_RAIDS_PER_BOSS = "EQUIP_RAIDS_PER_BOSS",
+    SPEC_RAIDS_PER_BOSS = "SPEC_RAIDS_PER_BOSS",
+    ADDONS_RAIDS_PER_BOSS = "ADDONS_RAIDS_PER_BOSS",
+    TALENT_RAIDS_PER_BOSS = "TALENT_RAIDS_PER_BOSS",
+}
+
+---@type table<LoadoutReminder.Const.Options, any>
+LoadoutReminder.CONST.OPTION_DEFAULTS = {
+    NEWS_CHECKSUM = nil,
+    GGUI_CONFIG = {},
+    LIBDB_CONFIG = {},
+    EQUIP_RAIDS_PER_BOSS = {},
+    SPEC_RAIDS_PER_BOSS = {},
+    ADDONS_RAIDS_PER_BOSS = {},
+    TALENT_RAIDS_PER_BOSS = {},
+}

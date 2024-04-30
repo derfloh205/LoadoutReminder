@@ -67,7 +67,7 @@ function LoadoutReminder.SPEC:HasRaidSpecPerBoss()
 		return false
 	end
 
-	return LoadoutReminderOptionsV2.SPEC.RAIDS_PER_BOSS[raid]
+	return LoadoutReminder.DB.OPTIONS:Get("SPEC_RAIDS_PER_BOSS")[raid]
 end
 
 function LoadoutReminder.SPEC:GetMacroTextBySet(assignedSet)
