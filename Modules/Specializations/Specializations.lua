@@ -29,7 +29,8 @@ end
 
 ---@return LoadoutReminder.ReminderInfo | nil
 function LoadoutReminder.SPEC:CheckBossSpecSet(raid, boss)
-	local bossSet = LoadoutReminder.DB_old.SPEC:GetRaidSet(raid, boss)
+	local difficulty = LoadoutReminder.UTIL:GetInstanceDifficulty() or LoadoutReminder.CONST.DIFFICULTY.DEFAULT
+	local bossSet = LoadoutReminder.DB.SPEC:GetRaidBossSet(raid, boss, difficulty)
 
 	if bossSet == nil then
 		return nil

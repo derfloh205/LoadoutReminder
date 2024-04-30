@@ -33,7 +33,9 @@ end
 function LoadoutReminder.ADDONS:CheckInstanceAddonSet()
 	-- check currentSet against general set list
 	local currentSet = LoadoutReminder.ADDONS:GetCurrentSet()
-	local assignedSet = LoadoutReminder.DB_old.ADDONS:GetInstanceSet()
+	local instanceType = LoadoutReminder.UTIL:GetCurrentInstanceType()
+	local difficulty = LoadoutReminder.UTIL:GetInstanceDifficulty() or LoadoutReminder.CONST.DIFFICULTY.DEFAULT
+	local assignedSet = LoadoutReminder.DB.ADDONS:GetInstanceSet(instanceType, difficulty)
 
 	currentSet = currentSet or LoadoutReminder.CONST.NO_SET_NAME
 
@@ -47,7 +49,8 @@ end
 
 ---@return LoadoutReminder.ReminderInfo | nil
 function LoadoutReminder.ADDONS:CheckBossAddonSet(raid, boss)
-	local bossSet = LoadoutReminder.DB_old.ADDONS:GetRaidSet(raid, boss)
+	local difficulty = LoadoutReminder.UTIL:GetInstanceDifficulty() or LoadoutReminder.CONST.DIFFICULTY.DEFAULT
+	local bossSet = LoadoutReminder.DB.ADDONS:GetRaidBossSet(raid, boss, difficulty)
 
 	if bossSet == nil then
 		return nil

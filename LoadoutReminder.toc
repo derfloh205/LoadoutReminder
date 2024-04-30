@@ -18,12 +18,12 @@ Init/GLibs.lua
 
 Util/Const.lua
 Util/Util.lua
-Util/DB.lua
 
 DB/DB.lua
 DB/talentDB.lua
 DB/equipDB.lua
 DB/specDB.lua
+DB/addonDB.lua
 
 Classes/ReminderInfo.lua
 Classes/ActiveReminders.lua
