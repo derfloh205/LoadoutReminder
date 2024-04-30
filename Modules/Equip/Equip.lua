@@ -89,16 +89,6 @@ function LoadoutReminder.EQUIP:GetEquipSetNameByID(setID)
     return setName
 end
 
-function LoadoutReminder.EQUIP:HasRaidEquipPerBoss()
-    local _, _, _, _, _, _, _, instanceID = GetInstanceInfo()
-    local raid = LoadoutReminder.CONST.INSTANCE_IDS[instanceID]
-
-    if not raid then
-        return false
-    end
-    return LoadoutReminder.DB.OPTIONS:Get("EQUIP_RAIDS_PER_BOSS")[raid]
-end
-
 function LoadoutReminder.EQUIP:GetMacroTextBySet(assignedSetID)
     local setName = LoadoutReminder.EQUIP:GetEquipSetNameByID(assignedSetID)
     return '/equipset ' .. tostring(setName)

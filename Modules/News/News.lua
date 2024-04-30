@@ -43,10 +43,7 @@ function LoadoutReminder.NEWS:GET_NEWS()
     local d = LoadoutReminder.GUTIL:ColorizeText("-", LoadoutReminder.GUTIL.COLORS.GREEN)
     return string.format(
         [[
-    %1$s Refactored options by using tabs instead of buttons
-    %1$s Added a little pause button to pause reminders for the
-         current session
-    %1$s Added debug commands /lor npc and /lor instance
+    %1$s Refactored internal db structure
     ]], d)
 end
 

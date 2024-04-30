@@ -382,7 +382,7 @@ function LoadoutReminder.OPTIONS:CreateRaidTabList(parent, dropdownData)
                 anchorB = "TOP",
                 offsetX = 55,
                 offsetY = -16,
-                initialValue = LoadoutReminderOptionsV2[perBossOptionKey],
+                initialValue = LoadoutReminder.DB.OPTIONS:Get("PER_BOSS_LOADOUTS")[perBossOptionKey],
                 label = "Boss Loadouts",
                 tooltip =
                 "When this is checked, you will be reminded for individual bosses for the selected raid of the selected difficulty.",
@@ -390,7 +390,7 @@ function LoadoutReminder.OPTIONS:CreateRaidTabList(parent, dropdownData)
                     local difficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(
                         LoadoutReminder.CONST.INSTANCE_TYPES.RAID)
                     local key = LoadoutReminder.OPTIONS:GetPerBossOptionKey(difficulty, raid)
-                    LoadoutReminderOptionsV2[key] = checked
+                    LoadoutReminder.DB.OPTIONS:Get("PER_BOSS_LOADOUTS")[key] = checked
                     LoadoutReminder.CHECK:CheckSituations()
                 end
             })
@@ -398,7 +398,7 @@ function LoadoutReminder.OPTIONS:CreateRaidTabList(parent, dropdownData)
                 local difficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(LoadoutReminder
                     .CONST.INSTANCE_TYPES.RAID)
                 local key = LoadoutReminder.OPTIONS:GetPerBossOptionKey(difficulty, raid)
-                tab.content.perBossCheckbox:SetChecked(LoadoutReminderOptionsV2[key])
+                tab.content.perBossCheckbox:SetChecked(LoadoutReminder.DB.OPTIONS:Get("PER_BOSS_LOADOUTS")[key])
             end
             table.insert(LoadoutReminder.OPTIONS.PERBOSSCHECKBOXES, tab.content.perBossCheckbox)
 
@@ -823,5 +823,5 @@ function LoadoutReminder.OPTIONS:HasRaidLoadoutsPerBoss()
     end
     local optionKey = LoadoutReminder.OPTIONS:GetPerBossOptionKey(difficulty, raid)
 
-    return LoadoutReminderOptionsV2[optionKey]
+    return LoadoutReminder.DB.OPTIONS:Get("PER_BOSS_LOADOUTS")[optionKey]
 end

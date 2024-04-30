@@ -43,14 +43,15 @@ function LoadoutReminder.DB.OPTIONS:Migrate()
             LoadoutReminderDB.optionsDB.data[LoadoutReminder.CONST.OPTIONS.LIBDB_CONFIG] =
                 _G["LoadoutReminderLibIconDB"] or
                 LoadoutReminder.CONST.OPTION_DEFAULTS[LoadoutReminder.CONST.OPTIONS.LIBDB_CONFIG]
-            LoadoutReminderDB.optionsDB.data[LoadoutReminder.CONST.OPTIONS.EQUIP_RAIDS_PER_BOSS] = LoadoutReminder.CONST
-            .OPTION_DEFAULTS[LoadoutReminder.CONST.OPTIONS.EQUIP_RAIDS_PER_BOSS]
-            LoadoutReminderDB.optionsDB.data[LoadoutReminder.CONST.OPTIONS.SPEC_RAIDS_PER_BOSS] = LoadoutReminder.CONST
-            .OPTION_DEFAULTS[LoadoutReminder.CONST.OPTIONS.SPEC_RAIDS_PER_BOSS]
-            LoadoutReminderDB.optionsDB.data[LoadoutReminder.CONST.OPTIONS.ADDONS_RAIDS_PER_BOSS] = LoadoutReminder
-            .CONST.OPTION_DEFAULTS[LoadoutReminder.CONST.OPTIONS.ADDONS_RAIDS_PER_BOSS]
-            LoadoutReminderDB.optionsDB.data[LoadoutReminder.CONST.OPTIONS.TALENT_RAIDS_PER_BOSS] = LoadoutReminder
-            .CONST.OPTION_DEFAULTS[LoadoutReminder.CONST.OPTIONS.TALENT_RAIDS_PER_BOSS]
+
+            -- migrate per boss option bools with dynamic keys
+            for key, value in pairs(_G["LoadoutReminderOptionsV2"]) do
+                if type(key) == "string" and string.find(key, "_PerBoss") then
+                    local pBL = self:Get("PER_BOSS_LOADOUTS")
+
+                    pBL[key] = value
+                end
+            end
         end
 
         --LoadoutReminderDB.optionsDB.version = 1

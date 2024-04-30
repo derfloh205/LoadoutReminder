@@ -7,7 +7,7 @@
 ## X-Curse-Project-ID: 942303
 ## X-Wago-ID: n6VPOLGd
 ## X-WoWI-ID: 26653
-## SavedVariablesPerCharacter: LoadoutReminderOptionsV2, LoadoutReminderDB
+## SavedVariablesPerCharacter: LoadoutReminderDB
 ## Version: 6.1.0
 ## OptionalDeps: BetterAddonList, AddonControlPanel, TalentLoadoutManager
 
@@ -24,6 +24,7 @@ DB/talentDB.lua
 DB/equipDB.lua
 DB/specDB.lua
 DB/addonDB.lua
+DB/optionsDB.lua
 
 Classes/ReminderInfo.lua
 Classes/ActiveReminders.lua
