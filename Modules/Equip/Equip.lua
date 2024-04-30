@@ -26,7 +26,9 @@ end
 ---@return LoadoutReminder.ReminderInfo | nil
 function LoadoutReminder.EQUIP:CheckInstanceEquipSet()
     local currentSetID = LoadoutReminder.EQUIP:GetCurrentSet()
-    local assignedSetID = LoadoutReminder.DB_old.EQUIP:GetInstanceSet()
+    local instanceType = LoadoutReminder.UTIL:GetCurrentInstanceType()
+    local difficulty = LoadoutReminder.UTIL:GetInstanceDifficulty() or LoadoutReminder.CONST.DIFFICULTY.DEFAULT
+    local assignedSetID = LoadoutReminder.DB.EQUIP:GetInstanceSet(instanceType, difficulty)
 
     -- print("equip: ")
     -- print("currentSet: " .. tostring(currentSet))
@@ -45,7 +47,8 @@ end
 
 ---@return LoadoutReminder.ReminderInfo | nil
 function LoadoutReminder.EQUIP:CheckBossEquipSet(raid, boss)
-    local bossSet = LoadoutReminder.DB_old.EQUIP:GetRaidSet(raid, boss)
+    local difficulty = LoadoutReminder.UTIL:GetInstanceDifficulty() or LoadoutReminder.CONST.DIFFICULTY.DEFAULT
+    local bossSet = LoadoutReminder.DB.EQUIP:GetRaidBossSet(raid, boss, difficulty)
 
     if bossSet == nil then
         return nil
