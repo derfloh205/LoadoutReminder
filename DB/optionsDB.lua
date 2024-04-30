@@ -27,7 +27,9 @@ end
 ---@param option LoadoutReminder.Const.Options
 ---@return any value
 function LoadoutReminder.DB.OPTIONS:Get(option)
-    return LoadoutReminderDB.optionsDB.data[option] or LoadoutReminder.CONST.OPTION_DEFAULTS[option]
+    LoadoutReminderDB.optionsDB.data[option] = LoadoutReminderDB.optionsDB.data[option] or
+    LoadoutReminder.CONST.OPTION_DEFAULTS[option]
+    return LoadoutReminderDB.optionsDB.data[option]
 end
 
 function LoadoutReminder.DB.OPTIONS:Migrate()
@@ -48,16 +50,17 @@ function LoadoutReminder.DB.OPTIONS:Migrate()
             for key, value in pairs(_G["LoadoutReminderOptionsV2"]) do
                 if type(key) == "string" and string.find(key, "_PerBoss") then
                     local pBL = self:Get("PER_BOSS_LOADOUTS")
-
                     pBL[key] = value
                 end
             end
         end
 
-        --LoadoutReminderDB.optionsDB.version = 1
+        LoadoutReminderDB.optionsDB.version = 1
     end
 end
 
 function LoadoutReminder.DB.OPTIONS:CleanUp()
-
+    _G["LoadoutReminderOptionsV2"] = nil
+    _G["LoadoutReminderLibIconDB"] = nil
+    _G["LoadoutReminderGGUIConfig"] = nil
 end
