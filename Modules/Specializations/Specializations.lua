@@ -18,12 +18,11 @@ function LoadoutReminder.SPEC:CheckInstanceSpecSet()
 	if currentSpecID and assignedSpecID then
 		local macroText = LoadoutReminder.SPEC:GetMacroTextBySet(assignedSpecID)
 		local buttonText = 'Switch Spec to: '
-		local specInfoInstantCurrent = LoadoutReminder.UTIL:GetSpecInfoInstant(select(3, UnitClass("player")),
-			currentSpecID)
-		local specInfoInstantAssigned = LoadoutReminder.UTIL:GetSpecInfoInstant(select(3, UnitClass("player")),
-			assignedSpecID)
+		local currentSpecName = select(2, GetSpecializationInfoByID(currentSpecID))
+		local assignedSpecName = select(2, GetSpecializationInfoByID(assignedSpecID))
+
 		return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.SPEC, 'Detected Situation: ', macroText,
-			buttonText, "Spec", specInfoInstantCurrent.name, specInfoInstantAssigned.name)
+			buttonText, "Spec", currentSpecName, assignedSpecName)
 	end
 end
 
@@ -38,9 +37,9 @@ function LoadoutReminder.SPEC:CheckBossSpecSet(raid, boss)
 
 	local specID = LoadoutReminder.SPEC:GetCurrentSet()
 	local macroText = LoadoutReminder.SPEC:GetMacroTextBySet(bossSet)
-	local specInfoInstant = LoadoutReminder.UTIL:GetSpecInfoInstant(select(3, UnitClass("player")), specID)
+	local specName = specID and select(2, GetSpecializationInfoByID(specID)) or ""
 	return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.SPEC, 'Detected Boss: ', macroText,
-		'Switch Spec to: ', 'Spec', specInfoInstant.name, bossSet)
+		'Switch Spec to: ', 'Spec', specName, bossSet)
 end
 
 function LoadoutReminder.SPEC:GetCurrentSet()

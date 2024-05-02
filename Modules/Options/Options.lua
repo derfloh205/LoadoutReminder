@@ -88,9 +88,9 @@ function LoadoutReminder.OPTIONS:GetSpecData()
     }
 
     table.foreach(specs, function(_, specID)
-        local specInfo = LoadoutReminder.UTIL:GetSpecInfoInstant(select(3, UnitClass("player")), specID)
+        local specName = specID and select(2, GetSpecializationInfoByID(specID)) or ""
         table.insert(specDropdownData, {
-            label = specInfo.name,
+            label = specName,
             value = specID,
         })
     end)
@@ -240,9 +240,9 @@ function LoadoutReminder.OPTIONS:Init()
                 local selectedDifficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(
                     instanceType)
                 local specID = LoadoutReminder.DB.SPEC:GetInstanceSet(instanceType, selectedDifficulty)
-                local specInfo = LoadoutReminder.UTIL:GetSpecInfoInstant(select(3, UnitClass("player")), specID)
+                local specName = specID and select(2, GetSpecializationInfoByID(specID)) or ""
                 return {
-                    label = specInfo.name,
+                    label = specName,
                     value = specID
                 }
             end
@@ -504,9 +504,9 @@ function LoadoutReminder.OPTIONS:CreateRaidTabList(parent, dropdownData)
                     local selectedDifficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(
                         LoadoutReminder.CONST.INSTANCE_TYPES.RAID)
                     local specID = LoadoutReminder.DB.SPEC:GetRaidBossSet(raid, bossID, selectedDifficulty)
-                    local specInfo = LoadoutReminder.UTIL:GetSpecInfoInstant(select(3, UnitClass("player")), specID)
+                    local specName = specID and select(2, GetSpecializationInfoByID(specID)) or ""
                     return {
-                        label = specInfo.name,
+                        label = specName,
                         value = specID
                     }
                 end
