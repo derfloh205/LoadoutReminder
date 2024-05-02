@@ -33,7 +33,7 @@ Init/Init.lua
 
 Modules/News/News.lua
 Modules/Options/Options.lua
-Modules/Options/Frames.lua.lua
+Modules/Options/Frames.lua
 Modules/ReminderFrame/ReminderFrame.lua
 Modules/ReminderFrame/Frames.lua
 

@@ -9,6 +9,7 @@ LoadoutReminder.CONST.FRAMES = {
     REMINDER_FRAME = "TALENT_REMINDER_FRAME",
     NEWS = "NEWS",
     POPUP = "POPUP",
+    OPTIONS = "OPTIONS",
 }
 
 LoadoutReminder.CONST.STARTER_BUILD = "Starter Build"
@@ -17,16 +18,16 @@ LoadoutReminder.CONST.NO_SET_NAME = '<No Set>'
 
 ---@type GGUI.BackdropOptions
 LoadoutReminder.CONST.DEFAULT_BACKDROP_OPTIONS = {
-    bgFile = "Interface\\CharacterFrame\\UI-Party-Background",
-    borderOptions = {
-        edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
+    backdropInfo = {
+        bgFile = "Interface\\CharacterFrame\\UI-Party-Background",
+        edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
         edgeSize = 16,
         insets = { left = 8, right = 6, top = 8, bottom = 8 },
     }
 }
 ---@type GGUI.BackdropOptions
 LoadoutReminder.CONST.OPTIONS_TAB_CONTENT_BACKDROP = {
-    borderOptions = {
+    backdropInfo = {
         edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
         edgeSize = 16,
     }

@@ -19,7 +19,7 @@ function LoadoutReminder.NEWS:Init()
         sizeY = sizeY,
         backdropOptions = LoadoutReminder.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameConfigTable = LoadoutReminder.DB.OPTIONS:Get("GGUI_CONFIG"),
-        frameTable = LoadoutReminder.MAIN.FRAMES,
+        frameTable = LoadoutReminder.INIT.FRAMES,
         frameID = LoadoutReminder.CONST.FRAMES.NEWS,
         title = LoadoutReminder.GUTIL:ColorizeText(
             "LoadoutReminder " .. C_AddOns.GetAddOnMetadata(LoadoutReminderAddonName, "Version"),
@@ -79,7 +79,7 @@ function LoadoutReminder.NEWS:ShowNews(force)
 
     LoadoutReminder.DB.OPTIONS:Save("NEWS_CHECKSUM", newChecksum)
 
-    local newsFrame = LoadoutReminder.GGUI:GetFrame(LoadoutReminder.MAIN.FRAMES, LoadoutReminder.CONST.FRAMES.NEWS)
+    local newsFrame = LoadoutReminder.GGUI:GetFrame(LoadoutReminder.INIT.FRAMES, LoadoutReminder.CONST.FRAMES.NEWS)
     -- resize
     newsFrame.content.info:SetText(infoText)
     newsFrame:Show()

@@ -21,7 +21,7 @@ function LoadoutReminder.CHECK:CheckSituations()
     if LoadoutReminder.CHECK.sessionPause then return end
 
     -- check only when player is not in combat and only if everything was initialized
-    if not LoadoutReminder.MAIN.READY or UnitAffectingCombat('player') then
+    if not LoadoutReminder.INIT.READY or UnitAffectingCombat('player') then
         return
     end
 

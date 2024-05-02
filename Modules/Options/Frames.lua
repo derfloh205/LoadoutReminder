@@ -1,22 +1,32 @@
 ---@class LoadoutReminder
 local LoadoutReminder = select(2, ...)
 
+local GGUI = LoadoutReminder.GGUI
+local GUTIL = LoadoutReminder.GUTIL
+local f = GUTIL:GetFormatter()
+
 ---@class LoadoutReminder.OPTIONS
 LoadoutReminder.OPTIONS = LoadoutReminder.OPTIONS
+
+---@type LoadoutReminder.OPTIONS.FRAME
+LoadoutReminder.OPTIONS.frame = nil
 
 ---@class LoadoutReminder.OPTIONS.FRAMES
 LoadoutReminder.OPTIONS.FRAMES = {}
 
 function LoadoutReminder.OPTIONS.FRAMES:Init()
-    LoadoutReminder.OPTIONS.optionsPanel = CreateFrame("Frame", "LoadoutReminderOptionsPanel")
-
-    LoadoutReminder.OPTIONS.optionsPanel:HookScript("OnShow", function(self)
-    end)
-
-    LoadoutReminder.OPTIONS.optionsPanel.name = "Loadout Reminder"
-    local title = LoadoutReminder.OPTIONS.optionsPanel:CreateFontString('optionsTitle', 'OVERLAY', 'GameFontNormal')
-    title:SetPoint("TOP", 0, 0)
-    title:SetText("Loadout Reminder Options")
+    ---@class LoadoutReminder.OPTIONS.FRAME : GGUI.Frame
+    LoadoutReminder.OPTIONS.frame = GGUI.Frame {
+        parent = UIParent, moveable = true, closeable = true,
+        sizeX = 650, sizeY = 620,
+        backdropOptions = LoadoutReminder.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameConfigTable = LoadoutReminder.DB.OPTIONS:Get("GGUI_CONFIG"),
+        frameID = LoadoutReminder.CONST.FRAMES.OPTIONS,
+        frameTable = LoadoutReminder.INIT.FRAMES,
+        title = f.white("Loadout Reminder Options"),
+        hide = true,
+        frameStrata = "DIALOG",
+    }
 
     ---@type GGUI.DropdownData
     local difficultyDropdownData = LoadoutReminder.GUTIL:Map(LoadoutReminder.CONST.DIFFICULTY, function(diff)
@@ -33,9 +43,9 @@ function LoadoutReminder.OPTIONS.FRAMES:Init()
 
     ---@type GGUI.Dropdown
     LoadoutReminder.OPTIONS.difficultyDropdown = LoadoutReminder.GGUI.Dropdown({
-        parent = LoadoutReminder.OPTIONS.optionsPanel,
-        anchorParent = LoadoutReminder.OPTIONS.optionsPanel,
-        offsetY = -30,
+        parent = LoadoutReminder.OPTIONS.frame.content,
+        anchorParent = LoadoutReminder.OPTIONS.frame.content,
+        offsetY = -40,
         anchorA = "TOP",
         anchorB = "TOP",
         label = "Difficulty",
@@ -62,16 +72,16 @@ function LoadoutReminder.OPTIONS.FRAMES:Init()
         buttonOptions =
         {
             label = "General",
-            parent = LoadoutReminder.OPTIONS.optionsPanel,
-            anchorParent = LoadoutReminder.OPTIONS.optionsPanel,
+            parent = LoadoutReminder.OPTIONS.frame.content,
+            anchorParent = LoadoutReminder.OPTIONS.frame.content,
             anchorA = "TOPLEFT",
             anchorB = "TOPLEFT",
             offsetX = 25,
-            offsetY = -35
+            offsetY = -45
         },
         canBeEnabled = true,
-        parent = LoadoutReminder.OPTIONS.optionsPanel,
-        anchorParent = LoadoutReminder.OPTIONS.optionsPanel,
+        parent = LoadoutReminder.OPTIONS.frame.content,
+        anchorParent = LoadoutReminder.OPTIONS.frame.content,
         anchorA = "CENTER",
         anchorB = "CENTER",
         offsetX = 0,
@@ -192,14 +202,14 @@ function LoadoutReminder.OPTIONS.FRAMES:Init()
         buttonOptions =
         {
             label = "Raids",
-            parent = LoadoutReminder.OPTIONS.optionsPanel,
+            parent = LoadoutReminder.OPTIONS.frame.content,
             anchorParent = generalTab.button,
             anchorA = "LEFT",
             anchorB = "RIGHT",
         },
         canBeEnabled = true,
-        parent = LoadoutReminder.OPTIONS.optionsPanel,
-        anchorParent = LoadoutReminder.OPTIONS.optionsPanel,
+        parent = LoadoutReminder.OPTIONS.frame.content,
+        anchorParent = LoadoutReminder.OPTIONS.frame.content,
         anchorA = "CENTER",
         anchorB = "CENTER",
         offsetX = 0,
@@ -217,8 +227,6 @@ function LoadoutReminder.OPTIONS.FRAMES:Init()
     LoadoutReminder.OPTIONS.FRAMES:CreateRaidTabList(raidsTab.content, dropdownData)
 
     LoadoutReminder.GGUI.BlizzardTabSystem({ generalTab, raidsTab })
-
-    InterfaceOptions_AddCategory(self.optionsPanel)
 end
 
 function LoadoutReminder.OPTIONS.FRAMES:CreateRaidTabList(parent, dropdownData)
@@ -683,7 +691,7 @@ function LoadoutReminder.OPTIONS.FRAMES:CreateReminderTypeDropdowns(parent, anch
 end
 
 function LoadoutReminder.OPTIONS.FRAMES:ReloadDropdowns()
-    if not LoadoutReminder.MAIN.READY then
+    if not LoadoutReminder.INIT.READY then
         return
     end
 

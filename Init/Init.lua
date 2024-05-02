@@ -2,20 +2,24 @@
 local LoadoutReminder = select(2, ...)
 local LoadoutReminderAddonName = select(1, ...)
 
+local GGUI = LoadoutReminder.GGUI
 local GUTIL = LoadoutReminder.GUTIL
+local f = GUTIL:GetFormatter()
 
----@class LoadoutReminder.MAIN : Frame
-LoadoutReminder.MAIN = GUTIL:CreateRegistreeForEvents({ "ADDON_LOADED" })
 
-LoadoutReminder.MAIN.FRAMES = {}
-LoadoutReminder.MAIN.READY = false
+---@class LoadoutReminder.INIT : Frame
+LoadoutReminder.INIT = GUTIL:CreateRegistreeForEvents({ "ADDON_LOADED" })
 
-function LoadoutReminder.MAIN:Init()
+LoadoutReminder.INIT.FRAMES = {}
+LoadoutReminder.INIT.READY = false
+
+function LoadoutReminder.INIT:Init()
 	if not LoadoutReminder.UTIL:IsNecessaryInfoLoaded() then
 		-- poll until info is available
-		C_Timer.After(LoadoutReminder.CONST.INIT_POLL_INTERVAL, LoadoutReminder.MAIN.Init)
+		C_Timer.After(LoadoutReminder.CONST.INIT_POLL_INTERVAL, LoadoutReminder.INIT.Init)
 		return
 	end
+	LoadoutReminder.INIT:InitOptionsPanel()
 	LoadoutReminder.DB:Init()
 	LoadoutReminder.GGUI:InitializePopup({
 		title = "LoadoutReminder",
@@ -26,21 +30,21 @@ function LoadoutReminder.MAIN:Init()
 	})
 	LoadoutReminder.NEWS:Init()
 	LoadoutReminder.ADDONS:Init()
-	LoadoutReminder.MAIN:InitializeSlashCommands()
+	LoadoutReminder.INIT:InitializeSlashCommands()
 	LoadoutReminder.OPTIONS.FRAMES:Init()
 	LoadoutReminder.REMINDER_FRAME.FRAMES:Init()
-	LoadoutReminder.MAIN:InitializeMinimapButton()
+	LoadoutReminder.INIT:InitializeMinimapButton()
 
 	-- restore frame positions
 	local reminderFrame = LoadoutReminder.REMINDER_FRAME.frame
 	reminderFrame:RestoreSavedConfig(UIParent)
-	local newsFrame = LoadoutReminder.GGUI:GetFrame(LoadoutReminder.MAIN.FRAMES, LoadoutReminder.CONST.FRAMES.NEWS)
+	local newsFrame = LoadoutReminder.GGUI:GetFrame(LoadoutReminder.INIT.FRAMES, LoadoutReminder.CONST.FRAMES.NEWS)
 	if newsFrame then
 		newsFrame:RestoreSavedConfig(UIParent)
 	end
 
 	-- everything initalized
-	LoadoutReminder.MAIN.READY = true
+	LoadoutReminder.INIT.READY = true
 
 	-- Make first check after everything is loaded
 	LoadoutReminder.CHECK:CheckSituations()
@@ -49,7 +53,17 @@ function LoadoutReminder.MAIN:Init()
 	LoadoutReminder.NEWS:ShowNews()
 end
 
-function LoadoutReminder.MAIN:InitializeSlashCommands()
+function LoadoutReminder.INIT:InitOptionsPanel()
+	local optionsPanel = CreateFrame("Frame")
+	optionsPanel.name = "LoadoutReminder"
+	optionsPanel.hint = GGUI.Text {
+		parent = optionsPanel, anchorPoints = { { anchorParent = optionsPanel } },
+		text = f.white("Use " .. f.whisper("/lor config") .. " to configure " .. f.l("LoadoutReminder"))
+	}
+	InterfaceOptions_AddCategory(optionsPanel)
+end
+
+function LoadoutReminder.INIT:InitializeSlashCommands()
 	SLASH_LOADOUTREMINDER1 = "/loadoutreminder"
 	SLASH_LOADOUTREMINDER2 = "/lor"
 	SlashCmdList["LOADOUTREMINDER"] = function(input)
@@ -66,7 +80,7 @@ function LoadoutReminder.MAIN:InitializeSlashCommands()
 		end
 
 		if command == "config" then
-			InterfaceOptionsFrame_OpenToCategory(LoadoutReminder.OPTIONS.optionsPanel)
+			LoadoutReminder.OPTIONS.frame:Show()
 		end
 
 		if command == "check" then
@@ -113,7 +127,7 @@ function LoadoutReminder.MAIN:InitializeSlashCommands()
 	end
 end
 
-function LoadoutReminder.MAIN:InitializeMinimapButton()
+function LoadoutReminder.INIT:InitializeMinimapButton()
 	local LibIcon = LibStub("LibDBIcon-1.0")
 	local libDB = LibStub("LibDataBroker-1.1")
 	local ldb = libDB:NewDataObject("LoadoutReminder", {
@@ -122,7 +136,7 @@ function LoadoutReminder.MAIN:InitializeMinimapButton()
 		tocname = "LoadoutReminder",
 		icon = "Interface\\Icons\\INV_Misc_Bell_01",
 		OnClick = function()
-			InterfaceOptionsFrame_OpenToCategory(LoadoutReminder.OPTIONS.optionsPanel)
+			LoadoutReminder.OPTIONS.frame:Show()
 		end,
 	})
 
@@ -134,11 +148,11 @@ function LoadoutReminder.MAIN:InitializeMinimapButton()
 	LibIcon:Register("LoadoutReminder", ldb, LoadoutReminder.DB.OPTIONS:Get("LIBDB_CONFIG"))
 end
 
-function LoadoutReminder.MAIN:ADDON_LOADED(addon_name)
+function LoadoutReminder.INIT:ADDON_LOADED(addon_name)
 	if addon_name ~= LoadoutReminderAddonName then
 		return
 	end
 	LoadoutReminder.TALENTS:InitTalentManagement()
 	-- init as soon as player specialization is available -- polling
-	LoadoutReminder.MAIN:Init()
+	LoadoutReminder.INIT:Init()
 end
