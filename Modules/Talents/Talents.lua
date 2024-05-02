@@ -37,7 +37,7 @@ function LoadoutReminder.TALENTS.TALENT_LOADOUT_MANAGER:InitHooks()
 	TalentLoadoutManagerAPI:RegisterCallback(TalentLoadoutManagerAPI.Event.LoadoutListUpdated, function()
 		if LoadoutReminder.OPTIONS.optionsPanel then
 			-- handle calls before options are initialized
-			LoadoutReminder.OPTIONS:ReloadDropdowns()
+			LoadoutReminder.OPTIONS.FRAMES:ReloadDropdowns()
 			LoadoutReminder.CHECK:CheckSituations()
 		end
 	end, LoadoutReminder.TALENTS)
@@ -46,7 +46,7 @@ function LoadoutReminder.TALENTS.TALENT_LOADOUT_MANAGER:InitHooks()
 	TalentLoadoutManagerAPI:RegisterCallback(TalentLoadoutManagerAPI.Event.LoadoutUpdated, function()
 		if LoadoutReminder.OPTIONS.optionsPanel then
 			-- handle calls before options are initialized
-			LoadoutReminder.OPTIONS:ReloadDropdowns()
+			LoadoutReminder.OPTIONS.FRAMES:ReloadDropdowns()
 			LoadoutReminder.CHECK:CheckSituations()
 		end
 	end, LoadoutReminder.TALENTS)

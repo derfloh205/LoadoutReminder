@@ -199,27 +199,27 @@ end
 function LoadoutReminder.CHECK:TRAIT_CONFIG_LIST_UPDATED()
     RunNextFrame(function()
         LoadoutReminder.CHECK:CheckSituations()
-        LoadoutReminder.OPTIONS:ReloadDropdowns()
+        LoadoutReminder.OPTIONS.FRAMES:ReloadDropdowns()
     end)
 end
 
 function LoadoutReminder.CHECK:TRAIT_CONFIG_CREATED()
     RunNextFrame(function()
         LoadoutReminder.CHECK:CheckSituations()
-        LoadoutReminder.OPTIONS:ReloadDropdowns()
+        LoadoutReminder.OPTIONS.FRAMES:ReloadDropdowns()
     end)
 end
 
 function LoadoutReminder.CHECK:TRAIT_CONFIG_DELETED()
     RunNextFrame(function()
         LoadoutReminder.CHECK:CheckSituations()
-        LoadoutReminder.OPTIONS:ReloadDropdowns()
+        LoadoutReminder.OPTIONS.FRAMES:ReloadDropdowns()
     end)
 end
 
 function LoadoutReminder.CHECK:TRAIT_CONFIG_UPDATED()
     RunNextFrame(function()
         LoadoutReminder.CHECK:CheckSituations()
-        LoadoutReminder.OPTIONS:ReloadDropdowns()
+        LoadoutReminder.OPTIONS.FRAMES:ReloadDropdowns()
     end)
 end

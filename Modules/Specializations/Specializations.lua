@@ -69,6 +69,6 @@ function LoadoutReminder.SPEC:GetMacroTextBySet(assignedSet)
 end
 
 function LoadoutReminder.SPEC:PLAYER_SPECIALIZATION_CHANGED()
-	LoadoutReminder.OPTIONS:ReloadDropdowns()
+	LoadoutReminder.OPTIONS.FRAMES:ReloadDropdowns()
 	LoadoutReminder.CHECK:CheckSituations()
 end

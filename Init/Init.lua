@@ -27,7 +27,7 @@ function LoadoutReminder.MAIN:Init()
 	LoadoutReminder.NEWS:Init()
 	LoadoutReminder.ADDONS:Init()
 	LoadoutReminder.MAIN:InitializeSlashCommands()
-	LoadoutReminder.OPTIONS:Init()
+	LoadoutReminder.OPTIONS.FRAMES:Init()
 	LoadoutReminder.REMINDER_FRAME.FRAMES:Init()
 	LoadoutReminder.MAIN:InitializeMinimapButton()
 

@@ -99,6 +99,6 @@ function LoadoutReminder.EQUIP:PLAYER_EQUIPMENT_CHANGED()
 end
 
 function LoadoutReminder.EQUIP:EQUIPMENT_SETS_CHANGED()
-    LoadoutReminder.OPTIONS:ReloadDropdowns()
+    LoadoutReminder.OPTIONS.FRAMES:ReloadDropdowns()
     LoadoutReminder.CHECK:CheckSituations()
 end
