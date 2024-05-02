@@ -44,6 +44,7 @@ function LoadoutReminder.NEWS:GET_NEWS()
     return string.format(
         [[
     %1$s Refactored internal db structure
+    %1$s Moved options to custom panel
     ]], d)
 end
 
