@@ -100,19 +100,19 @@ function LoadoutReminder.OPTIONS.FRAMES:Init()
     local dbFunctions = {
         TALENTS = {
             Save = function(_, instanceType, talentSetID)
-                local specID = GetSpecialization()
+                local specID = select(1, GetSpecializationInfo(GetSpecialization()))
                 local selectedDifficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(
                     instanceType)
                 LoadoutReminder.DB.TALENTS:SaveInstanceSet(instanceType, selectedDifficulty, specID, talentSetID)
             end,
             Get = function(_, instanceType)
-                local specID = GetSpecialization()
+                local specID = select(1, GetSpecializationInfo(GetSpecialization()))
                 local selectedDifficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(
                     instanceType)
                 return LoadoutReminder.DB.TALENTS:GetInstanceSet(instanceType, selectedDifficulty, specID)
             end,
             GetInitialData = function(_, instanceType)
-                local specID = GetSpecialization()
+                local specID = select(1, GetSpecializationInfo(GetSpecialization()))
                 local selectedDifficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(
                     instanceType)
                 local talentSetID = LoadoutReminder.DB.TALENTS:GetInstanceSet(instanceType, selectedDifficulty, specID)
@@ -362,19 +362,19 @@ function LoadoutReminder.OPTIONS.FRAMES:CreateRaidTabList(parent, dropdownData)
         local dbFunctions = {
             TALENTS = {
                 Save = function(_, bossID, talentSetID)
-                    local specID = GetSpecialization()
+                    local specID = select(1, GetSpecializationInfo(GetSpecialization()))
                     local selectedDifficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(
                         LoadoutReminder.CONST.INSTANCE_TYPES.RAID)
                     LoadoutReminder.DB.TALENTS:SaveRaidBossSet(raid, bossID, selectedDifficulty, specID, talentSetID)
                 end,
                 Get = function(_, bossID)
-                    local specID = GetSpecialization()
+                    local specID = select(1, GetSpecializationInfo(GetSpecialization()))
                     local selectedDifficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(
                         LoadoutReminder.CONST.INSTANCE_TYPES.RAID)
                     return LoadoutReminder.DB.TALENTS:GetRaidBossSet(raid, bossID, selectedDifficulty, specID)
                 end,
                 GetInitialData = function(_, bossID)
-                    local specID = GetSpecialization()
+                    local specID = select(1, GetSpecializationInfo(GetSpecialization()))
                     local selectedDifficulty = LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(
                         LoadoutReminder.CONST.INSTANCE_TYPES.RAID)
                     local setID = LoadoutReminder.DB.TALENTS:GetRaidBossSet(raid, bossID, selectedDifficulty, specID)

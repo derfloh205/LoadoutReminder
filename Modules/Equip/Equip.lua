@@ -23,11 +23,11 @@ function LoadoutReminder.EQUIP:AreEquipSetsLoaded()
     end
 end
 
+---@param instanceType LoadoutReminder.InstanceTypes
+---@param difficulty LoadoutReminder.Difficulty
 ---@return LoadoutReminder.ReminderInfo | nil
-function LoadoutReminder.EQUIP:CheckInstanceEquipSet()
+function LoadoutReminder.EQUIP:CheckInstanceEquipSet(instanceType, difficulty)
     local currentSetID = LoadoutReminder.EQUIP:GetCurrentSet()
-    local instanceType = LoadoutReminder.UTIL:GetCurrentInstanceType()
-    local difficulty = LoadoutReminder.UTIL:GetInstanceDifficulty() or LoadoutReminder.CONST.DIFFICULTY.DEFAULT
     local assignedSetID = LoadoutReminder.DB.EQUIP:GetInstanceSet(instanceType, difficulty)
 
     -- print("equip: ")
@@ -45,9 +45,11 @@ function LoadoutReminder.EQUIP:CheckInstanceEquipSet()
     end
 end
 
+---@param raid LoadoutReminder.Raids
+---@param boss LoadoutReminder.Raidboss
+---@param difficulty LoadoutReminder.Difficulty
 ---@return LoadoutReminder.ReminderInfo | nil
-function LoadoutReminder.EQUIP:CheckBossEquipSet(raid, boss)
-    local difficulty = LoadoutReminder.UTIL:GetInstanceDifficulty() or LoadoutReminder.CONST.DIFFICULTY.DEFAULT
+function LoadoutReminder.EQUIP:CheckBossEquipSet(raid, boss, difficulty)
     local bossSet = LoadoutReminder.DB.EQUIP:GetRaidBossSet(raid, boss, difficulty)
 
     if bossSet == nil then

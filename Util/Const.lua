@@ -237,6 +237,7 @@ LoadoutReminder.CONST.BOSS_ID_MAP = {
 
     -- Vault of the Incarnates (Dragonflight)
     [184972] = "VAULT_OF_THE_INCARNATES_ERANOG",
+    [193459] = "VAULT_OF_THE_INCARNATES_ERANOG", -- debug: kadghar
     [190496] = "VAULT_OF_THE_INCARNATES_TERROS",
     -- Primal Council: Kadros Icewrath
     [187771] = "VAULT_OF_THE_INCARNATES_PRIMAL_COUNCIL",
