@@ -4,8 +4,6 @@ local LoadoutReminder = select(2, ...)
 LoadoutReminder.OPTIONS = {}
 LoadoutReminder.OPTIONS.DROPDOWNS = {}
 LoadoutReminder.OPTIONS.PERBOSSCHECKBOXES = {}
-LoadoutReminder.OPTIONS.HELPICONS_DEFAULT_RAID = {}
-LoadoutReminder.OPTIONS.HELPICONS_DEFAULT_DIFF = {}
 
 function LoadoutReminder.OPTIONS:GetTalentsData()
     -- #### TALENTS

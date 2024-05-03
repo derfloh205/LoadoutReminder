@@ -242,7 +242,13 @@ function LoadoutReminder.OPTIONS.FRAMES:CreateRaidTabList(parent, dropdownData)
     local setInitial = true
     local offsetY = -20
     local offsetX = 15
-    for _, raid in pairs(raids) do
+    for _, raid in GUTIL:OrderedPairs(raids, function(a, b)
+        if a == LoadoutReminder.CONST.RAIDS.DEFAULT then
+            return true
+        else
+            return false
+        end
+    end) do
         local label = LoadoutReminder.CONST.RAID_DISPLAY_NAMES[raid]
         local initialTab = setInitial
         local tab = LoadoutReminder.GGUI.BlizzardTab({
@@ -321,38 +327,13 @@ function LoadoutReminder.OPTIONS.FRAMES:CreateRaidTabList(parent, dropdownData)
             table.insert(LoadoutReminder.OPTIONS.PERBOSSCHECKBOXES, tab.content.perBossCheckbox)
 
             tab.content.perBossCheckbox:Hide() -- cause initial difficulty is default and thats where we do not want the checkbox to show
-
-            ---@class GGUI.HelpIcon
-            table.insert(LoadoutReminder.OPTIONS.HELPICONS_DEFAULT_DIFF,
-                LoadoutReminder.GGUI.HelpIcon({
-                    parent = tab.content,
-                    anchorParent = tab.content,
-                    anchorA = "TOP",
-                    anchorB = "TOP",
-                    offsetX = 50,
-                    offsetY = -13,
-                    text =
-                        "You will be reminded of this loadouts when loading into the selected raid of any difficulty\nwhere individual boss loadouts are toggled" ..
-                        LoadoutReminder.GUTIL:ColorizeText(" ON", LoadoutReminder.GUTIL.COLORS.GREEN),
-                }))
-        else
-            table.insert(LoadoutReminder.OPTIONS.HELPICONS_DEFAULT_RAID,
-                LoadoutReminder.GGUI.HelpIcon({
-                    parent = tab.content,
-                    anchorParent = tab.content,
-                    anchorA = "TOP",
-                    anchorB = "TOP",
-                    offsetX = 50,
-                    offsetY = -13,
-                    text =
-                        "You will be reminded of this loadout when loading into any raid (of the selected difficulty)\nwhere individual boss loadouts are toggled" ..
-                        LoadoutReminder.GUTIL:ColorizeText(" OFF", LoadoutReminder.GUTIL.COLORS.RED),
-                }))
         end
 
         local bosses = LoadoutReminder.GUTIL:Filter(LoadoutReminder.CONST.BOSS_ID_MAP, function(boss)
             return string.sub(boss, 1, string.len(raid)) == raid
         end)
+
+        tinsert(bosses, 1, LoadoutReminder.CONST.BOSS_IDS.DEFAULT)
 
         bosses = LoadoutReminder.GUTIL:ToSet(bosses)
         bosses = LoadoutReminder.GUTIL:Sort(bosses, function(a, b)
@@ -712,9 +693,5 @@ function LoadoutReminder.OPTIONS.FRAMES:ReloadDropdowns()
     for _, checkBox in pairs(LoadoutReminder.OPTIONS.PERBOSSCHECKBOXES) do
         checkBox:Reload()
         checkBox:SetVisible(selectedDifficulty ~= LoadoutReminder.CONST.DIFFICULTY.DEFAULT)
-    end
-
-    for _, helpIcon in pairs(LoadoutReminder.OPTIONS.HELPICONS_DEFAULT_DIFF) do
-        helpIcon:SetVisible(selectedDifficulty == LoadoutReminder.CONST.DIFFICULTY.DEFAULT)
     end
 end

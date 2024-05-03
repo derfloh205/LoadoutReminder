@@ -69,7 +69,7 @@ LoadoutReminder.CONST.BOSS_IDS = {
 
 ---@type table<LoadoutReminder.Raidboss, string>
 LoadoutReminder.CONST.BOSS_NAMES = {
-    DEFAULT = "All Bosses",
+    DEFAULT = "Default",
     -- Amirdrassil
     AMIRDRASSIL_GNARLROOT = 'Gnarlroot',
     AMIRDRASSIL_IGIRA = 'Igira',
@@ -298,7 +298,7 @@ LoadoutReminder.CONST.RAIDS = {
 }
 
 LoadoutReminder.CONST.RAID_DISPLAY_NAMES = {
-    DEFAULT = "All Raids",
+    DEFAULT = "Default",
     AMIRDRASSIL = 'Amirdrassil',
     ABERRUS = 'Aberrus',
     VAULT_OF_THE_INCARNATES = "Vault of the Incarnates",
