@@ -403,6 +403,13 @@ LoadoutReminder.CONST.REMINDER_TYPES = {
     SPEC = 'SPEC',
 }
 
+LoadoutReminder.CONST.REMINDER_TYPES_DISPLAY_NAMES = {
+    EQUIP = 'Equip Sets',
+    TALENTS = 'Talent Sets',
+    ADDONS = 'Addon Sets',
+    SPEC = 'Specializations',
+}
+
 ---@enum LoadoutReminder.Raids
 LoadoutReminder.CONST.RAIDS = {
     DEFAULT = "DEFAULT",
@@ -418,7 +425,7 @@ LoadoutReminder.CONST.RAID_DISPLAY_NAMES = {
     VAULT_OF_THE_INCARNATES = "Vault of the Incarnates",
 }
 
----@enum LoadoutReminder.ReminderTypes
+---@enum LoadoutReminder.GeneralReminderTypes
 LoadoutReminder.CONST.GENERAL_REMINDER_TYPES = {
     INSTANCE_TYPES = "INSTANCE_TYPES",
     RAID_BOSSES = "RAID_BOSSES",

@@ -46,7 +46,7 @@ function LoadoutReminder.EQUIP:CheckInstanceEquipSet(instanceType, difficulty)
 end
 
 ---@param raid LoadoutReminder.Raids
----@param boss LoadoutReminder.Raidboss
+---@param boss string
 ---@param difficulty LoadoutReminder.Difficulty
 ---@return LoadoutReminder.ReminderInfo | nil
 function LoadoutReminder.EQUIP:CheckBossEquipSet(raid, boss, difficulty)
@@ -101,6 +101,6 @@ function LoadoutReminder.EQUIP:PLAYER_EQUIPMENT_CHANGED()
 end
 
 function LoadoutReminder.EQUIP:EQUIPMENT_SETS_CHANGED()
-    LoadoutReminder.OPTIONS.FRAMES:ReloadDropdowns()
+    LoadoutReminder.OPTIONS.FRAMES:UpdateSetListDisplay()
     LoadoutReminder.CHECK:CheckSituations()
 end

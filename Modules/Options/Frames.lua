@@ -19,7 +19,7 @@ function LoadoutReminder.OPTIONS.FRAMES:Init()
     ---@class LoadoutReminder.OPTIONS.FRAME : GGUI.Frame
     LoadoutReminder.OPTIONS.frame = GGUI.Frame {
         parent = UIParent, moveable = true, closeable = true,
-        sizeX = 650, sizeY = 400,
+        sizeX = 610, sizeY = 400,
         backdropOptions = LoadoutReminder.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameConfigTable = LoadoutReminder.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameID = LoadoutReminder.CONST.FRAMES.OPTIONS,
@@ -49,8 +49,8 @@ function LoadoutReminder.OPTIONS.FRAMES:Init()
         { {
             anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = 20, offsetY = -40
         } },
-        120,
-        false,
+        160,
+        true,
         GUTIL:Map(LoadoutReminder.CONST.GENERAL_REMINDER_TYPES_DISPLAY_NAMES, function(label, value)
             return {
                 label = label,
@@ -68,6 +68,66 @@ function LoadoutReminder.OPTIONS.FRAMES:Init()
     content.generalList:SelectRow(1)
     content.raidList:SelectRow(1)
     content.raidBossList:SelectRow(1)
+
+    -- Set Selector Dropdowns
+    self:InitReminderTypesList()
+    self:InitSetList()
+
+    content.reminderTypesList:SelectRow(1)
+    content.setList:SelectRow(1)
+
+    self:UpdateSetListDisplay()
+end
+
+function LoadoutReminder.OPTIONS.FRAMES:InitReminderTypesList()
+    ---@class LoadoutReminder.OPTIONS.FRAME.CONTENT : Frame
+    local content = LoadoutReminder.OPTIONS.frame.content
+
+    content.reminderTypesList = LoadoutReminder.UTIL:SingleColumnFrameList(
+        function()
+            -- update setList
+        end,
+        content,
+        { {
+            anchorParent = content.generalList.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetX = 0, offsetY = -20
+        } },
+        160,
+        true,
+        GUTIL:Map(LoadoutReminder.CONST.REMINDER_TYPES_DISPLAY_NAMES, function(label, value)
+            return {
+                label = label,
+                value = value
+            }
+        end)
+    )
+
+    content.reminderTypesList:UpdateDisplay()
+end
+
+function LoadoutReminder.OPTIONS.FRAMES:InitSetList()
+    ---@class LoadoutReminder.OPTIONS.FRAME.CONTENT : Frame
+    local content = LoadoutReminder.OPTIONS.frame.content
+
+    content.setList = LoadoutReminder.UTIL:SingleColumnFrameList(
+        function()
+            -- Check Situation
+        end,
+        content,
+        { {
+            anchorParent = content.reminderTypesList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT", offsetX = 20
+        } },
+        160,
+        true,
+        {
+            {
+                label = LoadoutReminder.CONST.NO_SET_NAME,
+                value = nil,
+            }
+        }
+    )
+
+
+    content.setList:UpdateDisplay()
 end
 
 function LoadoutReminder.OPTIONS.FRAMES:InitInstanceTypesList()
@@ -77,9 +137,9 @@ function LoadoutReminder.OPTIONS.FRAMES:InitInstanceTypesList()
     content.instanceTypesList = LoadoutReminder.UTIL:SingleColumnFrameList(
         nil,
         content,
-        { { anchorParent = content.generalList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT" } },
-        120,
-        false,
+        { { anchorParent = content.generalList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT", offsetX = 20 } },
+        160,
+        true,
         GUTIL:Map(LoadoutReminder.CONST.INSTANCE_TYPES_DISPLAY_NAMES, function(label, value)
             return {
                 label = label,
@@ -120,9 +180,9 @@ function LoadoutReminder.OPTIONS.FRAMES:InitRaidList()
             content.raidBossList:SelectRow(1)
         end,
         content,
-        { { anchorParent = content.generalList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT" } },
+        { { anchorParent = content.generalList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT", offsetX = 20 } },
         160,
-        false,
+        true,
         GUTIL:Map(LoadoutReminder.CONST.RAID_DISPLAY_NAMES, function(label, value)
             return {
                 label = label,
@@ -140,6 +200,21 @@ function LoadoutReminder.OPTIONS.FRAMES:InitRaidList()
     end)
 end
 
+function LoadoutReminder.OPTIONS.FRAMES:UpdateSetListDisplay()
+    ---@class LoadoutReminder.OPTIONS.FRAME.CONTENT : Frame
+    local content = LoadoutReminder.OPTIONS.frame.content
+    local selectedReminderType = content.reminderTypesList.selectedRow
+        .selectedValue --[[@as LoadoutReminder.ReminderTypes]]
+
+    content.setList:Remove()
+
+    -- TODO
+
+
+
+    content.setList:UpdateDisplay()
+end
+
 function LoadoutReminder.OPTIONS.FRAMES:InitRaidBossesList()
     ---@class LoadoutReminder.OPTIONS.FRAME.CONTENT : Frame
     local content = LoadoutReminder.OPTIONS.frame.content
@@ -147,9 +222,9 @@ function LoadoutReminder.OPTIONS.FRAMES:InitRaidBossesList()
     content.raidBossList = LoadoutReminder.UTIL:SingleColumnFrameList(
         nil,
         content,
-        { { anchorParent = content.raidList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT" } },
+        { { anchorParent = content.raidList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT", offsetX = 20 } },
         160,
-        false,
+        true,
         {
             {
                 label = LoadoutReminder.CONST.BOSS_NAMES[LoadoutReminder.CONST.BOSS_IDS.DEFAULT],
@@ -206,7 +281,7 @@ function LoadoutReminder.OPTIONS.FRAMES:Init_old()
         initialLabel = LoadoutReminder.CONST.DIFFICULTY_DISPLAY_NAMES.DEFAULT,
         initialValue = LoadoutReminder.CONST.DIFFICULTY.DEFAULT,
         clickCallback = function()
-            LoadoutReminder.OPTIONS.FRAMES:ReloadDropdowns()
+            LoadoutReminder.OPTIONS.FRAMES:UpdateSetListDisplay()
         end
     })
 
@@ -824,7 +899,7 @@ function LoadoutReminder.OPTIONS.FRAMES:CreateReminderTypeDropdowns(parent, anch
     table.insert(LoadoutReminder.OPTIONS.DROPDOWNS, addonDropdown)
 end
 
-function LoadoutReminder.OPTIONS.FRAMES:ReloadDropdowns()
+function LoadoutReminder.OPTIONS.FRAMES:ReloadDropdowns_old()
     if not LoadoutReminder.INIT.READY then
         return
     end

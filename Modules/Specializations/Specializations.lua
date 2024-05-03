@@ -32,7 +32,7 @@ function LoadoutReminder.SPEC:CheckInstanceSpecSet(instanceType, difficulty, spe
 end
 
 ---@param raid LoadoutReminder.Raids
----@param boss LoadoutReminder.Raidboss
+---@param boss string
 ---@param difficulty LoadoutReminder.Difficulty
 ---@param specID SpecID
 ---@return LoadoutReminder.ReminderInfo | nil
@@ -79,6 +79,6 @@ function LoadoutReminder.SPEC:GetMacroTextBySet(assignedSet)
 end
 
 function LoadoutReminder.SPEC:PLAYER_SPECIALIZATION_CHANGED()
-	LoadoutReminder.OPTIONS.FRAMES:ReloadDropdowns()
+	LoadoutReminder.OPTIONS.FRAMES:UpdateSetListDisplay()
 	LoadoutReminder.CHECK:CheckSituations()
 end

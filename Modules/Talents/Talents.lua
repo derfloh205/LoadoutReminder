@@ -37,7 +37,7 @@ function LoadoutReminder.TALENTS.TALENT_LOADOUT_MANAGER:InitHooks()
 	TalentLoadoutManagerAPI:RegisterCallback(TalentLoadoutManagerAPI.Event.LoadoutListUpdated, function()
 		if LoadoutReminder.OPTIONS.optionsPanel then
 			-- handle calls before options are initialized
-			LoadoutReminder.OPTIONS.FRAMES:ReloadDropdowns()
+			LoadoutReminder.OPTIONS.FRAMES:UpdateSetListDisplay()
 			LoadoutReminder.CHECK:CheckSituations()
 		end
 	end, LoadoutReminder.TALENTS)
@@ -46,7 +46,7 @@ function LoadoutReminder.TALENTS.TALENT_LOADOUT_MANAGER:InitHooks()
 	TalentLoadoutManagerAPI:RegisterCallback(TalentLoadoutManagerAPI.Event.LoadoutUpdated, function()
 		if LoadoutReminder.OPTIONS.optionsPanel then
 			-- handle calls before options are initialized
-			LoadoutReminder.OPTIONS.FRAMES:ReloadDropdowns()
+			LoadoutReminder.OPTIONS.FRAMES:UpdateSetListDisplay()
 			LoadoutReminder.CHECK:CheckSituations()
 		end
 	end, LoadoutReminder.TALENTS)
@@ -239,7 +239,7 @@ function LoadoutReminder.TALENTS:CheckInstanceTalentSet(instanceType, difficulty
 end
 
 ---@param raid LoadoutReminder.Raids
----@param boss LoadoutReminder.Raidboss
+---@param boss string
 ---@param difficulty LoadoutReminder.Difficulty
 ---@param specID SpecID
 ---@return LoadoutReminder.ReminderInfo | nil

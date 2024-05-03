@@ -48,7 +48,7 @@ function LoadoutReminder.ADDONS:CheckInstanceAddonSet(instanceType, difficulty)
 end
 
 ---@param raid LoadoutReminder.Raids
----@param boss LoadoutReminder.Raidboss
+---@param boss string
 ---@param difficulty LoadoutReminder.Difficulty
 ---@return LoadoutReminder.ReminderInfo | nil
 function LoadoutReminder.ADDONS:CheckBossAddonSet(raid, boss, difficulty)

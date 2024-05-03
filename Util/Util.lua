@@ -171,7 +171,7 @@ function LoadoutReminder.UTIL:SingleColumnFrameList(selectionCallback, parent, a
 		},
 		hideScrollbar = not showScrollBar,
 		showBorder = true,
-		sizeY = 200,
+		sizeY = 140,
 	}
 
 	for _, data in ipairs(selectionData) do
