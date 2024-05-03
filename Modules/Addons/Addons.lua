@@ -29,12 +29,12 @@ function LoadoutReminder.ADDONS:Init()
 	return false
 end
 
----@return LoadoutReminder.ReminderInfo
-function LoadoutReminder.ADDONS:CheckInstanceAddonSet()
+---@param instanceType LoadoutReminder.InstanceTypes
+---@param difficulty LoadoutReminder.Difficulty
+---@return LoadoutReminder.ReminderInfo | nil
+function LoadoutReminder.ADDONS:CheckInstanceAddonSet(instanceType, difficulty)
 	-- check currentSet against general set list
 	local currentSet = LoadoutReminder.ADDONS:GetCurrentSet()
-	local instanceType = LoadoutReminder.UTIL:GetCurrentInstanceType()
-	local difficulty = LoadoutReminder.UTIL:GetInstanceDifficulty() or LoadoutReminder.CONST.DIFFICULTY.DEFAULT
 	local assignedSet = LoadoutReminder.DB.ADDONS:GetInstanceSet(instanceType, difficulty)
 
 	currentSet = currentSet or LoadoutReminder.CONST.NO_SET_NAME
@@ -47,9 +47,11 @@ function LoadoutReminder.ADDONS:CheckInstanceAddonSet()
 	end
 end
 
+---@param raid LoadoutReminder.Raids
+---@param boss LoadoutReminder.Raidboss
+---@param difficulty LoadoutReminder.Difficulty
 ---@return LoadoutReminder.ReminderInfo | nil
-function LoadoutReminder.ADDONS:CheckBossAddonSet(raid, boss)
-	local difficulty = LoadoutReminder.UTIL:GetInstanceDifficulty() or LoadoutReminder.CONST.DIFFICULTY.DEFAULT
+function LoadoutReminder.ADDONS:CheckBossAddonSet(raid, boss, difficulty)
 	local bossSet = LoadoutReminder.DB.ADDONS:GetRaidBossSet(raid, boss, difficulty)
 
 	if bossSet == nil then

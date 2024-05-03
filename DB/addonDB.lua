@@ -40,7 +40,8 @@ end
 function LoadoutReminder.DB.ADDONS:GetInstanceSet(instanceType, difficulty)
     LoadoutReminderDB.addonDB.data.instanceSets[instanceType] =
         LoadoutReminderDB.addonDB.data.instanceSets[instanceType] or {}
-    return LoadoutReminderDB.addonDB.data.instanceSets[instanceType][difficulty]
+    return
+        LoadoutReminderDB.addonDB.data.instanceSets[instanceType][difficulty]
 end
 
 ---@param raid LoadoutReminder.Raids
@@ -62,7 +63,8 @@ function LoadoutReminder.DB.ADDONS:GetRaidBossSet(raid, boss, difficulty)
     LoadoutReminderDB.addonDB.data.raidSets[raid] = LoadoutReminderDB.addonDB.data.raidSets[raid] or {}
     LoadoutReminderDB.addonDB.data.raidSets[raid][boss] =
         LoadoutReminderDB.addonDB.data.raidSets[raid][boss] or {}
-    return LoadoutReminderDB.addonDB.data.raidSets[raid][boss][difficulty]
+    return
+        LoadoutReminderDB.addonDB.data.raidSets[raid][boss][difficulty]
 end
 
 function LoadoutReminder.DB.ADDONS:Migrate()

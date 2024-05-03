@@ -1,24 +1,29 @@
 ---@class LoadoutReminder
 local LoadoutReminder = select(2, ...)
 
+local GUTIL = LoadoutReminder.GUTIL
+
 ---@class LoadoutReminder.SPEC : Frame
-LoadoutReminder.SPEC = CreateFrame("Frame")
-LoadoutReminder.SPEC:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end)
-LoadoutReminder.SPEC:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+LoadoutReminder.SPEC = GUTIL:CreateRegistreeForEvents { "PLAYER_SPECIALIZATION_CHANGED" }
 
-
-
+---@param instanceType LoadoutReminder.InstanceTypes
+---@param difficulty LoadoutReminder.Difficulty
+---@param specID SpecID
 ---@return LoadoutReminder.ReminderInfo | nil
-function LoadoutReminder.SPEC:CheckInstanceSpecSet()
-	local currentSpecID = LoadoutReminder.SPEC:GetCurrentSet()
-	local instanceType = LoadoutReminder.UTIL:GetCurrentInstanceType()
-	local difficulty = LoadoutReminder.UTIL:GetInstanceDifficulty() or LoadoutReminder.CONST.DIFFICULTY.DEFAULT
+function LoadoutReminder.SPEC:CheckInstanceSpecSet(instanceType, difficulty, specID)
 	local assignedSpecID = LoadoutReminder.DB.SPEC:GetInstanceSet(instanceType, difficulty)
 
-	if currentSpecID and assignedSpecID then
+	print("checking spec for difficulty: " .. difficulty)
+
+	-- print("currentSpecID: " .. tostring(specID))
+	-- print("assignedSpecID: " .. tostring(assignedSpecID))
+	-- print("instanceType: " .. tostring(instanceType))
+	-- print("difficulty: " .. tostring(difficulty))
+
+	if specID and assignedSpecID then
 		local macroText = LoadoutReminder.SPEC:GetMacroTextBySet(assignedSpecID)
 		local buttonText = 'Switch Spec to: '
-		local currentSpecName = select(2, GetSpecializationInfoByID(currentSpecID))
+		local currentSpecName = select(2, GetSpecializationInfoByID(specID))
 		local assignedSpecName = select(2, GetSpecializationInfoByID(assignedSpecID))
 
 		return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.SPEC, 'Detected Situation: ', macroText,
@@ -26,20 +31,25 @@ function LoadoutReminder.SPEC:CheckInstanceSpecSet()
 	end
 end
 
+---@param raid LoadoutReminder.Raids
+---@param boss LoadoutReminder.Raidboss
+---@param difficulty LoadoutReminder.Difficulty
+---@param specID SpecID
 ---@return LoadoutReminder.ReminderInfo | nil
-function LoadoutReminder.SPEC:CheckBossSpecSet(raid, boss)
-	local difficulty = LoadoutReminder.UTIL:GetInstanceDifficulty() or LoadoutReminder.CONST.DIFFICULTY.DEFAULT
-	local bossSet = LoadoutReminder.DB.SPEC:GetRaidBossSet(raid, boss, difficulty)
+function LoadoutReminder.SPEC:CheckBossSpecSet(raid, boss, difficulty, specID)
+	local bossSetSpecID = LoadoutReminder.DB.SPEC:GetRaidBossSet(raid, boss, difficulty)
 
-	if bossSet == nil then
+	print("checking spec boss set: " .. raid .. "-" .. boss .. "-" .. difficulty)
+
+	if bossSetSpecID == nil then
 		return nil
 	end
 
-	local specID = LoadoutReminder.SPEC:GetCurrentSet()
-	local macroText = LoadoutReminder.SPEC:GetMacroTextBySet(bossSet)
-	local specName = specID and select(2, GetSpecializationInfoByID(specID)) or ""
+	local macroText = LoadoutReminder.SPEC:GetMacroTextBySet(bossSetSpecID)
+	local specName = select(2, GetSpecializationInfoByID(specID))
+	local bossSetName = bossSetSpecID and select(2, GetSpecializationInfoByID(bossSetSpecID)) or ""
 	return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.SPEC, 'Detected Boss: ', macroText,
-		'Switch Spec to: ', 'Spec', specName, bossSet)
+		'Switch Spec to: ', 'Spec', specName, bossSetName)
 end
 
 function LoadoutReminder.SPEC:GetCurrentSet()

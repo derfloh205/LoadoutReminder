@@ -26,6 +26,7 @@ function LoadoutReminder.UTIL:GetCurrentInstanceType()
 	end
 end
 
+---@return LoadoutReminder.Raids?
 function LoadoutReminder.UTIL:GetCurrentRaid()
 	-- DEBUG
 	if debug then
@@ -37,6 +38,11 @@ end
 ---@return LoadoutReminder.Difficulty difficulty
 function LoadoutReminder.UTIL:GetInstanceDifficulty()
 	return LoadoutReminder.CONST.DIFFICULTY_ID_MAP[select(3, GetInstanceInfo())]
+end
+
+---@return SpecID specID
+function LoadoutReminder.UTIL:GetPlayerSpecID()
+	return select(1, GetSpecializationInfo(GetSpecialization()))
 end
 
 function LoadoutReminder.UTIL:InstanceTypeSupportsDifficulty(instanceType)

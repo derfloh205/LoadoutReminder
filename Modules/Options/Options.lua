@@ -109,12 +109,12 @@ function LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(i
     return difficulty
 end
 
-function LoadoutReminder.OPTIONS:HasRaidLoadoutsPerBoss()
-    local raid = LoadoutReminder.UTIL:GetCurrentRaid()
+---@param raid LoadoutReminder.Raids
+function LoadoutReminder.OPTIONS:HasRaidLoadoutsPerBoss(raid, difficulty)
     if not raid then
         return false
     end
-    local difficulty = LoadoutReminder.UTIL:GetInstanceDifficulty()
+
     if not difficulty then
         -- happens on first execution after going into a raid.. next exec should include difficulty
         return false

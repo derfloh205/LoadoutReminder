@@ -17,6 +17,11 @@ LoadoutReminder.CHECK = GUTIL:CreateRegistreeForEvents(
 
 LoadoutReminder.CHECK.sessionPause = false
 
+
+local BOSSES = LoadoutReminder.CONST.BOSS_IDS
+local DIFF = LoadoutReminder.CONST.DIFFICULTY
+local RAIDS = LoadoutReminder.CONST.RAIDS
+
 function LoadoutReminder.CHECK:CheckSituations()
     if LoadoutReminder.CHECK.sessionPause then return end
 
@@ -25,9 +30,16 @@ function LoadoutReminder.CHECK:CheckSituations()
         return
     end
 
-    local activeInstanceReminders = LoadoutReminder.CHECK:CheckInstanceTypes()
-    local activeBossReminders = LoadoutReminder.CHECK:CheckBoss()
+    local difficulty = LoadoutReminder.UTIL:GetInstanceDifficulty() or LoadoutReminder.CONST.DIFFICULTY.DEFAULT
+    local specID = LoadoutReminder.UTIL:GetPlayerSpecID()
+    local raid = LoadoutReminder.UTIL:GetCurrentRaid() -- or LoadoutReminder.CONST.RAIDS.AMIRDRASSIL -- DEBUG
 
+    print("Checking situations for ")
+    print("difficulty: " .. difficulty)
+    print("specID: " .. specID)
+
+    local activeInstanceReminders = LoadoutReminder.CHECK:CheckInstanceTypes(raid, difficulty, specID)
+    local activeBossReminders = LoadoutReminder.CHECK:CheckBoss(raid, difficulty, specID)
     local combinedActiveCount = LoadoutReminder.ActiveReminders:GetCombinedActiveRemindersCount({ activeInstanceReminders,
         activeBossReminders })
 
@@ -45,8 +57,11 @@ function LoadoutReminder.CHECK:CheckSituations()
     end
 end
 
+---@param raid LoadoutReminder.Raids?
+---@param difficulty LoadoutReminder.Difficulty
+---@param specID SpecID
 ---@return LoadoutReminder.ActiveReminders | nil
-function LoadoutReminder.CHECK:CheckInstanceTypes()
+function LoadoutReminder.CHECK:CheckInstanceTypes(raid, difficulty, specID)
     if LoadoutReminder.CHECK.sessionPause then return end
 
     local activeReminders = LoadoutReminder.ActiveReminders(false, false, false, false)
@@ -55,32 +70,53 @@ function LoadoutReminder.CHECK:CheckInstanceTypes()
         return activeReminders
     end
 
+    local talentReminderInfo, addonReminderInfo, equipReminderInfo, specReminderInfo
     local instanceType = LoadoutReminder.UTIL:GetCurrentInstanceType()
 
-    if LoadoutReminder.OPTIONS:HasRaidLoadoutsPerBoss() then
-        -- print("ic: has raid loadouts per boss")
-        -- Hide ReminderFrames
-        LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.TALENTS, nil,
-            LoadoutReminder.CONST.INSTANCE_TYPES_DISPLAY_NAMES[instanceType])
-        LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.ADDONS, nil,
-            LoadoutReminder.CONST.INSTANCE_TYPES_DISPLAY_NAMES[instanceType])
-        LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.EQUIP, nil,
-            LoadoutReminder.CONST.INSTANCE_TYPES_DISPLAY_NAMES[instanceType])
-        LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.SPEC, nil,
-            LoadoutReminder.CONST.INSTANCE_TYPES_DISPLAY_NAMES[instanceType])
-        return activeReminders
+    if raid then
+        local perBossLoadouts = LoadoutReminder.OPTIONS:HasRaidLoadoutsPerBoss(raid, difficulty)
+        if not perBossLoadouts then
+            talentReminderInfo =
+                LoadoutReminder.TALENTS:CheckBossTalentSet(raid, BOSSES.DEFAULT, difficulty, specID) or
+                LoadoutReminder.TALENTS:CheckBossTalentSet(raid, BOSSES.DEFAULT, DIFF.DEFAULT, specID) or
+                LoadoutReminder.TALENTS:CheckBossTalentSet(RAIDS.DEFAULT, BOSSES.DEFAULT, DIFF.DEFAULT, specID)
+            if LoadoutReminder.ADDONS.AVAILABLE then
+                addonReminderInfo =
+                    LoadoutReminder.ADDONS:CheckBossAddonSet(raid, BOSSES.DEFAULT, difficulty) or
+                    LoadoutReminder.ADDONS:CheckBossAddonSet(raid, BOSSES.DEFAULT, DIFF.DEFAULT) or
+                    LoadoutReminder.ADDONS:CheckBossAddonSet(RAIDS.DEFAULT, BOSSES.DEFAULT, DIFF.DEFAULT)
+            end
+            equipReminderInfo =
+                LoadoutReminder.EQUIP:CheckBossEquipSet(raid, BOSSES.DEFAULT, difficulty) or
+                LoadoutReminder.EQUIP:CheckBossEquipSet(raid, BOSSES.DEFAULT, DIFF.DEFAULT) or
+                LoadoutReminder.EQUIP:CheckBossEquipSet(RAIDS.DEFAULT, BOSSES.DEFAULT, DIFF.DEFAULT)
+            specReminderInfo =
+                LoadoutReminder.SPEC:CheckBossSpecSet(raid, BOSSES.DEFAULT, difficulty, specID) or
+                LoadoutReminder.SPEC:CheckBossSpecSet(raid, BOSSES.DEFAULT, DIFF.DEFAULT, specID) or
+                LoadoutReminder.SPEC:CheckBossSpecSet(RAIDS.DEFAULT, BOSSES.DEFAULT, DIFF.DEFAULT, specID)
+        end
+    else
+        -- Check different reminder types and fallback to default values
+        talentReminderInfo =
+            LoadoutReminder.TALENTS:CheckInstanceTalentSet(instanceType, difficulty, specID) or
+            LoadoutReminder.TALENTS:CheckInstanceTalentSet(instanceType, DIFF.DEFAULT, specID)
+        if LoadoutReminder.ADDONS.AVAILABLE then
+            addonReminderInfo =
+                LoadoutReminder.ADDONS:CheckInstanceAddonSet(instanceType, difficulty) or
+                LoadoutReminder.ADDONS:CheckInstanceAddonSet(instanceType, DIFF.DEFAULT)
+        end
+        equipReminderInfo =
+            LoadoutReminder.EQUIP:CheckInstanceEquipSet(instanceType, difficulty) or
+            LoadoutReminder.EQUIP:CheckInstanceEquipSet(instanceType, DIFF.DEFAULT)
+        specReminderInfo =
+            LoadoutReminder.SPEC:CheckInstanceSpecSet(instanceType, difficulty, specID) or
+            LoadoutReminder.SPEC:CheckInstanceSpecSet(instanceType, DIFF.DEFAULT, specID)
     end
-    -- print("Check Instance Reminders")
-    local talentReminderInfo = LoadoutReminder.TALENTS:CheckInstanceTalentSet()
-    local addonReminderInfo = (LoadoutReminder.ADDONS.AVAILABLE and LoadoutReminder.ADDONS:CheckInstanceAddonSet()) or
-        nil
-    local equipReminderInfo = LoadoutReminder.EQUIP:CheckInstanceEquipSet()
-    local specReminderInfo = LoadoutReminder.SPEC:CheckInstanceSpecSet()
 
-    --  print("talentReminderInfo: " .. tostring(talentReminderInfo))
-    --  print("addonReminderInfo: " .. tostring(addonReminderInfo))
-    --  print("equipReminderInfo: " .. tostring(equipReminderInfo))
-    --  print("specReminderInfo: " .. tostring(specReminderInfo))
+    -- print("talentReminderInfo: " .. tostring(talentReminderInfo))
+    -- print("addonReminderInfo: " .. tostring(addonReminderInfo))
+    -- print("equipReminderInfo: " .. tostring(equipReminderInfo))
+    -- print("specReminderInfo: " .. tostring(specReminderInfo))
 
 
     -- Update Talent Reminder
@@ -107,9 +143,13 @@ function LoadoutReminder.CHECK:CheckInstanceTypes()
     )
 end
 
+---@param raid LoadoutReminder.Raids
+---@param difficulty LoadoutReminder.Difficulty
+---@param specID SpecID
 ---@return LoadoutReminder.ActiveReminders | nil
-function LoadoutReminder.CHECK:CheckBoss()
+function LoadoutReminder.CHECK:CheckBoss(raid, difficulty, specID)
     if LoadoutReminder.CHECK.sessionPause then return end
+    if not raid then return end
 
     local activeReminders = LoadoutReminder.ActiveReminders(false, false, false, false)
     if not LoadoutReminder.UTIL:IsNecessaryInfoLoaded() then
@@ -117,7 +157,7 @@ function LoadoutReminder.CHECK:CheckBoss()
     end
 
     -- no raid loadouts per boss -> do not remind
-    if not LoadoutReminder.OPTIONS:HasRaidLoadoutsPerBoss() then
+    if not LoadoutReminder.OPTIONS:HasRaidLoadoutsPerBoss(raid, difficulty) then
         -- Hide ReminderFrames
         LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.TALENTS, nil, "", true)
         LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.ADDONS, nil, "", true)
@@ -138,17 +178,31 @@ function LoadoutReminder.CHECK:CheckBoss()
         return activeReminders -- npc is no boss
     end
 
-    local raid = LoadoutReminder.UTIL:GetCurrentRaid() -- or LoadoutReminder.CONST.RAIDS.AMIRDRASSIL -- DEBUG
-
-    if not raid then
-        return
-    end
     -- print("check boss reminders..")
-    local talentReminderInfo = LoadoutReminder.TALENTS:CheckBossTalentSet(raid, boss)
-    local addonReminderInfo = (LoadoutReminder.ADDONS.AVAILABLE and LoadoutReminder.ADDONS:CheckBossAddonSet(raid, boss)) or
-        nil
-    local equipReminderInfo = LoadoutReminder.EQUIP:CheckBossEquipSet(raid, boss)
-    local specReminderInfo = LoadoutReminder.SPEC:CheckBossSpecSet(raid, boss)
+    -- Check different reminder types and fallback to defaults
+    local talentReminderInfo =
+        LoadoutReminder.TALENTS:CheckBossTalentSet(raid, boss, difficulty, specID) or
+        LoadoutReminder.TALENTS:CheckBossTalentSet(raid, boss, DIFF.DEFAULT, specID) or
+        LoadoutReminder.TALENTS:CheckBossTalentSet(raid, BOSSES.DEFAULT, DIFF.DEFAULT, specID) or
+        LoadoutReminder.TALENTS:CheckBossTalentSet(RAIDS.DEFAULT, BOSSES.DEFAULT, DIFF.DEFAULT, specID)
+    local addonReminderInfo
+    if LoadoutReminder.ADDONS.AVAILABLE then
+        addonReminderInfo =
+            LoadoutReminder.ADDONS:CheckBossAddonSet(raid, boss, difficulty) or
+            LoadoutReminder.ADDONS:CheckBossAddonSet(raid, boss, DIFF.DEFAULT) or
+            LoadoutReminder.ADDONS:CheckBossAddonSet(raid, BOSSES.DEFAULT, DIFF.DEFAULT) or
+            LoadoutReminder.ADDONS:CheckBossAddonSet(RAIDS.DEFAULT, BOSSES.DEFAULT, DIFF.DEFAULT)
+    end
+    local equipReminderInfo =
+        LoadoutReminder.EQUIP:CheckBossEquipSet(raid, boss, difficulty) or
+        LoadoutReminder.EQUIP:CheckBossEquipSet(raid, boss, DIFF.DEFAULT) or
+        LoadoutReminder.EQUIP:CheckBossEquipSet(raid, BOSSES.DEFAULT, DIFF.DEFAULT) or
+        LoadoutReminder.EQUIP:CheckBossEquipSet(RAIDS.DEFAULT, BOSSES.DEFAULT, DIFF.DEFAULT)
+    local specReminderInfo =
+        LoadoutReminder.SPEC:CheckBossSpecSet(raid, boss, difficulty, specID) or
+        LoadoutReminder.SPEC:CheckBossSpecSet(raid, boss, DIFF.DEFAULT, specID) or
+        LoadoutReminder.SPEC:CheckBossSpecSet(raid, BOSSES.DEFAULT, DIFF.DEFAULT, specID) or
+        LoadoutReminder.SPEC:CheckBossSpecSet(RAIDS.DEFAULT, BOSSES.DEFAULT, DIFF.DEFAULT, specID)
 
     -- print("talentReminderInfo: " .. tostring(talentReminderInfo))
     -- print("addonReminderInfo: " .. tostring(addonReminderInfo))
