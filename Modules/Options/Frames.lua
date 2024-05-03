@@ -1,3 +1,4 @@
+---@diagnostic disable: assign-type-mismatch
 ---@class LoadoutReminder
 local LoadoutReminder = select(2, ...)
 
@@ -15,6 +16,158 @@ LoadoutReminder.OPTIONS.frame = nil
 LoadoutReminder.OPTIONS.FRAMES = {}
 
 function LoadoutReminder.OPTIONS.FRAMES:Init()
+    ---@class LoadoutReminder.OPTIONS.FRAME : GGUI.Frame
+    LoadoutReminder.OPTIONS.frame = GGUI.Frame {
+        parent = UIParent, moveable = true, closeable = true,
+        sizeX = 650, sizeY = 400,
+        backdropOptions = LoadoutReminder.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameConfigTable = LoadoutReminder.DB.OPTIONS:Get("GGUI_CONFIG"),
+        frameID = LoadoutReminder.CONST.FRAMES.OPTIONS,
+        frameTable = LoadoutReminder.INIT.FRAMES,
+        title = f.white("Loadout Reminder Configuration"),
+        hide = true,
+        frameStrata = "DIALOG",
+    }
+
+    ---@class LoadoutReminder.OPTIONS.FRAME.CONTENT : Frame
+    local content = LoadoutReminder.OPTIONS.frame.content
+
+    content.generalList = LoadoutReminder.UTIL:SingleColumnFrameList(
+        function()
+            -- update display
+            if content.generalList.selectedRow.selectedValue == LoadoutReminder.CONST.GENERAL_REMINDER_TYPES.INSTANCE_TYPES then
+                content.instanceTypesList:Show()
+                content.raidList:Hide()
+                content.raidBossList:Hide()
+            elseif content.generalList.selectedRow.selectedValue == LoadoutReminder.CONST.GENERAL_REMINDER_TYPES.RAID_BOSSES then
+                content.instanceTypesList:Hide()
+                content.raidList:Show()
+                content.raidBossList:Show()
+            end
+        end,
+        content,
+        { {
+            anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = 20, offsetY = -40
+        } },
+        120,
+        false,
+        GUTIL:Map(LoadoutReminder.CONST.GENERAL_REMINDER_TYPES_DISPLAY_NAMES, function(label, value)
+            return {
+                label = label,
+                value = value
+            }
+        end)
+    )
+
+    content.generalList:UpdateDisplay()
+
+    self:InitInstanceTypesList()
+    self:InitRaidList()
+    self:InitRaidBossesList()
+
+    content.generalList:SelectRow(1)
+    content.raidList:SelectRow(1)
+    content.raidBossList:SelectRow(1)
+end
+
+function LoadoutReminder.OPTIONS.FRAMES:InitInstanceTypesList()
+    ---@class LoadoutReminder.OPTIONS.FRAME.CONTENT : Frame
+    local content = LoadoutReminder.OPTIONS.frame.content
+
+    content.instanceTypesList = LoadoutReminder.UTIL:SingleColumnFrameList(
+        nil,
+        content,
+        { { anchorParent = content.generalList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT" } },
+        120,
+        false,
+        GUTIL:Map(LoadoutReminder.CONST.INSTANCE_TYPES_DISPLAY_NAMES, function(label, value)
+            return {
+                label = label,
+                value = value
+            }
+        end)
+    )
+
+    content.instanceTypesList:UpdateDisplay()
+    content.instanceTypesList:SelectRow(1)
+end
+
+function LoadoutReminder.OPTIONS.FRAMES:InitRaidList()
+    ---@class LoadoutReminder.OPTIONS.FRAME.CONTENT : Frame
+    local content = LoadoutReminder.OPTIONS.frame.content
+
+    content.raidList = LoadoutReminder.UTIL:SingleColumnFrameList(
+        function(row)
+            content.raidBossList:Remove()
+            local raid = row.selectedValue --[[@as LoadoutReminder.Raids]]
+            local bosses = LoadoutReminder.CONST.BOSS_IDS[raid]
+
+            for boss in pairs(bosses) do
+                content.raidBossList:Add(function(row, columns)
+                    columns[1].text:SetText(LoadoutReminder.CONST.BOSS_NAMES[raid][boss])
+                    row.selectedValue = boss
+                end)
+            end
+
+            content.raidBossList:UpdateDisplay(function(rowA, rowB)
+                if rowA.selectedValue == LoadoutReminder.CONST.BOSS_IDS.DEFAULT.DEFAULT then
+                    return true
+                else
+                    return false
+                end
+            end)
+
+            content.raidBossList:SelectRow(1)
+        end,
+        content,
+        { { anchorParent = content.generalList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT" } },
+        160,
+        false,
+        GUTIL:Map(LoadoutReminder.CONST.RAID_DISPLAY_NAMES, function(label, value)
+            return {
+                label = label,
+                value = value
+            }
+        end)
+    )
+
+    content.raidList:UpdateDisplay(function(rowA, rowB)
+        if rowA.columns[1].text:GetText() == LoadoutReminder.CONST.RAID_DISPLAY_NAMES.DEFAULT then
+            return true
+        else
+            return false
+        end
+    end)
+end
+
+function LoadoutReminder.OPTIONS.FRAMES:InitRaidBossesList()
+    ---@class LoadoutReminder.OPTIONS.FRAME.CONTENT : Frame
+    local content = LoadoutReminder.OPTIONS.frame.content
+
+    content.raidBossList = LoadoutReminder.UTIL:SingleColumnFrameList(
+        nil,
+        content,
+        { { anchorParent = content.raidList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT" } },
+        160,
+        false,
+        {
+            {
+                label = LoadoutReminder.CONST.BOSS_NAMES[LoadoutReminder.CONST.BOSS_IDS.DEFAULT],
+                value = LoadoutReminder.CONST.BOSS_IDS.DEFAULT
+            }
+        }
+    )
+
+    content.raidBossList:UpdateDisplay(function(rowA, rowB)
+        if rowA.columns[1].text:GetText() == LoadoutReminder.CONST.BOSS_NAMES[LoadoutReminder.CONST.BOSS_IDS.DEFAULT] then
+            return true
+        else
+            return false
+        end
+    end)
+end
+
+function LoadoutReminder.OPTIONS.FRAMES:Init_old()
     ---@class LoadoutReminder.OPTIONS.FRAME : GGUI.Frame
     LoadoutReminder.OPTIONS.frame = GGUI.Frame {
         parent = UIParent, moveable = true, closeable = true,

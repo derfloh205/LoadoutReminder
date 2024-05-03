@@ -32,107 +32,88 @@ LoadoutReminder.CONST.OPTIONS_TAB_CONTENT_BACKDROP = {
         edgeSize = 16,
     }
 }
-
 ---@enum LoadoutReminder.Raidboss
 LoadoutReminder.CONST.BOSS_IDS = {
-    DEFAULT = "DEFAULT",
-    -- Amirdrassil
-    AMIRDRASSIL_GNARLROOT = "AMIRDRASSIL_GNARLROOT",
-    AMIRDRASSIL_IGIRA = "AMIRDRASSIL_IGIRA",
-    AMIRDRASSIL_VOLCOROSS = "AMIRDRASSIL_VOLCOROSS",
-    AMIRDRASSIL_COUNCIL_OF_DREAMS = "AMIRDRASSIL_COUNCIL_OF_DREAMS",
-    AMIRDRASSIL_LARODAR = "AMIRDRASSIL_LARODAR",
-    AMIRDRASSIL_NYMUE = "AMIRDRASSIL_NYMUE",
-    AMIRDRASSIL_SMOLDERON = "AMIRDRASSIL_SMOLDERON",
-    AMIRDRASSIL_TINDRAL_SAGESWIFT = "AMIRDRASSIL_TINDRAL_SAGESWIFT",
-    AMIRDRASSIL_FYRAKK = "AMIRDRASSIL_FYRAKK",
-    -- Aberrus
-    ABERRUS_KAZZARA = "ABERRUS_KAZZARA",
-    ABERRUS_AMALGAMATION_CHAMBER = "ABERRUS_AMALGAMATION_CHAMBER",
-    ABERRUS_FORGOTTEN_EXPERIMENTS = "ABERRUS_FORGOTTEN_EXPERIMENTS",
-    ABERRUS_ASSAULT = "ABERRUS_ASSAULT",
-    ABERRUS_RASHOK = "ABERRUS_RASHOK",
-    ABERRUS_ZSKARN = "ABERRUS_ZSKARN",
-    ABERRUS_MAGMORAX = "ABERRUS_MAGMORAX",
-    ABERRUS_ECHO = "ABERRUS_ECHO",
-    ABERRUS_SARKARETH = "ABERRUS_SARKARETH",
-    -- Vault of the Incarnates
-    VAULT_OF_THE_INCARNATES_ERANOG = "VAULT_OF_THE_INCARNATES_ERANOG",
-    VAULT_OF_THE_INCARNATES_TERROS = "VAULT_OF_THE_INCARNATES_TERROS",
-    VAULT_OF_THE_INCARNATES_PRIMAL_COUNCIL = "VAULT_OF_THE_INCARNATES_PRIMAL_COUNCIL",
-    VAULT_OF_THE_INCARNATES_SENNARTH = "VAULT_OF_THE_INCARNATES_SENNARTH",
-    VAULT_OF_THE_INCARNATES_DATHEA = "VAULT_OF_THE_INCARNATES_DATHEA",
-    VAULT_OF_THE_INCARNATES_KUROG = "VAULT_OF_THE_INCARNATES_KUROG",
-    VAULT_OF_THE_INCARNATES_DIURNA = "VAULT_OF_THE_INCARNATES_DIURNA",
-    VAULT_OF_THE_INCARNATES_RASZAGETH = "VAULT_OF_THE_INCARNATES_RASZAGETH",
+    DEFAULT = {
+        DEFAULT = "DEFAULT",
+    },
+    AMIRDRASSIL = {
+        DEFAULT = "DEFAULT",
+        GNARLROOT = 'GNARLROOT',
+        IGIRA = 'IGIRA',
+        VOLCOROSS = 'VOLCOROSS',
+        COUNCIL_OF_DREAMS = "COUNCIL_OF_DREAMS",
+        LARODAR = "LARODAR",
+        NYMUE = "NYMUE",
+        SMOLDERON = "SMOLDERON",
+        TINDRAL_SAGESWIFT = "TINDRAL_SAGESWIFT",
+        FYRAKK = "FYRAKK",
+    },
+    ABERRUS = {
+        DEFAULT = "DEFAULT",
+        KAZZARA = 'KAZZARA',
+        AMALGAMATION_CHAMBER = 'AMALGAMATION_CHAMBER',
+        FORGOTTEN_EXPERIMENTS = 'FORGOTTEN_EXPERIMENTS',
+        ASSAULT = 'ASSAULT',
+        RASHOK = 'RASHOK',
+        ZSKARN = 'ZSKARN',
+        MAGMORAX = 'MAGMORAX',
+        ECHO = 'ECHO',
+        SARKARETH = 'SARKARETH',
+    },
+    VAULT_OF_THE_INCARNATES = {
+        DEFAULT = "DEFAULT",
+        ERANOG = "ERANOG",
+        TERROS = "TERROS",
+        PRIMAL_COUNCIL = "PRIMAL_COUNCIL",
+        SENNARTH = "SENNARTH",
+        DATHEA = "DATHEA",
+        KUROG = "KUROG",
+        DIURNA = "DIURNA",
+        RASZAGETH = "RASZAGETH",
+    },
 }
 
----@type table<LoadoutReminder.Raidboss, string>
+---@type table<LoadoutReminder.Raids, table<LoadoutReminder.Raidboss, string>>
 LoadoutReminder.CONST.BOSS_NAMES = {
-    DEFAULT = "Default",
-    -- Amirdrassil
-    AMIRDRASSIL_GNARLROOT = 'Gnarlroot',
-    AMIRDRASSIL_IGIRA = 'Igira',
-    AMIRDRASSIL_VOLCOROSS = 'Volcoross',
-    AMIRDRASSIL_COUNCIL_OF_DREAMS = "Council of Dreams",
-    AMIRDRASSIL_LARODAR = "Larodar",
-    AMIRDRASSIL_NYMUE = "Nymue",
-    AMIRDRASSIL_SMOLDERON = "Smolderon",
-    AMIRDRASSIL_TINDRAL_SAGESWIFT = "Tindral Sageswift",
-    AMIRDRASSIL_FYRAKK = "Fyrakk",
-    -- Aberrus
-    ABERRUS_KAZZARA = 'Kazzara',
-    ABERRUS_AMALGAMATION_CHAMBER = 'Chamber',
-    ABERRUS_FORGOTTEN_EXPERIMENTS = 'Experiments',
-    ABERRUS_ASSAULT = 'Assault',
-    ABERRUS_RASHOK = 'Rashok',
-    ABERRUS_ZSKARN = 'Zskarn',
-    ABERRUS_MAGMORAX = 'Magmorax',
-    ABERRUS_ECHO = 'Echo of Neltharion',
-    ABERRUS_SARKARETH = 'Sarkareth',
-    -- Vault of the Incarnates
-    VAULT_OF_THE_INCARNATES_ERANOG = "Eranog",
-    VAULT_OF_THE_INCARNATES_TERROS = "Terros",
-    VAULT_OF_THE_INCARNATES_PRIMAL_COUNCIL = "Primal Council",
-    VAULT_OF_THE_INCARNATES_SENNARTH = "Sennarth",
-    VAULT_OF_THE_INCARNATES_DATHEA = "Dathea",
-    VAULT_OF_THE_INCARNATES_KUROG = "Kurog",
-    VAULT_OF_THE_INCARNATES_DIURNA = "Diurna",
-    VAULT_OF_THE_INCARNATES_RASZAGETH = "Raszageth",
-}
-
----@type table<LoadoutReminder.Raidboss, number>
-LoadoutReminder.CONST.BOSS_SORT_ORDER = {
-    DEFAULT = 0,
-    -- Amirdrassil
-    AMIRDRASSIL_GNARLROOT = 1,
-    AMIRDRASSIL_IGIRA = 2,
-    AMIRDRASSIL_VOLCOROSS = 3,
-    AMIRDRASSIL_COUNCIL_OF_DREAMS = 4,
-    AMIRDRASSIL_LARODAR = 5,
-    AMIRDRASSIL_NYMUE = 6,
-    AMIRDRASSIL_SMOLDERON = 7,
-    AMIRDRASSIL_TINDRAL_SAGESWIFT = 8,
-    AMIRDRASSIL_FYRAKK = 9,
-    -- Aberrus
-    ABERRUS_KAZZARA = 1,
-    ABERRUS_AMALGAMATION_CHAMBER = 2,
-    ABERRUS_FORGOTTEN_EXPERIMENTS = 3,
-    ABERRUS_ASSAULT = 4,
-    ABERRUS_RASHOK = 5,
-    ABERRUS_ZSKARN = 6,
-    ABERRUS_MAGMORAX = 7,
-    ABERRUS_ECHO = 8,
-    ABERRUS_SARKARETH = 9,
-    -- Vault of the Incarnates
-    VAULT_OF_THE_INCARNATES_ERANOG = 1,
-    VAULT_OF_THE_INCARNATES_TERROS = 2,
-    VAULT_OF_THE_INCARNATES_PRIMAL_COUNCIL = 3,
-    VAULT_OF_THE_INCARNATES_SENNARTH = 4,
-    VAULT_OF_THE_INCARNATES_DATHEA = 5,
-    VAULT_OF_THE_INCARNATES_KUROG = 6,
-    VAULT_OF_THE_INCARNATES_DIURNA = 7,
-    VAULT_OF_THE_INCARNATES_RASZAGETH = 8,
+    DEFAULT = {
+        DEFAULT = "Default",
+    },
+    AMIRDRASSIL = {
+        DEFAULT = "Default",
+        GNARLROOT = 'Gnarlroot',
+        IGIRA = 'Igira',
+        VOLCOROSS = 'Volcoross',
+        COUNCIL_OF_DREAMS = "Council of Dreams",
+        LARODAR = "Larodar",
+        NYMUE = "Nymue",
+        SMOLDERON = "Smolderon",
+        TINDRAL_SAGESWIFT = "Tindral Sageswift",
+        FYRAKK = "Fyrakk",
+    },
+    ABERRUS = {
+        DEFAULT = "Default",
+        KAZZARA = 'Kazzara',
+        AMALGAMATION_CHAMBER = 'Chamber',
+        FORGOTTEN_EXPERIMENTS = 'Experiments',
+        ASSAULT = 'Assault',
+        RASHOK = 'Rashok',
+        ZSKARN = 'Zskarn',
+        MAGMORAX = 'Magmorax',
+        ECHO = 'Echo of Neltharion',
+        SARKARETH = 'Sarkareth',
+    },
+    VAULT_OF_THE_INCARNATES = {
+        DEFAULT = "Default",
+        ERANOG = "Eranog",
+        TERROS = "Terros",
+        PRIMAL_COUNCIL = "Primal Council",
+        SENNARTH = "Sennarth",
+        DATHEA = "Dathea",
+        KUROG = "Kurog",
+        DIURNA = "Diurna",
+        RASZAGETH = "Raszageth",
+    },
 }
 
 ---@enum LoadoutReminder.Difficulty
@@ -188,70 +169,203 @@ LoadoutReminder.CONST.DIFFICULTY_ID_MAP = {
     [151] = "LFR",        -- lfr timewalking
 }
 
----@type table<number, LoadoutReminder.Raidboss>
+---@class LoadoutReminder.RaidBossData
+---@field boss string
+---@field raid LoadoutReminder.Raids
+
+---@type table<number, LoadoutReminder.RaidBossData>
 LoadoutReminder.CONST.BOSS_ID_MAP = {
-    [9999] = "DEFAULT",
+    [9999] = {
+        boss = "DEFAULT",
+        raid = "DEFAULT",
+    },
     -- Amirdrassil (Dragonflight)
-    [209333] = 'AMIRDRASSIL_GNARLROOT',
-    --[205772] = 'AMIRDRASSIL_GNARLROOT', --debug Kalecgos
-    --[213930] = 'AMIRDRASSIL_GNARLROOT', --debug Koszaru
-    [200926] = 'AMIRDRASSIL_IGIRA',
-    [208478] = 'AMIRDRASSIL_VOLCOROSS',
+    [209333] = {
+        boss = "GNARLROOT",
+        raid = "AMIRDRASSIL",
+    },
+    [200926] = {
+        boss = "IGIRA",
+        raid = "AMIRDRASSIL",
+    },
+    [208478] = {
+        boss = "VOLCOROSS",
+        raid = "AMIRDRASSIL",
+    },
     -- Council of Dreams: Urctos, Aerwynn, Pip
-    [208363] = 'AMIRDRASSIL_COUNCIL_OF_DREAMS',
-    [208365] = 'AMIRDRASSIL_COUNCIL_OF_DREAMS',
-    [208367] = 'AMIRDRASSIL_COUNCIL_OF_DREAMS',
-    [208445] = 'AMIRDRASSIL_LARODAR',
-    [206172] = 'AMIRDRASSIL_NYMUE',
-    [200927] = 'AMIRDRASSIL_SMOLDERON',
-    [209090] = 'AMIRDRASSIL_TINDRAL_SAGESWIFT',
-    [204931] = 'AMIRDRASSIL_FYRAKK',
+    [208363] = {
+        boss = "COUNCIL_OF_DREAMS",
+        raid = "AMIRDRASSIL",
+    },
+    [208365] = {
+        boss = "COUNCIL_OF_DREAMS",
+        raid = "AMIRDRASSIL",
+    },
+    [208367] = {
+        boss = "COUNCIL_OF_DREAMS",
+        raid = "AMIRDRASSIL",
+    },
+    [208445] = {
+        boss = "LARODAR",
+        raid = "AMIRDRASSIL",
+    },
+    [206172] = {
+        boss = "NYMUE",
+        raid = "AMIRDRASSIL",
+    },
+    [200927] = {
+        boss = "SMOLDERON",
+        raid = "AMIRDRASSIL",
+    },
+    [209090] = {
+        boss = "TINDRAL_SAGESWIFT",
+        raid = "AMIRDRASSIL",
+    },
+    [204931] = {
+        boss = "FYRAKK",
+        raid = "AMIRDRASSIL",
+    },
 
     -- Aberrus (Dragonflight)
     -- Kazzara
-    [201261] = 'ABERRUS_KAZZARA',
+    [201261] = {
+        boss = "KAZZARA",
+        raid = "AMIRDRASSIL",
+    },
     -- Amalgamation Chamber
-    [201774] = 'ABERRUS_AMALGAMATION_CHAMBER',
-    [201773] = 'ABERRUS_AMALGAMATION_CHAMBER',
-    [201934] = 'ABERRUS_AMALGAMATION_CHAMBER',
+    [201774] = {
+        boss = "AMALGAMATION_CHAMBER",
+        raid = "AMIRDRASSIL",
+    },
+    [201773] = {
+        boss = "AMALGAMATION_CHAMBER",
+        raid = "AMIRDRASSIL",
+    },
+    [201934] = {
+        boss = "AMALGAMATION_CHAMBER",
+        raid = "AMIRDRASSIL",
+    },
     -- Forgotten Experiments
-    [200912] = 'ABERRUS_FORGOTTEN_EXPERIMENTS',
-    [200913] = 'ABERRUS_FORGOTTEN_EXPERIMENTS',
-    [200918] = 'ABERRUS_FORGOTTEN_EXPERIMENTS',
+    [200912] = {
+        boss = "FORGOTTEN_EXPERIMENTS",
+        raid = "AMIRDRASSIL",
+    },
+    [200913] = {
+        boss = "FORGOTTEN_EXPERIMENTS",
+        raid = "AMIRDRASSIL",
+    },
+    [200918] = {
+        boss = "FORGOTTEN_EXPERIMENTS",
+        raid = "AMIRDRASSIL",
+    },
     -- Assault
-    [199659] = 'ABERRUS_ASSAULT',
-    [202791] = 'ABERRUS_ASSAULT',
-    [205921] = 'ABERRUS_ASSAULT',
-    [205617] = 'ABERRUS_ASSAULT',
-    [200840] = 'ABERRUS_ASSAULT',
-    [199703] = 'ABERRUS_ASSAULT',
-    [200836] = 'ABERRUS_ASSAULT',
-    [201320] = 'ABERRUS_RASHOK',
-    [202637] = 'ABERRUS_ZSKARN',
-    [201579] = 'ABERRUS_MAGMORAX',
+    [199659] = {
+        boss = "ASSAULT",
+        raid = "AMIRDRASSIL",
+    },
+    [202791] = {
+        boss = "ASSAULT",
+        raid = "AMIRDRASSIL",
+    },
+    [205921] = {
+        boss = "ASSAULT",
+        raid = "AMIRDRASSIL",
+    },
+    [205617] = {
+        boss = "ASSAULT",
+        raid = "AMIRDRASSIL",
+    },
+    [200840] = {
+        boss = "ASSAULT",
+        raid = "AMIRDRASSIL",
+    },
+    [199703] = {
+        boss = "ASSAULT",
+        raid = "AMIRDRASSIL",
+    },
+    [200836] = {
+        boss = "ASSAULT",
+        raid = "AMIRDRASSIL",
+    },
+    [201320] = {
+        boss = "RASHOK",
+        raid = "AMIRDRASSIL",
+    },
+    [202637] = {
+        boss = "ZSKARN",
+        raid = "AMIRDRASSIL",
+    },
+    [201579] = {
+        boss = "MAGMORAX",
+        raid = "AMIRDRASSIL",
+    },
     -- Echo of Neltharion
-    [201668] = 'ABERRUS_ECHO',
-    [203812] = 'ABERRUS_ECHO',
-    [202814] = 'ABERRUS_ECHO',
-    [201754] = 'ABERRUS_SARKARETH',
+    [201668] = {
+        boss = "ECHO",
+        raid = "AMIRDRASSIL",
+    },
+    [203812] = {
+        boss = "ECHO",
+        raid = "AMIRDRASSIL",
+    },
+    [202814] = {
+        boss = "ECHO",
+        raid = "AMIRDRASSIL",
+    },
+    [201754] = {
+        boss = "SARKARETH",
+        raid = "AMIRDRASSIL",
+    },
 
     -- Vault of the Incarnates (Dragonflight)
-    [184972] = "VAULT_OF_THE_INCARNATES_ERANOG",
-    [193459] = "VAULT_OF_THE_INCARNATES_ERANOG", -- debug: kadghar
-    [190496] = "VAULT_OF_THE_INCARNATES_TERROS",
+    [184972] = {
+        boss = "ERANOG",
+        raid = "DEFAULT",
+    },
+    [190496] = {
+        boss = "TERROS",
+        raid = "DEFAULT",
+    },
     -- Primal Council: Kadros Icewrath
-    [187771] = "VAULT_OF_THE_INCARNATES_PRIMAL_COUNCIL",
+    [187771] = {
+        boss = "PRIMAL_COUNCIL",
+        raid = "DEFAULT",
+    },
     -- Primal Council: Dathea Stormlash
-    [187768] = "VAULT_OF_THE_INCARNATES_PRIMAL_COUNCIL",
+    [187768] = {
+        boss = "PRIMAL_COUNCIL",
+        raid = "DEFAULT",
+    },
     -- Primal Council: Embar Firepath
-    [187767] = "VAULT_OF_THE_INCARNATES_PRIMAL_COUNCIL",
+    [187767] = {
+        boss = "PRIMAL_COUNCIL",
+        raid = "DEFAULT",
+    },
     -- Primal Council: Opalfang
-    [187772] = "VAULT_OF_THE_INCARNATES_PRIMAL_COUNCIL",
-    [187967] = "VAULT_OF_THE_INCARNATES_SENNARTH",
-    [189813] = "VAULT_OF_THE_INCARNATES_DATHEA",
-    [181378] = "VAULT_OF_THE_INCARNATES_KUROG",
-    [190245] = "VAULT_OF_THE_INCARNATES_DIURNA",
-    [189492] = "VAULT_OF_THE_INCARNATES_RASZAGETH",
+    [187772] = {
+        boss = "PRIMAL_COUNCIL",
+        raid = "DEFAULT",
+    },
+    [187967] = {
+        boss = "SENNARTH",
+        raid = "DEFAULT",
+    },
+    [189813] = {
+        boss = "DATHEA",
+        raid = "DEFAULT",
+    },
+    [181378] = {
+        boss = "KUROG",
+        raid = "DEFAULT",
+    },
+    [190245] = {
+        boss = "DIURNA",
+        raid = "DEFAULT",
+    },
+    [189492] = {
+        boss = "RASZAGETH",
+        raid = "DEFAULT",
+    },
 }
 
 LoadoutReminder.CONST.ADDON_LIST_ADDONS = {
@@ -302,6 +416,17 @@ LoadoutReminder.CONST.RAID_DISPLAY_NAMES = {
     AMIRDRASSIL = 'Amirdrassil',
     ABERRUS = 'Aberrus',
     VAULT_OF_THE_INCARNATES = "Vault of the Incarnates",
+}
+
+---@enum LoadoutReminder.ReminderTypes
+LoadoutReminder.CONST.GENERAL_REMINDER_TYPES = {
+    INSTANCE_TYPES = "INSTANCE_TYPES",
+    RAID_BOSSES = "RAID_BOSSES",
+}
+
+LoadoutReminder.CONST.GENERAL_REMINDER_TYPES_DISPLAY_NAMES = {
+    INSTANCE_TYPES = "Instance Types",
+    RAID_BOSSES = "Raid Bosses",
 }
 
 --- List: https://wowpedia.fandom.com/wiki/InstanceID

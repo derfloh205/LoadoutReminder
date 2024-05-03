@@ -1,6 +1,10 @@
 ---@class LoadoutReminder
 local LoadoutReminder = select(2, ...)
 
+local GGUI = LoadoutReminder.GGUI
+local GUTIL = LoadoutReminder.GUTIL
+
+---@class LoadoutReminder.UTIL
 LoadoutReminder.UTIL = {}
 local debug = false
 
@@ -131,4 +135,51 @@ function LoadoutReminder.UTIL:GetTargetNPCID()
 	end
 
 	return nil
+end
+
+---@class LoadoutReminder.SingleColumnFrameList.Data
+---@field label string
+---@field value any
+
+--- TODO: Create GGUI Widget !
+---@param selectionCallback fun(row: GGUI.FrameList.Row)?
+---@param parent Frame
+---@param anchorPoints GGUI.AnchorPoint[]
+---@param columnWidth number
+---@param showScrollBar boolean
+---@param selectionData LoadoutReminder.SingleColumnFrameList.Data[]
+---@return GGUI.FrameList
+function LoadoutReminder.UTIL:SingleColumnFrameList(selectionCallback, parent, anchorPoints, columnWidth, showScrollBar,
+													selectionData)
+	local list = GGUI.FrameList {
+		parent = parent,
+		anchorPoints = anchorPoints,
+		columnOptions = {
+			{
+				width = columnWidth,
+			}
+		},
+		rowConstructor = function(columns, _)
+			local mainRow = columns[1]
+			mainRow.text = GGUI.Text {
+				parent = mainRow, anchorPoints = { { anchorParent = mainRow } },
+				justifyOptions = { align = "LEFT", type = "H" }
+			}
+		end,
+		selectionOptions = {
+			selectionCallback = selectionCallback
+		},
+		hideScrollbar = not showScrollBar,
+		showBorder = true,
+		sizeY = 200,
+	}
+
+	for _, data in ipairs(selectionData) do
+		list:Add(function(row, columns)
+			columns[1].text:SetText(data.label)
+			row.selectedValue = data.value
+		end)
+	end
+
+	return list
 end
