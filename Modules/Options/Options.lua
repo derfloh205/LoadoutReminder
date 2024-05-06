@@ -127,3 +127,46 @@ function LoadoutReminder.OPTIONS:HasRaidLoadoutsPerBoss(raid, difficulty)
 
     return LoadoutReminder.DB.OPTIONS:Get("PER_BOSS_LOADOUTS")[optionKey]
 end
+
+function LoadoutReminder.OPTIONS:SaveSelection()
+    local content = LoadoutReminder.OPTIONS.frame.content --[[@as LoadoutReminder.OPTIONS.FRAME.CONTENT]]
+    local selectedReminderType = content.reminderTypesList.selectedRow
+        .selectedValue --[[@as LoadoutReminder.ReminderTypes]]
+    local specID = LoadoutReminder.UTIL:GetPlayerSpecID()
+    local selectedGeneralType = content.generalList.selectedRow and
+        content.generalList.selectedRow.selectedValue --[[@as LoadoutReminder.GeneralReminderTypes]]
+    local selectedInstanceType = content.instanceTypesList.selectedRow and
+        content.instanceTypesList.selectedRow.selectedValue --[[@as LoadoutReminder.InstanceTypes]]
+    local selectedDifficulty = content.difficultyList.selectedRow and
+        content.difficultyList.selectedRow.selectedValue --[[@as LoadoutReminder.Difficulty]]
+    local selectedRaid = content.raidList.selectedRow and
+        content.raidList.selectedRow.selectedValue --[[@as LoadoutReminder.Raids]]
+    local selectedBoss = content.raidBossList.selectedRow and
+        content.raidBossList.selectedRow.selectedValue --[[@as LoadoutReminder.Raidboss]]
+
+    local selectedSetID = content.setList.selectedRow and
+        content.setList.selectedRow.selectedValue --[[@as string|number]]
+
+    if selectedGeneralType == LoadoutReminder.CONST.GENERAL_REMINDER_TYPES.INSTANCE_TYPES then
+        if selectedReminderType == LoadoutReminder.CONST.REMINDER_TYPES.ADDONS then
+            LoadoutReminder.DB.ADDONS:SaveInstanceSet(selectedInstanceType, selectedDifficulty, selectedSetID)
+        elseif selectedReminderType == LoadoutReminder.CONST.REMINDER_TYPES.EQUIP then
+            LoadoutReminder.DB.EQUIP:SaveInstanceSet(selectedInstanceType, selectedDifficulty, selectedSetID)
+        elseif selectedReminderType == LoadoutReminder.CONST.REMINDER_TYPES.TALENTS then
+            LoadoutReminder.DB.TALENTS:SaveInstanceSet(selectedInstanceType, selectedDifficulty, selectedSetID, specID)
+        elseif selectedReminderType == LoadoutReminder.CONST.REMINDER_TYPES.SPEC then
+            LoadoutReminder.DB.SPEC:SaveInstanceSet(selectedInstanceType, selectedDifficulty, selectedSetID)
+        end
+    elseif selectedGeneralType == LoadoutReminder.CONST.GENERAL_REMINDER_TYPES.RAID_BOSSES then
+        if selectedReminderType == LoadoutReminder.CONST.REMINDER_TYPES.ADDONS then
+            LoadoutReminder.DB.ADDONS:SaveRaidBossSet(selectedRaid, selectedBoss, selectedDifficulty, selectedSetID)
+        elseif selectedReminderType == LoadoutReminder.CONST.REMINDER_TYPES.EQUIP then
+            LoadoutReminder.DB.EQUIP:SaveRaidBossSet(selectedRaid, selectedBoss, selectedDifficulty, selectedSetID)
+        elseif selectedReminderType == LoadoutReminder.CONST.REMINDER_TYPES.TALENTS then
+            LoadoutReminder.DB.TALENTS:SaveRaidBossSet(selectedRaid, selectedBoss, selectedDifficulty, selectedSetID,
+                specID)
+        elseif selectedReminderType == LoadoutReminder.CONST.REMINDER_TYPES.SPEC then
+            LoadoutReminder.DB.SPEC:SaveRaidBossSet(selectedRaid, selectedBoss, selectedDifficulty, selectedSetID)
+        end
+    end
+end

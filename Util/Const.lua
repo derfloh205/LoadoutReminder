@@ -396,7 +396,7 @@ LoadoutReminder.CONST.INSTANCE_TYPES_DISPLAY_NAMES = {
     OPENWORLD = 'Open World',
 }
 
----@enum LoadoutReminder.REMINDER_TYPES
+---@enum LoadoutReminder.ReminderTypes
 LoadoutReminder.CONST.REMINDER_TYPES = {
     EQUIP = 'EQUIP',
     TALENTS = 'TALENTS',

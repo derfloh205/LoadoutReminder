@@ -5,7 +5,7 @@ local LoadoutReminder = select(2, ...)
 ---@class LoadoutReminder.ReminderInfo
 LoadoutReminder.ReminderInfo = LoadoutReminder.Object:extend()
 
----@param reminderType LoadoutReminder.REMINDER_TYPES
+---@param reminderType LoadoutReminder.ReminderTypes
 ---@param situationInfo string
 ---@param macroText string
 ---@param currentSet string
