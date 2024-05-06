@@ -102,6 +102,9 @@ end
 ---@param loadoutID number TLM LoadoutID or Blizzard ConfigID
 ---@return string | nil configName
 function LoadoutReminder.TALENTS.TALENT_LOADOUT_MANAGER:GetTalentSetNameByID(loadoutID)
+	if loadoutID == Constants.TraitConsts.STARTER_BUILD_TRAIT_CONFIG_ID then
+		return "Starter Build"
+	end
 	local loadoutInfo = TalentLoadoutManagerAPI.GlobalAPI:GetLoadoutInfoByID(loadoutID)
 	return (loadoutInfo and loadoutInfo.name) or nil
 end
@@ -254,7 +257,10 @@ function LoadoutReminder.TALENTS:CheckBossTalentSet(raid, boss, difficulty, spec
 
 	if currentSet then
 		local currentSetName = LoadoutReminder.TALENTS:GetTalentSetNameByID(currentSet)
+		-- print("bossSet---: " .. bossSet)
 		local bossSetName = LoadoutReminder.TALENTS:GetTalentSetNameByID(bossSet)
+		-- print("currentSet: " .. tostring(currentSetName))
+		-- print("bossSetName: " .. tostring(bossSetName))
 		local macroText = LoadoutReminder.TALENTS:GetMacroTextBySet(bossSet)
 		local reminderInfo = LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.TALENTS, 'Detected Boss: ',
 			macroText, 'Switch Talents to: ', 'Talent Set', currentSetName, bossSetName)

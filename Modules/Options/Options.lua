@@ -163,8 +163,8 @@ function LoadoutReminder.OPTIONS:SaveSelection()
         elseif selectedReminderType == LoadoutReminder.CONST.REMINDER_TYPES.EQUIP then
             LoadoutReminder.DB.EQUIP:SaveRaidBossSet(selectedRaid, selectedBoss, selectedDifficulty, selectedSetID)
         elseif selectedReminderType == LoadoutReminder.CONST.REMINDER_TYPES.TALENTS then
-            LoadoutReminder.DB.TALENTS:SaveRaidBossSet(selectedRaid, selectedBoss, selectedDifficulty, selectedSetID,
-                specID)
+            LoadoutReminder.DB.TALENTS:SaveRaidBossSet(selectedRaid, selectedBoss, selectedDifficulty, specID,
+                selectedSetID)
         elseif selectedReminderType == LoadoutReminder.CONST.REMINDER_TYPES.SPEC then
             LoadoutReminder.DB.SPEC:SaveRaidBossSet(selectedRaid, selectedBoss, selectedDifficulty, selectedSetID)
         end

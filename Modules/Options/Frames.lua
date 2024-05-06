@@ -12,6 +12,9 @@ LoadoutReminder.OPTIONS = LoadoutReminder.OPTIONS
 ---@type LoadoutReminder.OPTIONS.FRAME
 LoadoutReminder.OPTIONS.frame = nil
 
+---@type boolean
+LoadoutReminder.OPTIONS.initialized = false
+
 ---@class LoadoutReminder.OPTIONS.FRAMES
 LoadoutReminder.OPTIONS.FRAMES = {}
 
@@ -54,6 +57,8 @@ function LoadoutReminder.OPTIONS.FRAMES:Init()
                 content.difficultyList:Show()
                 content.difficultyList:SetAnchorPoints { { anchorParent = content.raidBossList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT", offsetX = 20 } }
             end
+
+            self:UpdateSetListDisplay()
         end,
         content,
         { {
@@ -86,6 +91,8 @@ function LoadoutReminder.OPTIONS.FRAMES:Init()
     content.raidList:SelectRow(1)
     content.raidBossList:SelectRow(1)
     content.difficultyList:SelectRow(1)
+
+    LoadoutReminder.OPTIONS.initialized = true
 
     -- Set Selector Dropdowns
     self:InitReminderTypesList()
@@ -128,7 +135,8 @@ function LoadoutReminder.OPTIONS.FRAMES:InitSetList()
 
     content.setList = LoadoutReminder.UTIL:SingleColumnFrameList(
         function()
-            -- Check Situation
+            LoadoutReminder.OPTIONS:SaveSelection()
+            LoadoutReminder.CHECK:CheckSituations()
         end,
         content,
         { {
@@ -161,6 +169,7 @@ function LoadoutReminder.OPTIONS.FRAMES:InitInstanceTypesList()
             else
                 content.difficultyList:Hide()
             end
+            self:UpdateSetListDisplay()
             self:UpdateSelectionSummary()
         end,
         content,
@@ -233,6 +242,7 @@ function LoadoutReminder.OPTIONS.FRAMES:InitDifficultyList()
     content.difficultyList = LoadoutReminder.UTIL:SingleColumnFrameList(
         function(row)
             self:UpdateSelectionSummary()
+            self:UpdateSetListDisplay()
         end,
         content,
         { { anchorParent = content.raidList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT", offsetX = 20 } },
@@ -257,7 +267,9 @@ end
 
 function LoadoutReminder.OPTIONS.FRAMES:UpdateSetListDisplay()
     -- yield if options frame was not yet initialized
-    if not LoadoutReminder.OPTIONS.frame then return end
+    if not LoadoutReminder.OPTIONS.initialized then return end
+
+    -- print("UpdateSetListDisplay")
 
     ---@class LoadoutReminder.OPTIONS.FRAME.CONTENT : Frame
     local content = LoadoutReminder.OPTIONS.frame.content
@@ -319,14 +331,14 @@ function LoadoutReminder.OPTIONS.FRAMES:UpdateSetListDisplay()
 
     content.setList:UpdateDisplay()
 
-    print("selectSetID: " .. tostring(selectedSetID))
+    -- print("selectSetID: " .. tostring(selectedSetID))
 
     -- Update Selected Row
     local selectedIndex = content.setList:SelectRowWhere(function(row)
         return row.selectedValue == selectedSetID
     end, 1)
 
-    print("selectedRowIndex: " .. tostring(selectedIndex))
+    -- print("selectedRowIndex: " .. tostring(selectedIndex))
 
     self:UpdateSelectionSummary()
 end
@@ -338,6 +350,7 @@ function LoadoutReminder.OPTIONS.FRAMES:InitRaidBossesList()
     content.raidBossList = LoadoutReminder.UTIL:SingleColumnFrameList(
         function()
             self:UpdateSelectionSummary()
+            self:UpdateSetListDisplay()
         end,
         content,
         { { anchorParent = content.raidList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT", offsetX = 20 } },
