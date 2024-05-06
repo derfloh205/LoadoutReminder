@@ -6,6 +6,11 @@ LoadoutReminder.CONST = {}
 
 LoadoutReminder.CONST.INIT_POLL_INTERVAL = 0.5
 
+LoadoutReminder.CONST.GENERAL_SELECTION_RGBA = { 1, 1, 1, 0.5 }
+LoadoutReminder.CONST.GENERAL_HOVER_RGBA = { 1, 1, 1, 0.2 }
+LoadoutReminder.CONST.SET_SELECTION_RGBA = { 0, 1, 0, 0.5 }
+LoadoutReminder.CONST.SET_HOVER_RGBA = { 0, 1, 0, 0.2 }
+
 LoadoutReminder.CONST.FRAMES = {
     REMINDER_FRAME = "TALENT_REMINDER_FRAME",
     NEWS = "NEWS",
@@ -321,51 +326,55 @@ LoadoutReminder.CONST.BOSS_ID_MAP = {
     -- Vault of the Incarnates (Dragonflight)
     [184972] = {
         boss = "ERANOG",
-        raid = "DEFAULT",
+        raid = "VAULT_OF_THE_INCARNATES",
+    },
+    [193459] = { -- DEBUG: Kadghar
+        boss = "ERANOG",
+        raid = "VAULT_OF_THE_INCARNATES",
     },
     [190496] = {
         boss = "TERROS",
-        raid = "DEFAULT",
+        raid = "VAULT_OF_THE_INCARNATES",
     },
     -- Primal Council: Kadros Icewrath
     [187771] = {
         boss = "PRIMAL_COUNCIL",
-        raid = "DEFAULT",
+        raid = "VAULT_OF_THE_INCARNATES",
     },
     -- Primal Council: Dathea Stormlash
     [187768] = {
         boss = "PRIMAL_COUNCIL",
-        raid = "DEFAULT",
+        raid = "VAULT_OF_THE_INCARNATES",
     },
     -- Primal Council: Embar Firepath
     [187767] = {
         boss = "PRIMAL_COUNCIL",
-        raid = "DEFAULT",
+        raid = "VAULT_OF_THE_INCARNATES",
     },
     -- Primal Council: Opalfang
     [187772] = {
         boss = "PRIMAL_COUNCIL",
-        raid = "DEFAULT",
+        raid = "VAULT_OF_THE_INCARNATES",
     },
     [187967] = {
         boss = "SENNARTH",
-        raid = "DEFAULT",
+        raid = "VAULT_OF_THE_INCARNATES",
     },
     [189813] = {
         boss = "DATHEA",
-        raid = "DEFAULT",
+        raid = "VAULT_OF_THE_INCARNATES",
     },
     [181378] = {
         boss = "KUROG",
-        raid = "DEFAULT",
+        raid = "VAULT_OF_THE_INCARNATES",
     },
     [190245] = {
         boss = "DIURNA",
-        raid = "DEFAULT",
+        raid = "VAULT_OF_THE_INCARNATES",
     },
     [189492] = {
         boss = "RASZAGETH",
-        raid = "DEFAULT",
+        raid = "VAULT_OF_THE_INCARNATES",
     },
 }
 
@@ -434,7 +443,7 @@ LoadoutReminder.CONST.GENERAL_REMINDER_TYPES = {
 
 LoadoutReminder.CONST.GENERAL_REMINDER_TYPES_DISPLAY_NAMES = {
     INSTANCE_TYPES = "Instance Types",
-    RAID_BOSSES = "Raid Bosses",
+    RAID_BOSSES = "Raids",
 }
 
 --- List: https://wowpedia.fandom.com/wiki/InstanceID

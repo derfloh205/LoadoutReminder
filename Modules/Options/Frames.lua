@@ -71,12 +71,22 @@ function LoadoutReminder.OPTIONS.FRAMES:Init()
                 label = label,
                 value = value
             }
-        end)
+        end), LoadoutReminder.CONST.GENERAL_SELECTION_RGBA, LoadoutReminder.CONST.GENERAL_HOVER_RGBA
     )
 
     content.selectionSummary = GGUI.Text {
-        parent = content, anchorPoints = { { anchorParent = content, anchorA = "TOP", anchorB = "TOP", offsetY = -195 } },
+        parent = content, anchorPoints = { { anchorParent = content, anchorA = "TOP", anchorB = "TOP", offsetY = -192 } },
         text = "<selectionSummary>"
+    }
+
+    content.remindPerBossCheckbox = GGUI.Checkbox {
+        parent = content, anchorParent = content, anchorA = "TOP", anchorB = "TOP", offsetX = 210, offsetY = -15,
+        label = "Enable Boss Reminders",
+        tooltip = "If this is " .. f.g("enabled") .. ", you will be reminded of boss specific loadouts for this raid " .. f.bb("on boss targeting\n")
+            .. "If it is " .. f.r("disabled") .. " you will only be reminded on reload/load-ins for " .. f.white("'Any Boss'") .. " Loadouts",
+        clickCallback = function(_, checked)
+            LoadoutReminder.OPTIONS:SavePerBossSelection(checked)
+        end
     }
 
     content.generalList:UpdateDisplay()
@@ -123,7 +133,7 @@ function LoadoutReminder.OPTIONS.FRAMES:InitReminderTypesList()
                 label = label,
                 value = value
             }
-        end)
+        end), LoadoutReminder.CONST.GENERAL_SELECTION_RGBA, LoadoutReminder.CONST.GENERAL_HOVER_RGBA
     )
 
     content.reminderTypesList:UpdateDisplay()
@@ -149,7 +159,7 @@ function LoadoutReminder.OPTIONS.FRAMES:InitSetList()
                 label = LoadoutReminder.CONST.NO_SET_NAME,
                 value = nil,
             }
-        }
+        }, LoadoutReminder.CONST.SET_SELECTION_RGBA, LoadoutReminder.CONST.SET_HOVER_RGBA
     )
 
 
@@ -171,17 +181,19 @@ function LoadoutReminder.OPTIONS.FRAMES:InitInstanceTypesList()
             end
             self:UpdateSetListDisplay()
             self:UpdateSelectionSummary()
+            self:UpdatePerBossCheckbox()
         end,
         content,
         { { anchorParent = content.generalList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT", offsetX = 20 } },
         160,
         true,
         GUTIL:Map(LoadoutReminder.CONST.INSTANCE_TYPES_DISPLAY_NAMES, function(label, value)
+            if value == LoadoutReminder.CONST.INSTANCE_TYPES.RAID then return nil end -- filter out raid
             return {
                 label = label,
                 value = value
             }
-        end)
+        end), LoadoutReminder.CONST.GENERAL_SELECTION_RGBA, LoadoutReminder.CONST.GENERAL_HOVER_RGBA
     )
 
     content.instanceTypesList:UpdateDisplay()
@@ -213,6 +225,7 @@ function LoadoutReminder.OPTIONS.FRAMES:InitRaidList()
             end)
 
             content.raidBossList:SelectRow(1)
+            self:UpdatePerBossCheckbox()
         end,
         content,
         { { anchorParent = content.generalList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT", offsetX = 20 } },
@@ -223,7 +236,7 @@ function LoadoutReminder.OPTIONS.FRAMES:InitRaidList()
                 label = label,
                 value = value
             }
-        end)
+        end), LoadoutReminder.CONST.GENERAL_SELECTION_RGBA, LoadoutReminder.CONST.GENERAL_HOVER_RGBA
     )
 
     content.raidList:UpdateDisplay(function(rowA, rowB)
@@ -243,6 +256,7 @@ function LoadoutReminder.OPTIONS.FRAMES:InitDifficultyList()
         function(row)
             self:UpdateSelectionSummary()
             self:UpdateSetListDisplay()
+            self:UpdatePerBossCheckbox()
         end,
         content,
         { { anchorParent = content.raidList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT", offsetX = 20 } },
@@ -253,7 +267,7 @@ function LoadoutReminder.OPTIONS.FRAMES:InitDifficultyList()
                 label = label,
                 value = value
             }
-        end)
+        end), LoadoutReminder.CONST.GENERAL_SELECTION_RGBA, LoadoutReminder.CONST.GENERAL_HOVER_RGBA
     )
 
     content.difficultyList:UpdateDisplay(function(rowA, rowB)
@@ -341,6 +355,7 @@ function LoadoutReminder.OPTIONS.FRAMES:UpdateSetListDisplay()
     -- print("selectedRowIndex: " .. tostring(selectedIndex))
 
     self:UpdateSelectionSummary()
+    self:UpdatePerBossCheckbox()
 end
 
 function LoadoutReminder.OPTIONS.FRAMES:InitRaidBossesList()
@@ -351,6 +366,7 @@ function LoadoutReminder.OPTIONS.FRAMES:InitRaidBossesList()
         function()
             self:UpdateSelectionSummary()
             self:UpdateSetListDisplay()
+            self:UpdatePerBossCheckbox()
         end,
         content,
         { { anchorParent = content.raidList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT", offsetX = 20 } },
@@ -361,13 +377,13 @@ function LoadoutReminder.OPTIONS.FRAMES:InitRaidBossesList()
                 label = LoadoutReminder.CONST.BOSS_NAMES[LoadoutReminder.CONST.BOSS_IDS.DEFAULT],
                 value = LoadoutReminder.CONST.BOSS_IDS.DEFAULT
             }
-        }
+        }, LoadoutReminder.CONST.GENERAL_SELECTION_RGBA, LoadoutReminder.CONST.GENERAL_HOVER_RGBA
     )
 
     content.raidBossList:UpdateDisplay(function(rowA, rowB)
-        if rowA.columns[1].text:GetText() == LoadoutReminder.CONST.BOSS_NAMES[LoadoutReminder.CONST.BOSS_IDS.DEFAULT] then
+        if rowA.selectedValue == LoadoutReminder.CONST.BOSS_IDS.DEFAULT.DEFAULT then
             return true
-        else
+        elseif rowB.selectedValue == LoadoutReminder.CONST.BOSS_IDS.DEFAULT.DEFAULT then
             return false
         end
     end)
@@ -409,4 +425,26 @@ function LoadoutReminder.OPTIONS.FRAMES:UpdateSelectionSummary()
 
 
     content.selectionSummary:SetText(summaryText)
+end
+
+function LoadoutReminder.OPTIONS.FRAMES:UpdatePerBossCheckbox()
+    ---@class LoadoutReminder.OPTIONS.FRAME.CONTENT : Frame
+    local content = LoadoutReminder.OPTIONS.frame.content
+    if content.generalList.selectedRow and content.generalList.selectedRow.selectedValue == LoadoutReminder.CONST.GENERAL_REMINDER_TYPES.RAID_BOSSES then
+        if content.raidList.selectedRow and content.raidList.selectedRow.selectedValue ~= LoadoutReminder.CONST.RAIDS.DEFAULT then
+            local selectedRaid = content.raidList.selectedRow and
+                content.raidList.selectedRow.selectedValue --[[@as LoadoutReminder.Raids]]
+            local selectedDifficulty = content.difficultyList.selectedRow.selectedValue or
+                LoadoutReminder.CONST.DIFFICULTY.DEFAULT --[[@as LoadoutReminder.Difficulty]]
+
+            local perBossOptionKey = LoadoutReminder.OPTIONS:GetPerBossOptionKey(selectedDifficulty, selectedRaid)
+            local checked = LoadoutReminder.DB.OPTIONS:Get("PER_BOSS_LOADOUTS")[perBossOptionKey]
+            content.remindPerBossCheckbox:SetChecked(checked)
+            content.remindPerBossCheckbox:Show()
+        else
+            content.remindPerBossCheckbox:Hide()
+        end
+    else
+        content.remindPerBossCheckbox:Hide()
+    end
 end

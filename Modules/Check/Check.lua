@@ -72,8 +72,10 @@ function LoadoutReminder.CHECK:CheckInstanceTypes(raid, difficulty, specID)
 
     local talentReminderInfo, addonReminderInfo, equipReminderInfo, specReminderInfo
     local instanceType = LoadoutReminder.UTIL:GetCurrentInstanceType()
+    local reminderTargetName = LoadoutReminder.CONST.INSTANCE_TYPES_DISPLAY_NAMES[instanceType]
 
     if raid then
+        reminderTargetName = "Any"
         local perBossLoadouts = LoadoutReminder.OPTIONS:HasRaidLoadoutsPerBoss(raid, difficulty)
         if not perBossLoadouts then
             talentReminderInfo =
@@ -121,19 +123,19 @@ function LoadoutReminder.CHECK:CheckInstanceTypes(raid, difficulty, specID)
 
     -- Update Talent Reminder
     LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.TALENTS, talentReminderInfo,
-        LoadoutReminder.CONST.INSTANCE_TYPES_DISPLAY_NAMES[instanceType])
+        reminderTargetName)
 
     -- Update Addon Reminder
     LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.ADDONS, addonReminderInfo,
-        LoadoutReminder.CONST.INSTANCE_TYPES_DISPLAY_NAMES[instanceType])
+        reminderTargetName)
 
     -- Update Equip Reminder
     LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.EQUIP, equipReminderInfo,
-        LoadoutReminder.CONST.INSTANCE_TYPES_DISPLAY_NAMES[instanceType])
+        reminderTargetName)
 
     -- Update Spec Reminder
     LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.SPEC, specReminderInfo,
-        LoadoutReminder.CONST.INSTANCE_TYPES_DISPLAY_NAMES[instanceType])
+        reminderTargetName)
 
     return LoadoutReminder.ActiveReminders(
         talentReminderInfo and not talentReminderInfo:IsAssignedSet(),
@@ -175,12 +177,12 @@ function LoadoutReminder.CHECK:CheckBoss(raid, difficulty, specID)
     local bossData = LoadoutReminder.CONST.BOSS_ID_MAP[npcID] and
         LoadoutReminder.CONST.BOSS_ID_MAP[npcID] --[[@as LoadoutReminder.RaidBossData]]
 
-
     if bossData == nil then
         return activeReminders -- npc is no boss
     end
 
     local boss = bossData.boss
+    local reminderTargetName = LoadoutReminder.CONST.BOSS_NAMES[boss] --[[@as string]]
 
     -- print("check boss reminders..")
     -- Check different reminder types and fallback to defaults
@@ -215,19 +217,19 @@ function LoadoutReminder.CHECK:CheckBoss(raid, difficulty, specID)
 
     -- Update Talent Reminder
     LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.TALENTS, talentReminderInfo,
-        LoadoutReminder.CONST.BOSS_NAMES[boss], true)
+        reminderTargetName, true)
 
     -- Update Addon Reminder
     LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.ADDONS, addonReminderInfo,
-        LoadoutReminder.CONST.BOSS_NAMES[boss], true)
+        reminderTargetName, true)
 
     -- Update Equip Reminder
     LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.EQUIP, equipReminderInfo,
-        LoadoutReminder.CONST.BOSS_NAMES[boss], true)
+        reminderTargetName, true)
 
     -- Update Spec Reminder
     LoadoutReminder.REMINDER_FRAME:UpdateDisplay(LoadoutReminder.CONST.REMINDER_TYPES.SPEC, specReminderInfo,
-        LoadoutReminder.CONST.BOSS_NAMES[boss], true)
+        reminderTargetName, true)
 
     return LoadoutReminder.ActiveReminders(
         talentReminderInfo and not talentReminderInfo:IsAssignedSet(),

@@ -5,6 +5,7 @@ local GUTIL = LoadoutReminder.GUTIL
 
 local f = GUTIL:GetFormatter()
 
+---@class LoadoutReminder.OPTIONS
 LoadoutReminder.OPTIONS = {}
 LoadoutReminder.OPTIONS.DROPDOWNS = {}
 LoadoutReminder.OPTIONS.PERBOSSCHECKBOXES = {}
@@ -102,7 +103,7 @@ function LoadoutReminder.OPTIONS:GetSpecializationSelectionData()
 end
 
 function LoadoutReminder.OPTIONS:GetPerBossOptionKey(difficulty, raid)
-    return difficulty .. "_" .. raid .. "_PerBoss"
+    return raid .. "_" .. difficulty
 end
 
 function LoadoutReminder.OPTIONS:GetSelectedDifficultyBySupportedInstanceTypes(instanceType)
@@ -169,4 +170,16 @@ function LoadoutReminder.OPTIONS:SaveSelection()
             LoadoutReminder.DB.SPEC:SaveRaidBossSet(selectedRaid, selectedBoss, selectedDifficulty, selectedSetID)
         end
     end
+end
+
+---@param value boolean
+function LoadoutReminder.OPTIONS:SavePerBossSelection(value)
+    local content = LoadoutReminder.OPTIONS.frame.content --[[@as LoadoutReminder.OPTIONS.FRAME.CONTENT]]
+    local selectedRaid = content.raidList.selectedRow and
+        content.raidList.selectedRow.selectedValue --[[@as LoadoutReminder.Raids]]
+    local selectedDifficulty = content.difficultyList.selectedRow.selectedValue or
+        LoadoutReminder.CONST.DIFFICULTY.DEFAULT --[[@as LoadoutReminder.Difficulty]]
+
+    local perBossOptionKey = self:GetPerBossOptionKey(selectedDifficulty, selectedRaid)
+    LoadoutReminder.DB.OPTIONS:Get("PER_BOSS_LOADOUTS")[perBossOptionKey] = value
 end

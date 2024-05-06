@@ -148,9 +148,10 @@ end
 ---@param columnWidth number
 ---@param showScrollBar boolean
 ---@param selectionData LoadoutReminder.SingleColumnFrameList.Data[]
+---@param selectionRGBA number[]
 ---@return GGUI.FrameList
 function LoadoutReminder.UTIL:SingleColumnFrameList(selectionCallback, parent, anchorPoints, columnWidth, showScrollBar,
-													selectionData)
+													selectionData, selectionRGBA, hoverRGBA)
 	local list = GGUI.FrameList {
 		parent = parent,
 		anchorPoints = anchorPoints,
@@ -167,7 +168,9 @@ function LoadoutReminder.UTIL:SingleColumnFrameList(selectionCallback, parent, a
 			}
 		end,
 		selectionOptions = {
-			selectionCallback = selectionCallback
+			selectionCallback = selectionCallback,
+			selectedRGBA = selectionRGBA,
+			hoverRGBA = hoverRGBA
 		},
 		hideScrollbar = not showScrollBar,
 		showBorder = true,
