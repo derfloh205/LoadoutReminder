@@ -13,7 +13,7 @@ LoadoutReminder.SPEC = GUTIL:CreateRegistreeForEvents { "PLAYER_SPECIALIZATION_C
 function LoadoutReminder.SPEC:CheckInstanceSpecSet(instanceType, difficulty, specID)
 	local assignedSpecID = LoadoutReminder.DB.SPEC:GetInstanceSet(instanceType, difficulty)
 
-	print("checking spec for difficulty: " .. difficulty)
+	-- print("checking spec for difficulty: " .. difficulty)
 
 	-- print("currentSpecID: " .. tostring(specID))
 	-- print("assignedSpecID: " .. tostring(assignedSpecID))
@@ -39,7 +39,7 @@ end
 function LoadoutReminder.SPEC:CheckBossSpecSet(raid, boss, difficulty, specID)
 	local bossSetSpecID = LoadoutReminder.DB.SPEC:GetRaidBossSet(raid, boss, difficulty)
 
-	print("checking spec boss set: " .. raid .. "-" .. boss .. "-" .. difficulty)
+	-- print("checking spec boss set: " .. raid .. "-" .. boss .. "-" .. difficulty)
 
 	if bossSetSpecID == nil then
 		return nil

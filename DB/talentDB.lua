@@ -79,38 +79,15 @@ function LoadoutReminder.DB.TALENTS:GetRaidBossSet(raid, boss, difficulty, specI
 end
 
 function LoadoutReminder.DB.TALENTS:Migrate()
-    if LoadoutReminderDB.talentDB.version == 0 then
-        -- migrate from old sv table structure
-        if _G["LoadoutReminderDBV3"] then
-            if _G["LoadoutReminderDBV3"].GENERAL then
-                for difficulty, instanceTypeData in pairs(_G["LoadoutReminderDBV3"].GENERAL) do
-                    for instanceType, data in pairs(instanceTypeData) do
-                        if data.TALENTS then
-                            for specID, talentSetID in pairs(data.TALENTS) do
-                                self:SaveInstanceSet(instanceType, difficulty, specID, talentSetID)
-                            end
-                        end
-                    end
-                end
-            end
-
-            if _G["LoadoutReminderDBV3"].RAIDS then
-                for difficulty, raidData in pairs(_G["LoadoutReminderDBV3"].RAIDS) do
-                    for raid, bossData in pairs(raidData) do
-                        for boss, data in pairs(bossData) do
-                            if data.TALENTS then
-                                for specID, talentSetID in pairs(data.TALENTS) do
-                                    self:SaveRaidBossSet(raid, boss, difficulty, specID, talentSetID)
-                                end
-                            end
-                        end
-                    end
-                end
-            end
-        end
-
-        LoadoutReminderDB.talentDB.version = 1
+    if LoadoutReminderDB.talentDB.version < 2 then
+        self:ClearAll()
+        LoadoutReminderDB.talentDB.version = 2
     end
+end
+
+function LoadoutReminder.DB.TALENTS:ClearAll()
+    wipe(LoadoutReminderDB.talentDB.data.instanceSets)
+    wipe(LoadoutReminderDB.talentDB.data.raidSets)
 end
 
 function LoadoutReminder.DB.TALENTS:CleanUp()

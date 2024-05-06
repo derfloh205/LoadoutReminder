@@ -1,98 +1,104 @@
 ---@class LoadoutReminder
 local LoadoutReminder = select(2, ...)
 
+local GUTIL = LoadoutReminder.GUTIL
+
+local f = GUTIL:GetFormatter()
+
 LoadoutReminder.OPTIONS = {}
 LoadoutReminder.OPTIONS.DROPDOWNS = {}
 LoadoutReminder.OPTIONS.PERBOSSCHECKBOXES = {}
 
-function LoadoutReminder.OPTIONS:GetTalentsData()
-    -- #### TALENTS
+---@return LoadoutReminder.SingleColumnFrameList.Data[]
+function LoadoutReminder.OPTIONS:GetTalentsSelectionData()
     ---@type number|string[]
     local talentSetIDs = LoadoutReminder.TALENTS:GetTalentSets()
 
     -- convert to dropdown data, always include starter build label
-    local talentsDropdownData = {
+    local selectionData = {
         {
-            label = LoadoutReminder.CONST.LABEL_NO_SET,
+            label = f.grey(LoadoutReminder.CONST.LABEL_NO_SET),
             value = nil
         },
         {
-            label = LoadoutReminder.CONST.STARTER_BUILD,
+            label = f.bb(LoadoutReminder.CONST.STARTER_BUILD),
             value = Constants.TraitConsts.STARTER_BUILD_TRAIT_CONFIG_ID
         }
     }
     table.foreach(talentSetIDs, function(_, configID)
         local setName = LoadoutReminder.TALENTS:GetTalentSetNameByID(configID)
-        table.insert(talentsDropdownData, {
+        table.insert(selectionData, {
             label = setName,
             value = configID,
         })
     end)
-    return talentsDropdownData
+    return selectionData
 end
 
-function LoadoutReminder.OPTIONS:GetAddonsData()
+---@return LoadoutReminder.SingleColumnFrameList.Data[]
+
+function LoadoutReminder.OPTIONS:GetAddonsSelectionData()
     if not LoadoutReminder.ADDONS.AVAILABLE then
         return nil
     end
     local addonSets = LoadoutReminder.ADDONS:GetAddonSets()
 
-    -- convert to dropdown data, always include starter build label
-    local addonsDropdownData = {
+    local selectionData = {
         {
-            label = LoadoutReminder.CONST.LABEL_NO_SET,
+            label = f.grey(LoadoutReminder.CONST.LABEL_NO_SET),
             value = nil
         }
     }
 
     table.foreach(addonSets, function(setName, _)
-        table.insert(addonsDropdownData, {
+        table.insert(selectionData, {
             label = setName,
             value = setName,
         })
     end)
-    return addonsDropdownData
+    return selectionData
 end
 
-function LoadoutReminder.OPTIONS:GetEquipData()
+---@return LoadoutReminder.SingleColumnFrameList.Data[]
+function LoadoutReminder.OPTIONS:GetEquipSelectionData()
     local equipSets = LoadoutReminder.EQUIP:GetEquipSets()
 
-    -- convert to dropdown data, always include starter build label
-    local equipDropdownData = {
+    local selectionData = {
         {
-            label = LoadoutReminder.CONST.LABEL_NO_SET,
+            label = f.grey(LoadoutReminder.CONST.LABEL_NO_SET),
             value = nil
         }
     }
 
     table.foreach(equipSets, function(_, setID)
         local setName = LoadoutReminder.EQUIP:GetEquipSetNameByID(setID)
-        table.insert(equipDropdownData, {
+        table.insert(selectionData, {
             label = setName,
             value = setID,
         })
     end)
-    return equipDropdownData
+    return selectionData
 end
 
-function LoadoutReminder.OPTIONS:GetSpecData()
+---@return LoadoutReminder.SingleColumnFrameList.Data[]
+function LoadoutReminder.OPTIONS:GetSpecializationSelectionData()
     local specs = LoadoutReminder.SPEC:GetSpecSets()
     -- convert to dropdown data, always include starter build label
-    local specDropdownData = {
+    local selectionData = {
         {
-            label = LoadoutReminder.CONST.LABEL_NO_SET,
+            label = f.grey(LoadoutReminder.CONST.LABEL_NO_SET),
             value = nil
         }
     }
 
     table.foreach(specs, function(_, specID)
         local specName = specID and select(2, GetSpecializationInfoByID(specID)) or ""
-        table.insert(specDropdownData, {
+        table.insert(selectionData, {
             label = specName,
             value = specID,
         })
     end)
-    return specDropdownData
+    return selectionData
 end
 
 function LoadoutReminder.OPTIONS:GetPerBossOptionKey(difficulty, raid)

@@ -1,6 +1,7 @@
 ---@class LoadoutReminder
 local LoadoutReminder = select(2, ...)
 
+---@class LoadoutReminder.CONST
 LoadoutReminder.CONST = {}
 
 LoadoutReminder.CONST.INIT_POLL_INTERVAL = 0.5
@@ -77,10 +78,10 @@ LoadoutReminder.CONST.BOSS_IDS = {
 ---@type table<LoadoutReminder.Raids, table<LoadoutReminder.Raidboss, string>>
 LoadoutReminder.CONST.BOSS_NAMES = {
     DEFAULT = {
-        DEFAULT = "Default",
+        DEFAULT = "Any Boss",
     },
     AMIRDRASSIL = {
-        DEFAULT = "Default",
+        DEFAULT = "Any Boss",
         GNARLROOT = 'Gnarlroot',
         IGIRA = 'Igira',
         VOLCOROSS = 'Volcoross',
@@ -92,7 +93,7 @@ LoadoutReminder.CONST.BOSS_NAMES = {
         FYRAKK = "Fyrakk",
     },
     ABERRUS = {
-        DEFAULT = "Default",
+        DEFAULT = "Any Boss",
         KAZZARA = 'Kazzara',
         AMALGAMATION_CHAMBER = 'Chamber',
         FORGOTTEN_EXPERIMENTS = 'Experiments',
@@ -104,7 +105,7 @@ LoadoutReminder.CONST.BOSS_NAMES = {
         SARKARETH = 'Sarkareth',
     },
     VAULT_OF_THE_INCARNATES = {
-        DEFAULT = "Default",
+        DEFAULT = "Any Boss",
         ERANOG = "Eranog",
         TERROS = "Terros",
         PRIMAL_COUNCIL = "Primal Council",
@@ -127,7 +128,7 @@ LoadoutReminder.CONST.DIFFICULTY = {
 }
 
 LoadoutReminder.CONST.DIFFICULTY_DISPLAY_NAMES = {
-    DEFAULT = "All Difficulties",
+    DEFAULT = "Any Difficulty",
     LFR = "LFR",
     NORMAL = "Normal",
     HEROIC = "Heroic",
@@ -419,7 +420,7 @@ LoadoutReminder.CONST.RAIDS = {
 }
 
 LoadoutReminder.CONST.RAID_DISPLAY_NAMES = {
-    DEFAULT = "Default",
+    DEFAULT = "Any Raid",
     AMIRDRASSIL = 'Amirdrassil',
     ABERRUS = 'Aberrus',
     VAULT_OF_THE_INCARNATES = "Vault of the Incarnates",

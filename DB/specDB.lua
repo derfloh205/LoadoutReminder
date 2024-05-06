@@ -64,42 +64,15 @@ function LoadoutReminder.DB.SPEC:GetRaidBossSet(raid, boss, difficulty)
 end
 
 function LoadoutReminder.DB.SPEC:Migrate()
-    if LoadoutReminderDB.specDB.version == 0 then
-        -- migrate from old sv table structure
-        if _G["LoadoutReminderDBV3"] then
-            local specMap = {}
-            local classID = select(3, UnitClass("player"))
-            for i = 1, 4 do
-                local specID, name = GetSpecializationInfoForClassID(classID, i)
-                if specID then
-                    specMap[name] = specID
-                end
-            end
-            if _G["LoadoutReminderDBV3"].GENERAL then
-                for difficulty, instanceTypeData in pairs(_G["LoadoutReminderDBV3"].GENERAL) do
-                    for instanceType, data in pairs(instanceTypeData) do
-                        if data.SPEC then
-                            self:SaveInstanceSet(instanceType, difficulty, specMap[data.SPEC])
-                        end
-                    end
-                end
-            end
-
-            if _G["LoadoutReminderDBV3"].RAIDS then
-                for difficulty, raidData in pairs(_G["LoadoutReminderDBV3"].RAIDS) do
-                    for raid, bossData in pairs(raidData) do
-                        for boss, data in pairs(bossData) do
-                            if data.SPEC then
-                                self:SaveRaidBossSet(raid, boss, difficulty, specMap[data.SPEC])
-                            end
-                        end
-                    end
-                end
-            end
-        end
-
-        LoadoutReminderDB.specDB.version = 1
+    if LoadoutReminderDB.specDB.version < 2 then
+        self:ClearAll()
+        LoadoutReminderDB.specDB.version = 2
     end
+end
+
+function LoadoutReminder.DB.SPEC:ClearAll()
+    wipe(LoadoutReminderDB.specDB.data.instanceSets)
+    wipe(LoadoutReminderDB.specDB.data.raidSets)
 end
 
 function LoadoutReminder.DB.SPEC:CleanUp()

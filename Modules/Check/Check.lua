@@ -34,9 +34,9 @@ function LoadoutReminder.CHECK:CheckSituations()
     local specID = LoadoutReminder.UTIL:GetPlayerSpecID()
     local raid = LoadoutReminder.UTIL:GetCurrentRaid() -- or LoadoutReminder.CONST.RAIDS.AMIRDRASSIL -- DEBUG
 
-    print("Checking situations for ")
-    print("difficulty: " .. difficulty)
-    print("specID: " .. specID)
+    -- print("Checking situations for ")
+    -- print("difficulty: " .. difficulty)
+    -- print("specID: " .. specID)
 
     local activeInstanceReminders = LoadoutReminder.CHECK:CheckInstanceTypes(raid, difficulty, specID)
     local activeBossReminders = LoadoutReminder.CHECK:CheckBoss(raid, difficulty, specID)

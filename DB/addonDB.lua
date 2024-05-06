@@ -68,36 +68,16 @@ function LoadoutReminder.DB.ADDONS:GetRaidBossSet(raid, boss, difficulty)
 end
 
 function LoadoutReminder.DB.ADDONS:Migrate()
-    if LoadoutReminderDB.addonDB.version == 0 then
-        -- migrate from old sv table structure
-        if _G["LoadoutReminderDBV3"] then
-            if _G["LoadoutReminderDBV3"].GENERAL then
-                for difficulty, instanceTypeData in pairs(_G["LoadoutReminderDBV3"].GENERAL) do
-                    for instanceType, data in pairs(instanceTypeData) do
-                        if data.ADDONS then
-                            self:SaveInstanceSet(instanceType, difficulty, data.ADDONS)
-                        end
-                    end
-                end
-            end
-
-            if _G["LoadoutReminderDBV3"].RAIDS then
-                for difficulty, raidData in pairs(_G["LoadoutReminderDBV3"].RAIDS) do
-                    for raid, bossData in pairs(raidData) do
-                        for boss, data in pairs(bossData) do
-                            if data.ADDONS then
-                                self:SaveRaidBossSet(raid, boss, difficulty, data.ADDONS)
-                            end
-                        end
-                    end
-                end
-            end
-        end
-
-        LoadoutReminderDB.addonDB.version = 1
+    if LoadoutReminderDB.addonDB.version < 2 then
+        self:ClearAll()
+        LoadoutReminderDB.addonDB.version = 2
     end
 end
 
-function LoadoutReminder.DB.ADDONS:CleanUp()
+function LoadoutReminder.DB.ADDONS:ClearAll()
+    wipe(LoadoutReminderDB.addonDB.data.instanceSets)
+    wipe(LoadoutReminderDB.addonDB.data.raidSets)
+end
 
+function LoadoutReminder.DB.ADDONS:CleanUp()
 end
