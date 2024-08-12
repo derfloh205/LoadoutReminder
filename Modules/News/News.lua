@@ -43,8 +43,8 @@ function LoadoutReminder.NEWS:GET_NEWS()
     local d = LoadoutReminder.GUTIL:ColorizeText("-", LoadoutReminder.GUTIL.COLORS.GREEN)
     return string.format(
         [[
-    %1$s Refactored internal db structure
-    %1$s Moved options to custom panel
+    %1$s Updated systems for TWW
+    %1$s Dungeon/Raid List Update WIP
     ]], d)
 end
 

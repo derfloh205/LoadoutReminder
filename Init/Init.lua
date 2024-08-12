@@ -60,7 +60,8 @@ function LoadoutReminder.INIT:InitOptionsPanel()
 		parent = optionsPanel, anchorPoints = { { anchorParent = optionsPanel } },
 		text = f.white("Use " .. f.whisper("/lor config") .. " to configure " .. f.l("LoadoutReminder"))
 	}
-	InterfaceOptions_AddCategory(optionsPanel)
+	local category = Settings.RegisterCanvasLayoutCategory(optionsPanel, optionsPanel.name)
+	Settings.RegisterAddOnCategory(category)
 end
 
 function LoadoutReminder.INIT:InitializeSlashCommands()
