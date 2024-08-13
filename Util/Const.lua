@@ -380,7 +380,7 @@ LoadoutReminder.CONST.BOSS_ID_MAP = {
 
 LoadoutReminder.CONST.ADDON_LIST_ADDONS = {
     BETTER_ADDON_LIST = "BetterAddonList",
-    ADDON_CONTROL_PANEL = "AddonControlPanel",
+    ADDON_CONTROL_PANEL = "ACP",
 }
 
 LoadoutReminder.CONST.TALENT_MANAGEMENT_ADDONS = {
