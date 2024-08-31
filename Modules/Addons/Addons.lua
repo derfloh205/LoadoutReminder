@@ -38,8 +38,13 @@ function LoadoutReminder.ADDONS:CheckInstanceAddonSet(instanceType, difficulty)
 	local assignedSet = LoadoutReminder.DB.ADDONS:GetInstanceSet(instanceType, difficulty)
 
 	currentSet = currentSet or LoadoutReminder.CONST.NO_SET_NAME
+	local assignedId = LoadoutReminder.ADDONS.LIST_ADDON:GetSetKey(assignedSet)
 
-	if currentSet and assignedSet then
+	if currentSet == assignedId then
+		return nil
+	end
+
+	if currentSet and assignedId then
 		local macroText = LoadoutReminder.ADDONS:GetMacroTextByListAddon(assignedSet)
 		local buttonText = 'Switch Addons to: '
 		return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.ADDONS, 'Detected Situation: ',
@@ -53,6 +58,7 @@ end
 ---@return LoadoutReminder.ReminderInfo | nil
 function LoadoutReminder.ADDONS:CheckBossAddonSet(raid, boss, difficulty)
 	local bossSet = LoadoutReminder.DB.ADDONS:GetRaidBossSet(raid, boss, difficulty)
+	local assignedId = LoadoutReminder.ADDONS.LIST_ADDON:GetSetKey(bossSet)
 
 	if bossSet == nil then
 		return nil
@@ -60,7 +66,11 @@ function LoadoutReminder.ADDONS:CheckBossAddonSet(raid, boss, difficulty)
 
 	local currentSet = LoadoutReminder.ADDONS:GetCurrentSet() or LoadoutReminder.CONST.NO_SET_NAME
 
-	if currentSet and bossSet then
+	if currentSet == assignedId then
+		return nil
+	end
+
+	if currentSet and assignedId then
 		local macroText = LoadoutReminder.ADDONS:GetMacroTextByListAddon(bossSet)
 		return LoadoutReminder.ReminderInfo(LoadoutReminder.CONST.REMINDER_TYPES.ADDONS, 'Detected Boss: ', macroText,
 			'Switch Addons to: ', "Addon Set", currentSet, bossSet)
@@ -76,19 +86,15 @@ function LoadoutReminder.ADDONS:GetCurrentSet()
 	return LoadoutReminder.ADDONS.LIST_ADDON:GetCurrentSet()
 end
 
-function LoadoutReminder.ADDONS.BETTER_ADDON_LIST:GetAddonSets()
-	if BetterAddonListDB then
-		return BetterAddonListDB.sets
+function LoadoutReminder.ADDONS:GetName(data, key)
+	if data.name then
+		return data.name
+	else
+		return key
 	end
-	return {}
 end
 
-function LoadoutReminder.ADDONS:GetMacroTextByListAddon(assignedSet)
-	return LoadoutReminder.ADDONS.LIST_ADDON:GetMacroText(assignedSet)
-end
-
---- find out what set is currently activated by iterating the addonlist
-function LoadoutReminder.ADDONS.BETTER_ADDON_LIST:GetCurrentSet()
+function LoadoutReminder.ADDONS:GetEnabledAddon()
 	local numAddons = C_AddOns.GetNumAddOns()
 	local character = UnitName("player")
 	local enabledAddons = {}
@@ -104,25 +110,52 @@ function LoadoutReminder.ADDONS.BETTER_ADDON_LIST:GetCurrentSet()
 			end
 		end
 	end
-	-- to be able to early return
-	local function matchesCurrentSet(addonList)
-		for _, addonName in pairs(addonList) do
-			--print("- addon: " .. addonName)
-			if enabledAddons[addonName] == nil then
-				-- cannot be this set
-				return false
-			end
-		end
-		return true
-	end
 
+	return enabledAddons;
+end
+
+function LoadoutReminder.ADDONS:GetMatchingAddons(addonList)
+	local enabledAddons = LoadoutReminder.ADDONS:GetEnabledAddon()
+
+	for key, addonName in pairs(addonList) do
+		if key == "name" then
+			return true
+		end
+
+		--print("- addon: " .. addonName)
+		if enabledAddons[addonName] == nil then
+			-- cannot be this set
+			-- print("- Failed because of addon: " .. addonName, key)
+			return false
+		end
+	end
+	return true
+end
+
+function LoadoutReminder.ADDONS.BETTER_ADDON_LIST:GetAddonSets()
+	if BetterAddonListDB then
+		return BetterAddonListDB.sets
+	end
+	return {}
+end
+
+function LoadoutReminder.ADDONS:GetMacroTextByListAddon(assignedSet)
+	return LoadoutReminder.ADDONS.LIST_ADDON:GetMacroText(assignedSet)
+end
+
+--- find out what set is currently activated by iterating the addonlist
+function LoadoutReminder.ADDONS.BETTER_ADDON_LIST:GetCurrentSet()
 	-- check against list of addon sets of BAL
 	-- early return when matching set is found
 	for set, addons in pairs(BetterAddonListDB.sets) do
-		if matchesCurrentSet(addons) then
+		if LoadoutReminder.ADDONS:GetMatchingAddons(addons) then
 			return set
 		end
 	end
+end
+
+function LoadoutReminder.ADDONS.BETTER_ADDON_LIST:GetSetKey(assignedSet)
+	return assignedSet
 end
 
 function LoadoutReminder.ADDONS.BETTER_ADDON_LIST:GetMacroText(assignedSet)
@@ -130,11 +163,40 @@ function LoadoutReminder.ADDONS.BETTER_ADDON_LIST:GetMacroText(assignedSet)
 end
 
 function LoadoutReminder.ADDONS.ADDON_CONTROL_PANEL:GetAddonSets()
-	-- TODO: Implement
-	return {}
+	if ACP_Data then
+		local sets = {};
+		for key, data in pairs(ACP_Data.AddonSet) do 
+			local name = LoadoutReminder.ADDONS:GetName(data, key)
+			sets[name] = key;
+		end
+		return sets;
+	end
+	return sets
 end
 
 function LoadoutReminder.ADDONS.ADDON_CONTROL_PANEL:GetCurrentSet()
-	-- TODO: Implement
-	return nil
+	for set, addons in pairs(ACP_Data.AddonSet) do
+		local name = LoadoutReminder.ADDONS:GetName(addons, key)
+		-- print("Checking Set : ", name);
+		if LoadoutReminder.ADDONS:GetMatchingAddons(addons) then
+			-- print("Found Matching Set : ", set);
+			return set
+		end
+	end
+end
+
+function LoadoutReminder.ADDONS.ADDON_CONTROL_PANEL:GetSetKey(assignedSet)
+	for key, addons in pairs(ACP_Data.AddonSet) do
+		local name = LoadoutReminder.ADDONS:GetName(addons, key)
+		if name == assignedSet then
+			return key
+		end
+	end
+
+	return assignedSet
+end
+
+function LoadoutReminder.ADDONS.ADDON_CONTROL_PANEL:GetMacroText(assignedSet)
+	local id = LoadoutReminder.ADDONS.ADDON_CONTROL_PANEL:GetSetKey(assignedSet)
+	return "/acp disableall\n/acp addset " .. id .. "\n/rl"
 end
