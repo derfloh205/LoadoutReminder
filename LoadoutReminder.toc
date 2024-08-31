@@ -1,4 +1,4 @@
-## Interface: 110000
+## Interface: 110002
 ## DefaultState: enabled
 
 ## Title: LoadoutReminder
@@ -8,7 +8,7 @@
 ## X-Wago-ID: n6VPOLGd
 ## X-WoWI-ID: 26653
 ## SavedVariablesPerCharacter: LoadoutReminderDB
-## Version: 6.2.0
+## Version: 6.2.1
 ## OptionalDeps: BetterAddonList, AddonControlPanel, TalentLoadoutManager
 
 embeds.xml

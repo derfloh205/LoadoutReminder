@@ -43,8 +43,8 @@ function LoadoutReminder.NEWS:GET_NEWS()
     local d = LoadoutReminder.GUTIL:ColorizeText("-", LoadoutReminder.GUTIL.COLORS.GREEN)
     return string.format(
         [[
-    %1$s Updated systems for TWW
-    %1$s Dungeon/Raid List Update WIP
+    %1$s Fixed ACP Support
+    %1$s Thank you MedianAura!
     ]], d)
 end
 
